@@ -30,6 +30,7 @@ builder
 var app = builder.Build();
 
 app.UseGleisGrainHttp();
+app.MapGleisGrainDashboard();
 
 app.MapStopsEndpoints()
     .MapTripsEndpoints()

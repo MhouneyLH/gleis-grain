@@ -418,6 +418,11 @@
           "System.IO.Hashing": "10.0.3"
         }
       },
+      "Microsoft.Orleans.Dashboard.Abstractions": {
+        "type": "Transitive",
+        "resolved": "10.4.0",
+        "contentHash": "H/F+ZFR+njqUXkha7yZCMBhr1x+pc9ddZuVvBg60D6M67Zi4EtgWMlpkwgaHTYz6bJP+SlsqTzfWRF8HK+3AZg=="
+      },
       "Microsoft.Orleans.Persistence.Memory": {
         "type": "Transitive",
         "resolved": "10.4.0",
@@ -740,6 +745,7 @@
           "GleisGrain.Common.Abstractions": "[1.0.0, )",
           "Microsoft.AspNetCore.OpenApi": "[10.0.13, )",
           "Microsoft.Orleans.Clustering.AdoNet": "[10.4.0, )",
+          "Microsoft.Orleans.Dashboard": "[10.4.0, )",
           "Microsoft.Orleans.Persistence.AdoNet": "[10.4.0, )",
           "Microsoft.Orleans.Reminders.AdoNet": "[10.4.0, )",
           "Microsoft.Orleans.Server": "[10.4.0, )",
@@ -808,6 +814,28 @@
           "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.5",
           "Microsoft.Orleans.Runtime": "10.4.0",
           "Newtonsoft.Json": "13.0.4",
+          "Polly": "8.6.4",
+          "Polly.Extensions": "8.6.5",
+          "System.IO.Hashing": "10.0.3",
+          "System.Memory.Data": "10.0.3"
+        }
+      },
+      "Microsoft.Orleans.Dashboard": {
+        "type": "CentralTransitive",
+        "requested": "[10.4.0, )",
+        "resolved": "10.4.0",
+        "contentHash": "JSn86bF72h5hYjPnF/7lsGrd0R00X9FV8yc9iDSCLI9UJ+pxbpMBZaet6t1OjkqJqrVk0LGiLnlNR8eW4x/2yg==",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Analyzers": "5.9.0",
+          "Microsoft.CodeAnalysis.Common": "5.0.0",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "5.0.0",
+          "Microsoft.Extensions.DependencyModel": "10.0.5",
+          "Microsoft.Orleans.Dashboard.Abstractions": "10.4.0",
+          "Microsoft.Orleans.Reminders": "10.4.0",
+          "Microsoft.Orleans.Runtime": "10.4.0",
+          "Microsoft.Orleans.Sdk": "10.4.0",
+          "Newtonsoft.Json": "13.0.4",
+          "OpenTelemetry": "1.18.0",
           "Polly": "8.6.4",
           "Polly.Extensions": "8.6.5",
           "System.IO.Hashing": "10.0.3",

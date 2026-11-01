@@ -23,4 +23,10 @@ public sealed class OrleansOptions
 
     [Range(1, 65_535)]
     public int GatewayPort { get; init; } = 30_000;
+
+    /// <summary>Exposes the Orleans Dashboard. Off by default because it shows internals of the cluster.</summary>
+    public bool EnableDashboard { get; init; }
+
+    [RegularExpression("^/.+")]
+    public string DashboardPath { get; init; } = "/dashboard";
 }

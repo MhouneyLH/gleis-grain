@@ -18,7 +18,10 @@ Everything runs in the devcontainer, so you only need VS Code with the Dev Conta
 
 1. Open the repo in VS Code and choose "Reopen in Container".
 2. Start the AppHost: `dotnet run --project src/AppHost`
-3. The Aspire dashboard is on http://localhost:15000. It shows Postgres, pgAdmin and the one `gleis-grain` service that contains all modules. The API docs are under `/scalar`.
+3. The Aspire dashboard is on http://localhost:15000. It shows Postgres, pgAdmin and the one `gleis-grain` service that contains all modules.
+4. The service runs on http://localhost:5080:
+   - `/dashboard` is the Orleans Dashboard: silos, grains, activations and request rates. It is switched on with `Orleans:EnableDashboard` in `src/Host/appsettings.json` and off by default in code, because it exposes internals of the cluster.
+   - `/scalar` has the API docs.
 
 The Orleans SQL schema is not loaded into the databases yet, so the services will crash on startup until that is done.
 

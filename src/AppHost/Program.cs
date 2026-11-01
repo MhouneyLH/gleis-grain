@@ -23,6 +23,8 @@ var orleans = postgres.AddDatabase("orleans");
 // Modular monolith: one host that contains all modules. The database keeps the plain module name
 // because it becomes the connection string name the module reads.
 var host = builder.AddProject<Projects.GleisGrain_Host>("gleis-grain")
+    .WithUrlForEndpoint("http", endpoint => new ResourceUrlAnnotation { Url = "/dashboard", DisplayText = "Orleans Dashboard" })
+    .WithUrlForEndpoint("http", endpoint => new ResourceUrlAnnotation { Url = "/scalar", DisplayText = "Scalar API docs" })
     .WithReference(orleans)
     .WaitFor(orleans);
 

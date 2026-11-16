@@ -56,6 +56,18 @@ public class LeaderboardTests
     }
 
     [Fact]
+    public void Report_WithALowerScore_IsIgnored()
+    {
+        var board = new Leaderboard();
+        board.Report("Max", 6);
+
+        var changed = board.Report("Max", 3);
+
+        Assert.False(changed);
+        Assert.Equal(6, board.Top(10)[0].Score);
+    }
+
+    [Fact]
     public void Report_ForANewPlayer_ReportsAChange() =>
         Assert.True(new Leaderboard().Report("Max", 0));
 

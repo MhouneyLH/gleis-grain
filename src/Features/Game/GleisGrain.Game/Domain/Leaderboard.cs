@@ -20,10 +20,13 @@ internal sealed class Leaderboard
 
     public IReadOnlyCollection<LeaderboardEntry> Entries => _entries.Values;
 
-    /// <summary>Sets the score of a player. False when the player already had exactly this score.</summary>
+    /// <summary>
+    /// Raises the score of a player. Scores only grow, so a lower or equal score is ignored: reports are one-way
+    /// calls and may arrive out of order. False when nothing changed.
+    /// </summary>
     public bool Report(string nickname, int score)
     {
-        if (_entries.TryGetValue(nickname, out var current) && current.Score == score)
+        if (_entries.TryGetValue(nickname, out var current) && current.Score >= score)
         {
             return false;
         }

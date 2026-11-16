@@ -1,0 +1,152 @@
+[
+  {
+    "id": "60501720",
+    "name": "Hauptbahnhof",
+    "latitude": 48.291028,
+    "longitude": 14.291325
+  },
+  {
+    "id": "60501700",
+    "name": "Landgutstraße",
+    "latitude": 48.311034,
+    "longitude": 14.277701
+  },
+  {
+    "id": "60501160",
+    "name": "Taubenmarkt",
+    "latitude": 48.304119,
+    "longitude": 14.288003
+  },
+  {
+    "id": "60501010",
+    "name": "Hauptplatz",
+    "latitude": 48.306392,
+    "longitude": 14.286219
+  },
+  {
+    "id": "60500530",
+    "name": "Volksgartenstraße",
+    "latitude": 48.294712,
+    "longitude": 14.290883
+  },
+  {
+    "id": "60501220",
+    "name": "Brucknerhaus",
+    "latitude": 48.310464,
+    "longitude": 14.294588
+  },
+  {
+    "id": "60500280",
+    "name": "Theater",
+    "latitude": 48.304068,
+    "longitude": 14.282625
+  },
+  {
+    "id": "60501730",
+    "name": "Mühlkreisbahnhof",
+    "latitude": 48.311936,
+    "longitude": 14.279603
+  },
+  {
+    "id": "60500920",
+    "name": "JKU Universität",
+    "latitude": 48.334873,
+    "longitude": 14.320297
+  },
+  {
+    "id": "60502480",
+    "name": "Pöstlingberg",
+    "latitude": 48.324917,
+    "longitude": 14.25895
+  },
+  {
+    "id": "60500470",
+    "name": "Ebelsberg Bahnhof",
+    "latitude": 48.252096,
+    "longitude": 14.347558
+  },
+  {
+    "id": "60501250",
+    "name": "Industriezeile",
+    "latitude": 48.302186,
+    "longitude": 14.319275
+  },
+  {
+    "id": "60500312",
+    "name": "Pichlinger See",
+    "latitude": 48.241664,
+    "longitude": 14.378562
+  },
+  {
+    "id": "60501090",
+    "name": "Peuerbachstraße",
+    "latitude": 48.315794,
+    "longitude": 14.289755
+  },
+  {
+    "id": "60502280",
+    "name": "Kudlichstraße",
+    "latitude": 48.285167,
+    "longitude": 14.285935
+  },
+  {
+    "id": "60500730",
+    "name": "Blumauerstraße",
+    "latitude": 48.296075,
+    "longitude": 14.297616
+  },
+  {
+    "id": "60501130",
+    "name": "Biesenfeldbad",
+    "latitude": 48.334063,
+    "longitude": 14.300723
+  },
+  {
+    "id": "60500120",
+    "name": "Meixnerkreuzung",
+    "latitude": 48.262799,
+    "longitude": 14.258649
+  },
+  {
+    "id": "60501810",
+    "name": "Auwiesen",
+    "latitude": 48.248771,
+    "longitude": 14.307999
+  },
+  {
+    "id": "60500960",
+    "name": "Dornach",
+    "latitude": 48.331888,
+    "longitude": 14.312824
+  },
+  {
+    "id": "60500520",
+    "name": "Stadion",
+    "latitude": 48.290841,
+    "longitude": 14.275857
+  },
+  {
+    "id": "60501570",
+    "name": "Neue Heimat",
+    "latitude": 48.253776,
+    "longitude": 14.282332
+  },
+  {
+    "id": "60502400",
+    "name": "Bergbahnhof",
+    "latitude": 48.311026,
+    "longitude": 14.276555
+  },
+  {
+    "id": "60500930",
+    "name": "Musiktheater",
+    "latitude": 48.294208,
+    "longitude": 14.293788
+  },
+  {
+    "id": "60500410",
+    "name": "Ebelsberg",
+    "latitude": 48.246089,
+    "longitude": 14.327465
+  }
+]

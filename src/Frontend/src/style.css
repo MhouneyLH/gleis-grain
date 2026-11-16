@@ -1,0 +1,252 @@
+/* gleis-grain: tram red and cream for the phone pages, a dark theme for the projector. */
+
+:root {
+  --red: #d6232f;
+  --red-dark: #a9141f;
+  --red-soft: #fde8ea;
+  --cream: #fff7ef;
+  --paper: #ffffff;
+  --ink: #261f21;
+  --muted: #766d70;
+  --hairline: #ecdfd5;
+  --amber: #f2a900;
+  --amber-soft: #fff1cc;
+  --green: #1c8a57;
+  --green-soft: #dcf4e8;
+  --shadow: 0 6px 20px rgb(60 20 20 / 0.1);
+  --radius: 18px;
+  --font: ui-rounded, 'SF Pro Rounded', 'Nunito', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --map-bg: #eaeef0;
+}
+
+.theme-dark {
+  --red: #ff4d5a;
+  --red-dark: #d6232f;
+  --red-soft: #3a1d22;
+  --cream: #0d1117;
+  --paper: #161c26;
+  --ink: #eef2f8;
+  --muted: #94a0b4;
+  --hairline: #262f3d;
+  --amber: #ffc83d;
+  --amber-soft: #3a2f10;
+  --green: #34d399;
+  --green-soft: #12332a;
+  --shadow: 0 8px 28px rgb(0 0 0 / 0.45);
+  --map-bg: #0b0f15;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h2 {
+  font-size: 0.8rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+a {
+  color: var(--red-dark);
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.card {
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.card > h2 {
+  margin-bottom: 10px;
+}
+
+/* ---- buttons: 48px high, easy to hit on a phone ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  background: var(--red);
+  color: #fff;
+  transition: transform 0.08s ease, background 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--red-dark);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--red-dark);
+  border-color: var(--red);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--red-soft);
+}
+
+.btn-small {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 0.92rem;
+}
+
+.field {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 2px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--paper);
+  outline: none;
+}
+
+.field:focus {
+  border-color: var(--red);
+}
+
+.error-text {
+  color: var(--red-dark);
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ---- line badge and delays ---- */
+
+.line {
+  display: inline-block;
+  min-width: 2.4em;
+  padding: 2px 10px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 900;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.delay {
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.delay-ontime {
+  color: var(--green);
+}
+
+.delay-minor {
+  color: #b27800;
+}
+
+.delay-major {
+  color: var(--red-dark);
+}
+
+.theme-dark .delay-minor {
+  color: var(--amber);
+}
+
+/* ---- page frame ---- */
+
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px 16px 64px;
+  display: grid;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+/* ---- Leaflet extras that apply to every map ---- */
+
+.leaflet-container {
+  font-family: var(--font);
+  background: var(--map-bg);
+}
+
+.stop-label {
+  background: rgb(255 255 255 / 0.88);
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 11px;
+  padding: 1px 5px;
+}
+
+.stop-label::before {
+  display: none;
+}
+
+.labels-off .stop-label {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

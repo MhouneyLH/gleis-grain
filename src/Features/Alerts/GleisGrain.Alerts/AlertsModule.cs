@@ -1,4 +1,3 @@
-using GleisGrain.Alerts.Endpoints;
 using GleisGrain.Common.Options;
 
 namespace GleisGrain.Alerts;
@@ -13,13 +12,12 @@ public static class AlertsModule
     public const string StorageName = AlertsOptions.StorageName;
 
     /// <summary>Name of the meter the module publishes metrics on.</summary>
-    public const string MeterName = AlertsMetrics.MeterName;
+    public const string MeterName = "GleisGrain.Alerts";
 
     public static TBuilder AddAlertsModule<TBuilder>(this TBuilder builder)
         where TBuilder : IHostApplicationBuilder
     {
         builder.Services.AddValidatedOptions<AlertsOptions>(AlertsOptions.SectionName);
-        builder.Services.AddSingleton<AlertsMetrics>();
 
         return builder;
     }
@@ -27,7 +25,6 @@ public static class AlertsModule
     public static IEndpointRouteBuilder MapAlertsEndpoints(this IEndpointRouteBuilder routes)
     {
         var api = routes.MapGroup("/alerts");
-        GetAlert.Map(api);
 
         return routes;
     }

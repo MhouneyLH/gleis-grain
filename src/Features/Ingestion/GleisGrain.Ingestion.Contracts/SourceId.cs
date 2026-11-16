@@ -10,6 +10,9 @@ public readonly record struct SourceId([property: Id(0)] string Value) : IStrong
 {
     public const int MaxLength = 64;
 
+    /// <summary>The Linz AG EFA server, the only source for now.</summary>
+    public static SourceId LinzAg => new("linz-ag");
+
     public static SourceId From(string value) =>
         TryParse(value, null, out var id) ? id : throw new ArgumentException($"'{value}' is not a valid Source id.", nameof(value));
 

@@ -21,6 +21,14 @@
     <Project Path="src/Features/Ingestion/GleisGrain.Ingestion/GleisGrain.Ingestion.csproj" />
     <Project Path="src/Features/Ingestion/GleisGrain.Ingestion.Contracts/GleisGrain.Ingestion.Contracts.csproj" />
   </Folder>
+  <Folder Name="/src/Features/Game/">
+    <Project Path="src/Features/Game/GleisGrain.Game/GleisGrain.Game.csproj" />
+    <Project Path="src/Features/Game/GleisGrain.Game.Contracts/GleisGrain.Game.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/Features/Cluster/">
+    <Project Path="src/Features/Cluster/GleisGrain.Cluster/GleisGrain.Cluster.csproj" />
+    <Project Path="src/Features/Cluster/GleisGrain.Cluster.Contracts/GleisGrain.Cluster.Contracts.csproj" />
+  </Folder>
   <Folder Name="/test/">
     <Project Path="test/Modules/GleisGrain.Modules.Tests/GleisGrain.Modules.Tests.csproj" />
     <Project Path="test/Common/GleisGrain.Common.Tests/GleisGrain.Common.Tests.csproj" />
@@ -37,5 +45,14 @@
   </Folder>
   <Folder Name="/test/Features/Ingestion/">
     <Project Path="test/Features/Ingestion/GleisGrain.Ingestion.Tests/GleisGrain.Ingestion.Tests.csproj" />
+  </Folder>
+  <Folder Name="/test/Features/Game/">
+    <Project Path="test/Features/Game/GleisGrain.Game.Tests/GleisGrain.Game.Tests.csproj" />
+  </Folder>
+  <Folder Name="/test/Features/Cluster/">
+    <Project Path="test/Features/Cluster/GleisGrain.Cluster.Tests/GleisGrain.Cluster.Tests.csproj" />
+  </Folder>
+  <Folder Name="/test/Infrastructure/">
+    <Project Path="test/Infrastructure/GleisGrain.Postgres.Tests/GleisGrain.Postgres.Tests.csproj" />
   </Folder>
 </Solution>

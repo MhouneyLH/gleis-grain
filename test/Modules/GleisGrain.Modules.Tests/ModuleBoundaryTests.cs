@@ -1,6 +1,10 @@
 using System.Reflection;
 using GleisGrain.Alerts;
 using GleisGrain.Alerts.Contracts;
+using GleisGrain.Cluster;
+using GleisGrain.Cluster.Contracts;
+using GleisGrain.Game;
+using GleisGrain.Game.Contracts;
 using GleisGrain.Ingestion;
 using GleisGrain.Ingestion.Contracts;
 using GleisGrain.Stops;
@@ -22,6 +26,8 @@ public class ModuleBoundaryTests
         ("Trips", typeof(TripsModule).Assembly, typeof(TripId).Assembly, typeof(TripsModule)),
         ("Alerts", typeof(AlertsModule).Assembly, typeof(AlertId).Assembly, typeof(AlertsModule)),
         ("Ingestion", typeof(IngestionModule).Assembly, typeof(SourceId).Assembly, typeof(IngestionModule)),
+        ("Game", typeof(GameModule).Assembly, typeof(Nickname).Assembly, typeof(GameModule)),
+        ("Cluster", typeof(ClusterModule).Assembly, typeof(LiveEvent).Assembly, typeof(ClusterModule)),
     ];
 
     public static TheoryData<string> ModuleNames => [.. _modules.Select(m => m.Name)];

@@ -10,6 +10,17 @@ public readonly record struct TripId([property: Id(0)] string Value) : IStrongly
 {
     public const int MaxLength = 64;
 
+    /// <summary>
+    /// The id of one run of a line past a stop: <c>{stopId}:{line}:{plannedAt as UTC yyyyMMddHHmm}</c>.
+    /// Characters of the line that are not letters or digits are dropped, so every caller derives the same id.
+    /// </summary>
+    public static TripId For(string stopId, string line, DateTimeOffset plannedAt)
+    {
+        var cleanLine = new string([.. line.Where(char.IsAsciiLetterOrDigit)]);
+
+        return From($"{stopId}:{cleanLine}:{plannedAt.UtcDateTime:yyyyMMddHHmm}");
+    }
+
     public static TripId From(string value) =>
         TryParse(value, null, out var id) ? id : throw new ArgumentException($"'{value}' is not a valid Trip id.", nameof(value));
 

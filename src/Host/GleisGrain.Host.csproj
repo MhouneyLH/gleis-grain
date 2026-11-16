@@ -6,6 +6,8 @@
     <ProjectReference Include="../Features/Trips/GleisGrain.Trips/GleisGrain.Trips.csproj" />
     <ProjectReference Include="../Features/Alerts/GleisGrain.Alerts/GleisGrain.Alerts.csproj" />
     <ProjectReference Include="../Features/Ingestion/GleisGrain.Ingestion/GleisGrain.Ingestion.csproj" />
+    <ProjectReference Include="../Features/Game/GleisGrain.Game/GleisGrain.Game.csproj" />
+    <ProjectReference Include="../Features/Cluster/GleisGrain.Cluster/GleisGrain.Cluster.csproj" />
   </ItemGroup>
 
 </Project>

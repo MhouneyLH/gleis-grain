@@ -259,6 +259,22 @@
           "Microsoft.Orleans.Sdk": "[10.4.0, )"
         }
       },
+      "gleisgrain.cluster": {
+        "type": "Project",
+        "dependencies": {
+          "GleisGrain.Cluster.Contracts": "[1.0.0, )",
+          "GleisGrain.Common": "[1.0.0, )",
+          "GleisGrain.Ingestion.Contracts": "[1.0.0, )",
+          "Microsoft.Orleans.Runtime": "[10.4.0, )",
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
+      },
+      "gleisgrain.cluster.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
+      },
       "gleisgrain.common": {
         "type": "Project",
         "dependencies": {
@@ -280,6 +296,27 @@
       },
       "gleisgrain.common.abstractions": {
         "type": "Project"
+      },
+      "gleisgrain.game": {
+        "type": "Project",
+        "dependencies": {
+          "GleisGrain.Cluster.Contracts": "[1.0.0, )",
+          "GleisGrain.Common": "[1.0.0, )",
+          "GleisGrain.Game.Contracts": "[1.0.0, )",
+          "GleisGrain.Stops.Contracts": "[1.0.0, )",
+          "GleisGrain.Trips.Contracts": "[1.0.0, )",
+          "Microsoft.Orleans.Runtime": "[10.4.0, )",
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
+      },
+      "gleisgrain.game.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "GleisGrain.Common.Abstractions": "[1.0.0, )",
+          "GleisGrain.Stops.Contracts": "[1.0.0, )",
+          "GleisGrain.Trips.Contracts": "[1.0.0, )",
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
       },
       "gleisgrain.ingestion": {
         "type": "Project",
@@ -310,6 +347,7 @@
         "type": "Project",
         "dependencies": {
           "GleisGrain.Common.Abstractions": "[1.0.0, )",
+          "GleisGrain.Trips.Contracts": "[1.0.0, )",
           "Microsoft.Orleans.Sdk": "[10.4.0, )"
         }
       },

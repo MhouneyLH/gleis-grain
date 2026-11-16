@@ -1,10 +1,12 @@
 using GleisGrain.Alerts;
+using GleisGrain.Cluster;
 using GleisGrain.Common;
+using GleisGrain.Game;
 using GleisGrain.Ingestion;
 using GleisGrain.Stops;
 using GleisGrain.Trips;
 
-// Composition root of the modular monolith: one process, one Orleans silo, four modules.
+// Composition root of the modular monolith: one process, one Orleans silo, six modules.
 // A module is added by one Add...Module call, one Map...Endpoints call and its storage and meter name.
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,28 +15,37 @@ builder.AddGleisGrainObservability(
     StopsModule.MeterName,
     TripsModule.MeterName,
     AlertsModule.MeterName,
-    IngestionModule.MeterName);
+    IngestionModule.MeterName,
+    GameModule.MeterName,
+    ClusterModule.MeterName);
 builder.AddGleisGrainHttp();
 builder.AddGleisGrainOrleans(
     StopsModule.StorageName,
     TripsModule.StorageName,
     AlertsModule.StorageName,
-    IngestionModule.StorageName);
+    IngestionModule.StorageName,
+    GameModule.StorageName);
 
 builder
     .AddStopsModule()
     .AddTripsModule()
     .AddAlertsModule()
-    .AddIngestionModule();
+    .AddIngestionModule()
+    .AddGameModule()
+    .AddClusterModule();
 
 var app = builder.Build();
 
 app.UseGleisGrainHttp();
 app.MapGleisGrainDashboard();
 
-app.MapStopsEndpoints()
+// All module endpoints live under /api, so the frontend dev server proxies one prefix.
+app.MapGroup("/api")
+    .MapStopsEndpoints()
     .MapTripsEndpoints()
     .MapAlertsEndpoints()
-    .MapIngestionEndpoints();
+    .MapIngestionEndpoints()
+    .MapGameEndpoints()
+    .MapClusterEndpoints();
 
 await app.RunAsync();

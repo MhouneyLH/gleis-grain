@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../Common.Abstractions/GleisGrain.Common.Abstractions.csproj" />
+    <ProjectReference Include="../../Stops/GleisGrain.Stops.Contracts/GleisGrain.Stops.Contracts.csproj" />
+    <ProjectReference Include="../../Trips/GleisGrain.Trips.Contracts/GleisGrain.Trips.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

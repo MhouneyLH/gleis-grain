@@ -305,6 +305,14 @@
         "type": "Project",
         "dependencies": {
           "GleisGrain.Common.Abstractions": "[1.0.0, )",
+          "GleisGrain.Trips.Contracts": "[1.0.0, )",
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
+      },
+      "gleisgrain.trips.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "GleisGrain.Common.Abstractions": "[1.0.0, )",
           "Microsoft.Orleans.Sdk": "[10.4.0, )"
         }
       },

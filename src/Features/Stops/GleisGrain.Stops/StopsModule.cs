@@ -1,5 +1,4 @@
 using GleisGrain.Common.Options;
-using GleisGrain.Stops.Endpoints;
 
 namespace GleisGrain.Stops;
 
@@ -13,13 +12,12 @@ public static class StopsModule
     public const string StorageName = StopsOptions.StorageName;
 
     /// <summary>Name of the meter the module publishes metrics on.</summary>
-    public const string MeterName = StopsMetrics.MeterName;
+    public const string MeterName = "GleisGrain.Stops";
 
     public static TBuilder AddStopsModule<TBuilder>(this TBuilder builder)
         where TBuilder : IHostApplicationBuilder
     {
         builder.Services.AddValidatedOptions<StopsOptions>(StopsOptions.SectionName);
-        builder.Services.AddSingleton<StopsMetrics>();
 
         return builder;
     }
@@ -27,7 +25,6 @@ public static class StopsModule
     public static IEndpointRouteBuilder MapStopsEndpoints(this IEndpointRouteBuilder routes)
     {
         var api = routes.MapGroup("/stops");
-        GetStop.Map(api);
 
         return routes;
     }

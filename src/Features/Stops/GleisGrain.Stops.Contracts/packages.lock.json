@@ -522,6 +522,13 @@
       },
       "gleisgrain.common.abstractions": {
         "type": "Project"
+      },
+      "gleisgrain.trips.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "GleisGrain.Common.Abstractions": "[1.0.0, )",
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
       }
     }
   }

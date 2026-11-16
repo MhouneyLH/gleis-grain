@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Runtime" />
+    <PackageReference Include="Microsoft.Orleans.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../Common/GleisGrain.Common.csproj" />
+    <ProjectReference Include="../GleisGrain.Cluster.Contracts/GleisGrain.Cluster.Contracts.csproj" />
+    <ProjectReference Include="../../Ingestion/GleisGrain.Ingestion.Contracts/GleisGrain.Ingestion.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="GleisGrain.Cluster.Tests" />
+  </ItemGroup>
+
+</Project>

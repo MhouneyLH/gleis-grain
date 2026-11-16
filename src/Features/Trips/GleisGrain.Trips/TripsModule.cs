@@ -1,5 +1,4 @@
 using GleisGrain.Common.Options;
-using GleisGrain.Trips.Endpoints;
 
 namespace GleisGrain.Trips;
 
@@ -13,13 +12,12 @@ public static class TripsModule
     public const string StorageName = TripsOptions.StorageName;
 
     /// <summary>Name of the meter the module publishes metrics on.</summary>
-    public const string MeterName = TripsMetrics.MeterName;
+    public const string MeterName = "GleisGrain.Trips";
 
     public static TBuilder AddTripsModule<TBuilder>(this TBuilder builder)
         where TBuilder : IHostApplicationBuilder
     {
         builder.Services.AddValidatedOptions<TripsOptions>(TripsOptions.SectionName);
-        builder.Services.AddSingleton<TripsMetrics>();
 
         return builder;
     }
@@ -27,7 +25,6 @@ public static class TripsModule
     public static IEndpointRouteBuilder MapTripsEndpoints(this IEndpointRouteBuilder routes)
     {
         var api = routes.MapGroup("/trips");
-        GetTrip.Map(api);
 
         return routes;
     }

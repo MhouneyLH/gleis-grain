@@ -13,6 +13,8 @@
     <ProjectReference Include="../../../src/Features/Trips/GleisGrain.Trips/GleisGrain.Trips.csproj" />
     <ProjectReference Include="../../../src/Features/Alerts/GleisGrain.Alerts/GleisGrain.Alerts.csproj" />
     <ProjectReference Include="../../../src/Features/Ingestion/GleisGrain.Ingestion/GleisGrain.Ingestion.csproj" />
+    <ProjectReference Include="../../../src/Features/Game/GleisGrain.Game/GleisGrain.Game.csproj" />
+    <ProjectReference Include="../../../src/Features/Cluster/GleisGrain.Cluster/GleisGrain.Cluster.csproj" />
   </ItemGroup>
 
 </Project>

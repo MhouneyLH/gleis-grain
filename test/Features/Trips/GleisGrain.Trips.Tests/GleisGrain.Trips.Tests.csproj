@@ -1,6 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+    <PackageReference Include="Microsoft.Orleans.TestingHost" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../../../src/Features/Trips/GleisGrain.Trips/GleisGrain.Trips.csproj" />
   </ItemGroup>
 

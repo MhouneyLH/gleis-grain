@@ -40,6 +40,9 @@ public static class OrleansExtensions
 
             silo.ConfigureEndpoints(siloPort: options.SiloPort, gatewayPort: options.GatewayPort);
 
+            // Carries the trace context through grain calls, so one request shows up as one trace across grains and silos.
+            silo.AddActivityPropagation();
+
             if (options.EnableDashboard)
             {
                 silo.AddDashboard();

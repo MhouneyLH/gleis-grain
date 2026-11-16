@@ -19,8 +19,8 @@ public static class ObservabilityExtensions
     ];
 
     /// <summary>
-    /// Wires OpenTelemetry logs, metrics and traces. The OTLP endpoint comes from the standard
-    /// <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> variable, which the Aspire AppHost sets.
+    /// Wires OpenTelemetry logs, metrics and traces. The OTLP endpoint and the service name come from the standard
+    /// <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> and <c>OTEL_SERVICE_NAME</c> variables, which the Aspire AppHost sets.
     /// </summary>
     public static TBuilder AddGleisGrainObservability<TBuilder>(this TBuilder builder, string serviceName, params string[] featureMeterNames)
         where TBuilder : IHostApplicationBuilder
@@ -36,7 +36,9 @@ public static class ObservabilityExtensions
         });
 
         builder.Services.AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService(serviceName))
+            // The environment goes last so it wins: Aspire names the resource and gives every replica its
+            // own instance id through OTEL_SERVICE_NAME and OTEL_RESOURCE_ATTRIBUTES. serviceName is the fallback.
+            .ConfigureResource(resource => resource.AddService(serviceName).AddEnvironmentVariableDetector())
             .WithMetrics(m =>
             {
                 m.AddAspNetCoreInstrumentation()

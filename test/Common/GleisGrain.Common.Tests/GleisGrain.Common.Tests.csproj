@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Exporter.InMemory" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../../src/Common/GleisGrain.Common.csproj" />
   </ItemGroup>
 

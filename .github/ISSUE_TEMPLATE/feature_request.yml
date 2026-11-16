@@ -6,7 +6,7 @@ body:
     id: context
     attributes:
       label: Context
-      options: [Stops, Trips, Alerts, Ingestion, Common, AppHost, CI / devcontainer, Cross-context]
+      options: [Stops, Trips, Alerts, Ingestion, Game, Cluster, Frontend, Common, AppHost, CI / devcontainer, Cross-context]
     validations:
       required: true
   - type: textarea

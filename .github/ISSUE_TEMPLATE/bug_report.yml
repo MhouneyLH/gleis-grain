@@ -6,7 +6,7 @@ body:
     id: context
     attributes:
       label: Context
-      options: [Stops, Trips, Alerts, Ingestion, Common, AppHost, CI / devcontainer, Not sure]
+      options: [Stops, Trips, Alerts, Ingestion, Game, Cluster, Frontend, Common, AppHost, CI / devcontainer, Not sure]
     validations:
       required: true
   - type: textarea
@@ -22,7 +22,8 @@ body:
       label: Steps to reproduce
       placeholder: |
         1. Start the AppHost
-        2. ...
+        2. Open the projector page
+        3. ...
     validations:
       required: true
   - type: input
@@ -34,4 +35,5 @@ body:
     id: logs
     attributes:
       label: Logs or traces
+      description: From the Aspire dashboard or the browser console. Leave out anything personal.
       render: text

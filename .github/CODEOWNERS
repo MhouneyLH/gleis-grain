@@ -5,8 +5,12 @@
 /src/Features/Trips/ @MhouneyLH
 /src/Features/Alerts/ @MhouneyLH
 /src/Features/Ingestion/ @MhouneyLH
+/src/Features/Game/ @MhouneyLH
+/src/Features/Cluster/ @MhouneyLH
 /test/Features/ @MhouneyLH
 
-# Host and shared pieces
+# Host, frontend and shared pieces
 /src/Host/ @MhouneyLH
+/src/Frontend/ @MhouneyLH
+/db/ @MhouneyLH
 /test/Modules/ @MhouneyLH

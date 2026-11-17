@@ -11,31 +11,62 @@ public class ReplayFeedTests
     private const string RecordedStop = "60500920";
 
     [Fact]
-    public async Task FetchDepartures_LaterThanTheRecording_ShiftsEveryTimeByTheElapsedTime()
+    public async Task FetchDepartures_KeepsTheGapsOfTheRecording()
     {
-        var recorded = EfaParser.ParseDepartures(EfaXml.ReadRecording($"Replay/departures/{RecordedStop}.xml"));
-        var elapsed = TimeSpan.FromHours(26) + TimeSpan.FromMinutes(7);
-        var feed = FeedAt(recorded.RequestedAt + elapsed);
+        var recorded = EfaParser.ParseDepartures(EfaXml.ReadRecording($"Replay/departures/{RecordedStop}.xml")).Departures.OrderBy(d => d.PlannedAt).ToList();
+        var feed = FeedAt(DateTimeOffset.UnixEpoch);
 
         var replayed = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
 
-        Assert.Equal(recorded.Departures.Count, replayed.Count);
-        Assert.All(recorded.Departures.Zip(replayed), pair =>
-        {
-            Assert.Equal(pair.First.PlannedAt + elapsed, pair.Second.PlannedAt);
-            Assert.Equal(pair.First with { PlannedAt = pair.Second.PlannedAt }, pair.Second);
-        });
+        Assert.Equal(recorded.Count, replayed.Count);
+        Assert.Equal(
+            recorded.Select(d => d.PlannedAt - recorded[0].PlannedAt),
+            replayed.Select(d => d.PlannedAt - replayed[0].PlannedAt));
+        Assert.Equal(recorded.Select(d => d.Line), replayed.Select(d => d.Line));
+        Assert.Equal(TimeSpan.FromMinutes(1), replayed[0].PlannedAt - DateTimeOffset.UnixEpoch);
     }
 
     [Fact]
-    public async Task FetchDepartures_AtTheTimeOfTheRecording_ReturnsTheRecordedTimes()
+    public async Task FetchDepartures_AsTimePasses_ADepartureKeepsItsTimeAndLeavesTheBoard()
     {
-        var recorded = EfaParser.ParseDepartures(EfaXml.ReadRecording($"Replay/departures/{RecordedStop}.xml"));
-        var feed = FeedAt(recorded.RequestedAt);
+        var clock = new FakeTimeProvider(DateTimeOffset.UnixEpoch);
+        var feed = new ReplayFeed(clock, NullLogger<ReplayFeed>.Instance);
+        var before = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
 
-        var replayed = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
+        clock.Advance(TimeSpan.FromSeconds(90));
+        var after = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
 
-        Assert.Equal(recorded.Departures, replayed);
+        Assert.DoesNotContain(before[0], after);
+        Assert.Equal(before[1], after[0]);
+        Assert.All(after, departure => Assert.True(departure.PlannedAt > clock.GetUtcNow()));
+    }
+
+    [Fact]
+    public async Task FetchDepartures_TwoCallsSecondsApart_ReturnTheSameDepartures()
+    {
+        var clock = new FakeTimeProvider(DateTimeOffset.UnixEpoch + TimeSpan.FromHours(5));
+        var feed = new ReplayFeed(clock, NullLogger<ReplayFeed>.Instance);
+        var first = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
+
+        clock.Advance(TimeSpan.FromSeconds(7));
+        var second = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
+
+        Assert.Equal(first, second);
+    }
+
+    [Fact]
+    public async Task FetchDepartures_AfterTheLastDeparture_StartsTheLoopAgain()
+    {
+        var clock = new FakeTimeProvider(DateTimeOffset.UnixEpoch);
+        var feed = new ReplayFeed(clock, NullLogger<ReplayFeed>.Instance);
+        var firstLoop = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
+
+        clock.SetUtcNow(firstLoop[^1].PlannedAt + TimeSpan.FromSeconds(1));
+        var board = await feed.FetchDeparturesAsync(RecordedStop, TestContext.Current.CancellationToken);
+
+        Assert.Equal(firstLoop.Count, board.Count);
+        Assert.Equal(firstLoop[0].Line, board[0].Line);
+        Assert.True(board[0].PlannedAt > firstLoop[^1].PlannedAt);
     }
 
     [Fact]

@@ -17,7 +17,7 @@ Note:
 
 <div class="speakers">
   <div class="speaker">
-    <div class="photo"><!-- TODO IMAGE: replace with <img src="/images/lucas.jpg" alt="Lucas Hünniger"> (square, at least 800 x 800 px) -->TODO IMAGE<br>lucas.jpg</div>
+    <img src="/img/lucas.jpg" alt="Raffi">
     <h3>Lucas Hünniger</h3>
     <ul>
       <li>Backend Engineer by day, Hobby Platform Engineer at night</li>
@@ -26,7 +26,7 @@ Note:
     </ul>
   </div>
   <div class="speaker">
-    <div class="photo"><!-- TODO IMAGE: replace with <img src="/images/raffi.jpg" alt="Raffi"> (square, at least 800 x 800 px) -->TODO IMAGE<br>raffi.jpg</div>
+    <img src="/img/raffi.jpg" alt="Raffi">
     <h3>Raffael Rehberger</h3>
     <ul>
       <li>TODO: role in one line</li>
@@ -141,7 +141,7 @@ Demo step 1 (virtual actors, feature F3). Audience action: join by QR code with 
 - Grain: thin wrapper, load, call, save
 
 ```csharp
-public class StopGrain(
+public sealed class StopGrain(
     [PersistentState("stop", StopsOptions.StorageName)]
     IPersistentState<StopState> state, ...) : Grain, IStopGrain
 ```
@@ -203,12 +203,12 @@ Demo step 3 (F1, F5). Audience action: bet on a delay. Show the timer while some
 
 ## One request at a time
 
-- Every grain has a mailbox, one message at a time (a turn)
+- Every grain has a mailbox, one message at a time
 - No locks inside the grain
 - The price: a slow call blocks the next ones
 - Deadlock: A waits for B, B waits for A, timeout
 
-<!-- TODO IMAGE: mailbox diagram and the Trip <-> Stop deadlock sequence (Mermaid in how-orleans-works.md) -->
+<img src="./img/spiderman_deadlock.webp">
 
 Note:
 - Speaker: Lucas | Raffi

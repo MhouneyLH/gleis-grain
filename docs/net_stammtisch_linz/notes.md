@@ -1,10 +1,6 @@
 # .NET Stammtisch Linz
 
-Talk: actor-based modeling with Microsoft Orleans. Speaker works as cloud dev at Fronius, where Orleans runs the inverter firmware update services.
-Time: 45 min, but the discussion is more important than a finished demo. Most `[TBD]` items can stay slides or talking points.
-How Orleans works under the hood (diagrams): [how-orleans-works.md](how-orleans-works.md)
-
-`[TBD]` = not built in this repo yet.
+- additional: how Orleans works under the hood (diagrams): [how-orleans-works.md](how-orleans-works.md)
 
 ## Why this project
 - The domain has to be easy to picture and the speaker has to understand it deeply. Linz AG public transport fits: everybody has waited at a stop in Linz.

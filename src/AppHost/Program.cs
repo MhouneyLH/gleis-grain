@@ -24,6 +24,9 @@ var postgresPassword = builder.AddParameter(
 var postgres = builder.AddPostgres("postgres", password: postgresPassword)
     .WithImageTag(PostgresTag)
     .WithDataVolume("gleis-grain-postgres")
+    // Three replicas keep a pool of up to 20 connections for each of the six databases: 360 in the worst case.
+    // The default of 100 makes Postgres refuse connections ("too many clients") during a burst of grain activations.
+    .WithArgs("-c", "max_connections=400")
     // db/init.sh creates the databases and loads the Orleans schema. Postgres runs it only on an empty
     // data volume, so after a schema change: docker volume rm gleis-grain-postgres
     .WithInitFiles("../../db")

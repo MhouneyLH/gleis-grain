@@ -18,6 +18,13 @@ public sealed class OrleansOptions
     [Required]
     public string ClusteringConnectionName { get; init; } = "orleans";
 
+    /// <summary>
+    /// Upper bound of pooled Postgres connections per connection string and process. A cluster has one pool per
+    /// database and replica, so without a cap a burst of grain activations opens more connections than the server allows.
+    /// </summary>
+    [Range(1, 500)]
+    public int MaxConnectionPoolSize { get; init; } = 20;
+
     [Range(1, 65_535)]
     public int SiloPort { get; init; } = 11_111;
 

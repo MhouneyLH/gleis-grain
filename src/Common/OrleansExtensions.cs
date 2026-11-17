@@ -23,12 +23,16 @@ public static class OrleansExtensions
         builder.Services.AddValidatedOptions<OrleansOptions>(OrleansOptions.SectionName);
 
         var options = builder.Configuration.GetSection(OrleansOptions.SectionName).Get<OrleansOptions>() ?? new OrleansOptions();
-        var clusteringConnection = builder.Configuration.GetConnectionString(options.ClusteringConnectionName)
-            ?? throw new InvalidOperationException($"Connection string '{options.ClusteringConnectionName}' is missing.");
+        var clusteringConnection = WithPoolLimit(
+            builder.Configuration.GetConnectionString(options.ClusteringConnectionName)
+                ?? throw new InvalidOperationException($"Connection string '{options.ClusteringConnectionName}' is missing."),
+            options.MaxConnectionPoolSize);
         var storages = storageNames.ToDictionary(
             name => name,
-            name => builder.Configuration.GetConnectionString(name)
-                ?? throw new InvalidOperationException($"Connection string '{name}' is missing."));
+            name => WithPoolLimit(
+                builder.Configuration.GetConnectionString(name)
+                    ?? throw new InvalidOperationException($"Connection string '{name}' is missing."),
+                options.MaxConnectionPoolSize));
 
         builder.UseOrleans(silo =>
         {
@@ -72,4 +76,7 @@ public static class OrleansExtensions
 
         return builder;
     }
+
+    private static string WithPoolLimit(string connectionString, int maxPoolSize) =>
+        new Npgsql.NpgsqlConnectionStringBuilder(connectionString) { MaxPoolSize = maxPoolSize }.ConnectionString;
 }

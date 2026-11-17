@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:5080
+
+### The silos of the cluster with their status, from the membership table
+GET {{baseUrl}}/api/cluster/silos
+Accept: application/json
+
+### Active stop grains and the silo that hosts each one
+GET {{baseUrl}}/api/cluster/activations
+Accept: application/json
+
+### Calls to Linz AG versus cache hits, active grains by type
+GET {{baseUrl}}/api/cluster/stats
+Accept: application/json
+
+### The live event stream (server-sent events). Stays open; stop activation, watchers, bets, leaderboard.
+GET {{baseUrl}}/api/cluster/events
+Accept: text/event-stream
+
+### Chaos: the replica that gets this request exits abruptly. 404 unless Cluster:EnableChaos is true (the AppHost turns it on).
+POST {{baseUrl}}/api/cluster/chaos/kill

@@ -1,0 +1,5 @@
+@baseUrl = http://localhost:5080
+
+### The OpenAPI document. Scalar renders it at {{baseUrl}}/scalar
+GET {{baseUrl}}/openapi/v1.json
+Accept: application/json

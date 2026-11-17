@@ -1,0 +1,15 @@
+@baseUrl = http://localhost:5080
+# Linz Hauptbahnhof, one of the stops in src/Features/Stops/GleisGrain.Stops/Catalogue/stops.json
+@stopId = 60501720
+
+### The curated stops. Static data, does not activate any stop grain.
+GET {{baseUrl}}/api/stops
+Accept: application/json
+
+### The departure board of one stop. Activates the stop grain on one of the silos.
+GET {{baseUrl}}/api/stops/{{stopId}}
+Accept: application/json
+
+### Unknown stop: 404 stops.stop.not_found
+GET {{baseUrl}}/api/stops/does-not-exist
+Accept: application/json

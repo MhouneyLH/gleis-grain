@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:5080
+@nickname = Max
+@stopId = 60501720
+# Copy a tripId from the board of a stop (stops.http).
+@tripId = 60501720:1:202611171005
+
+### Claim a nickname. 201, or 409 game.nickname.taken when somebody has it. 2-20 characters, letters, digits, space, dash, underscore.
+POST {{baseUrl}}/api/game/players
+Content-Type: application/json
+
+{ "nickname": "{{nickname}}" }
+
+### The player: score, watched stop, open bet
+GET {{baseUrl}}/api/game/players/{{nickname}}
+Accept: application/json
+
+### Pick a stop. The player becomes a watcher of it (and leaves the previous one). 204
+PUT {{baseUrl}}/api/game/players/{{nickname}}/stop
+Content-Type: application/json
+
+{ "stopId": "{{stopId}}" }
+
+### Bet on the delay of a departure in whole minutes, 0 to 15. 201, 409 when a bet is open or the trip has left.
+POST {{baseUrl}}/api/game/players/{{nickname}}/bet
+Content-Type: application/json
+
+{ "tripId": "{{tripId}}", "guessedDelayMinutes": 2 }
+
+### Invalid guess: 400 game.bet.invalid_guess
+POST {{baseUrl}}/api/game/players/{{nickname}}/bet
+Content-Type: application/json
+
+{ "tripId": "{{tripId}}", "guessedDelayMinutes": 99 }
+
+### The top 10
+GET {{baseUrl}}/api/game/leaderboard
+Accept: application/json

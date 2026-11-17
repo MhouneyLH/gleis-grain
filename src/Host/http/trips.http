@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:5080
+# Copy a tripId from the board of a stop (stops.http). Format: {stopId}:{line}:{planned time as UTC yyyyMMddHHmm}
+@tripId = 60501720:1:202611171005
+
+### One trip with its latest known delay. 404 trips.trip.not_found until a stop reported it.
+GET {{baseUrl}}/api/trips/{{tripId}}
+Accept: application/json

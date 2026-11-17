@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:5080
+
+### All current service notices
+GET {{baseUrl}}/api/alerts
+Accept: application/json
+
+### Notices that name a line
+GET {{baseUrl}}/api/alerts?line=26
+Accept: application/json
+
+### Notices that name a stop
+GET {{baseUrl}}/api/alerts?stop=60500280
+Accept: application/json

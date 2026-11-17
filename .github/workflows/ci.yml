@@ -20,6 +20,8 @@ jobs:
       common: ${{ steps.filter.outputs.shared }}
       apphost: ${{ steps.filter.outputs.apphost }}
       modules: ${{ steps.filter.outputs.modules }}
+      postgres: ${{ steps.filter.outputs.postgres }}
+      frontend: ${{ steps.filter.outputs.frontend }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
@@ -55,13 +57,28 @@ jobs:
             Ingestion:
               - 'src/Features/Ingestion/**'
               - 'test/Features/Ingestion/**'
+            Game:
+              - 'src/Features/Game/**'
+              - 'test/Features/Game/**'
+            Cluster:
+              - 'src/Features/Cluster/**'
+              - 'test/Features/Cluster/**'
+            postgres:
+              - 'db/**'
+              - 'src/Host/**'
+              - 'test/Infrastructure/**'
+            frontend:
+              - 'src/Frontend/**'
+              - 'Directory.Build.props'
+              - 'Directory.Packages.props'
+              - '.github/workflows/**'
       - name: Build feature matrix
         id: matrix
         env:
           SHARED: ${{ steps.filter.outputs.shared }}
           CHANGED: ${{ steps.filter.outputs.changes }}
         run: |
-          all='["Stops","Trips","Alerts","Ingestion"]'
+          all='["Stops","Trips","Alerts","Ingestion","Game","Cluster"]'
           if [ "$SHARED" = "true" ]; then
             features="$all"
           else
@@ -103,10 +120,43 @@ jobs:
           global-json-file: global.json
       - run: dotnet test --project test/Modules/GleisGrain.Modules.Tests/GleisGrain.Modules.Tests.csproj --configuration Release
 
+  # Orleans against a real Postgres (Testcontainers): the SQL scripts in db/, clustering, grain storage, reminders.
+  # The runners have Docker. Without Docker the tests would skip, so a green run here means they really ran.
+  postgres:
+    needs: changes
+    if: needs.changes.outputs.postgres == 'true' || needs.changes.outputs.common == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - run: dotnet test --project test/Infrastructure/GleisGrain.Postgres.Tests/GleisGrain.Postgres.Tests.csproj --configuration Release
+
+  # The Vue app in src/Frontend. Only runs when it, the build props or the workflows changed.
+  frontend:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: src/Frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/Frontend/package-lock.json
+      - run: npm ci
+      - run: npm run type-check
+      - run: npm test
+      - run: npm run build
+
   # Single required check for branch protection; skipped jobs count as success.
   ci-ok:
     if: always()
-    needs: [changes, feature, apphost, modules]
+    needs: [changes, feature, apphost, modules, postgres, frontend]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any job failed or was cancelled

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "http": {
+    "live": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
@@ -11,7 +11,22 @@
         "DOTNET_ENVIRONMENT": "Development",
         "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19000",
         "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20000",
-        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true"
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true",
+        "Ingestion__Mode": "Live"
+      }
+    },
+    "replay": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:15000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19000",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20000",
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true",
+        "Ingestion__Mode": "Replay"
       }
     }
   }

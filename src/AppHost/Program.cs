@@ -41,8 +41,8 @@ var host = builder.AddProject<Projects.GleisGrain_Host>("gleis-grain")
     .WithEndpoint("silo", endpoint => endpoint.UriScheme = "tcp")
     .WithEndpoint("gateway", endpoint => endpoint.UriScheme = "tcp")
     .WithEnvironment("Orleans__ClusterId", clusterId)
-    // Demo settings. The ingestion mode can be changed per run, for example
-    // dotnet run --project src/AppHost -- Ingestion:Mode=Replay
+    // Demo settings. The ingestion mode comes from the launch profile (live is the default, replay serves
+    // recorded responses): dotnet run --project src/AppHost --launch-profile replay
     .WithEnvironment("Cluster__EnableChaos", "true")
     .WithEnvironment("Ingestion__Mode", builder.Configuration["Ingestion:Mode"] ?? "Live")
     .WithUrlForEndpoint("http", endpoint => new ResourceUrlAnnotation { Url = "/dashboard", DisplayText = "Orleans Dashboard" })

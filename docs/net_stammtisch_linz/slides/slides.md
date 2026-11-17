@@ -43,22 +43,35 @@ Note:
 
 ## Agenda
  
-- Why actors?
-- Grains and state
-- Timers vs reminders
-- Concurrency and hot spots
-- Cluster in action
-- Versioning
-- Kubernetes and load test
-- Take this home
+- Project Intro [5min]
+- What are actors? ... and why??? [5min]
+- Grains and state [5min]
+- Cluster in action [5min]
+- Timers vs reminders [3min]
+- Concurrency and hot spots [5min]
+- Versioning [5min]
+- Kubernetes -> bridge to loda tests & testing in general [3min]
+- Testing [3min]
+- Take this home [2min]
+
+[5min] Questions
 
 Note:
 - Speaker: Lucas | Raffi
 
 ---
 
-## Why actors?
+## Project Intro
+- domain, what is stop, where data from
+- diagram
+- what is tech stack
+- showing frontend example
 
+---
+
+## What are actors? ... and why???
+
+- how we would do with classic microservice -> netflix architecture horror
 - A **stop** is an actor
 - One identity, its own state, one request at a time
 - Nobody searches "all stops", you ask one stop
@@ -72,7 +85,7 @@ Everybody has waited at a stop in Linz, so the domain is easy to picture. Partit
 
 ---
 
-## Virtual actors in one slide
+## Virtual actors in Orleans
 
 - A **grain** is an object with an identity and its own state
 - You never create or destroy it, you just call it
@@ -89,7 +102,15 @@ Note:
 
 Careful: the snippet is illustrative, check the real method names in `Endpoints/GetStop.cs` before showing code. Office analogy from how-orleans-works.md: grain = clerk for one stop, silo = building, cluster = all buildings, activation = clerk at the desk. A typo in an id silently gets its own empty grain, so validate ids at the edge.
 
---
+---
+
+## Example: StopGrain
+
+```csharp
+myexample
+```
+
+---
 
 ## Grains, silos, cluster
 
@@ -109,27 +130,73 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 
 ---
 
-## Demo Overview
+## Cluster in Action
 
-<!-- TODO: image of architecture -->
-
-Note:
-- Speaker: Lucas | Raffi
+- placement strategies
+- sequence diagram to show one full call from frontend to grain calls
+    - what happens in orleans middleware -> communication protocol, binary serialization, grain directory 
 
 ---
 
-## Demo 1: stops light up
+## Timers vs reminders
+- persisting
+- eventually consistent behavior of reminders
 
-- Open the map
-- Stops glow while their grain is active
-- They fade when it is deactivated
+---
 
-<div class="placeholder">QR CODE / URL placeholder: public/images/qr.svg and https://TODO-audience-url</div>
+## Concurrency and hot spots
+- interleave & reentrancy
+- stateless worker
+- readonly 
+- hot grain: Hauptbahnhof -> bad architectural decision or batching
+    - sourcegrain -> grain chains block each other, one global grain; show at rate limiter
+
+---
+
+---
+
+## Versioning: serialization
+
+- `[GenerateSerializer]` on every state and contract
+- Stable `[Id(n)]` per field, add new ids only
+- Never reuse or retype an id
+- `[Alias("...")]` so renames do not break anything
+
+```csharp
+[GenerateSerializer, Alias("GleisGrain.Stops.Domain.StopState")]
+internal sealed class StopState
+{
+    [Id(0)] public int SchemaVersion { get; set; } = 1;
+    [Id(1)] public List<string> Watchers { get; set; } = [];
+}
+```
 
 Note:
 - Speaker: Lucas | Raffi
 
-Demo step 1 (virtual actors, feature F3). Audience action: join by QR code with a nickname only, open a stop. Watch the dots light up and fade. Fallback: replay mode. Check that the map shows the activation view in the current build before the talk.
+This is in the repo on state, snapshots, ids and grain interfaces. Snippet shortened from the real `StopState` (more fields with ids 2 and 3). State is a blob and old blobs stay across deployments, so this matters a lot.
+
+---
+
+## Versioning: rolling updates
+
+- `SchemaVersion` field exists, migration in `OnActivateAsync` is missing
+- `[Version(2)]` on grain interfaces
+- Compatibility strategy and version selector
+- v1 and v2 silos coexist during a rolling update
+
+<!-- TODO IMAGE: timeline of a rolling update with v1 and v2 silos -->
+
+Note:
+- Speaker: Lucas | Raffi
+
+PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no rolling update demo (optional demo step 6, extra field such as platform on `StopGrain`). Present as a talk topic or show a pre-recorded run. Discussion question: how do you roll out a breaking state change safely?
+
+---
+
+## Demo Time
+
+- 
 
 ---
 
@@ -338,44 +405,7 @@ Note:
 
 Demo step 5 (F6, F7). Audience action: vote to kill a silo. The chaos button kills the replica that receives the request, only when `Cluster:EnableChaos` is true (the AppHost sets it for the demo). Needs the 3 replicas. Rehearse it, and keep a screen recording as a backup.
 
----
 
-## Versioning: serialization
-
-- `[GenerateSerializer]` on every state and contract
-- Stable `[Id(n)]` per field, add new ids only
-- Never reuse or retype an id
-- `[Alias("...")]` so renames do not break anything
-
-```csharp
-[GenerateSerializer, Alias("GleisGrain.Stops.Domain.StopState")]
-internal sealed class StopState
-{
-    [Id(0)] public int SchemaVersion { get; set; } = 1;
-    [Id(1)] public List<string> Watchers { get; set; } = [];
-}
-```
-
-Note:
-- Speaker: Lucas | Raffi
-
-This is in the repo on state, snapshots, ids and grain interfaces. Snippet shortened from the real `StopState` (more fields with ids 2 and 3). State is a blob and old blobs stay across deployments, so this matters a lot.
-
----
-
-## Versioning: rolling updates
-
-- `SchemaVersion` field exists, migration in `OnActivateAsync` is missing
-- `[Version(2)]` on grain interfaces
-- Compatibility strategy and version selector
-- v1 and v2 silos coexist during a rolling update
-
-<!-- TODO IMAGE: timeline of a rolling update with v1 and v2 silos -->
-
-Note:
-- Speaker: Lucas | Raffi
-
-PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no rolling update demo (optional demo step 6, extra field such as platform on `StopGrain`). Present as a talk topic or show a pre-recorded run. Discussion question: how do you roll out a breaking state change safely?
 
 ---
 

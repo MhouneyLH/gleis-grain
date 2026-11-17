@@ -68,6 +68,8 @@ Note:
 Note:
 - Speaker: Lucas | Raffi
 
+Everybody has waited at a stop in Linz, so the domain is easy to picture. Partition by key: you ask one stop, not the whole network.
+
 ---
 
 ## Virtual actors in one slide

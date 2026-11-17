@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -12,11 +13,10 @@ namespace GleisGrain.Common;
 public static class ObservabilityExtensions
 {
     private const string OrleansMeter = "Microsoft.Orleans";
-    private static readonly string[] _orleansActivitySources =
-    [
-        "Microsoft.Orleans.Runtime",
-        "Microsoft.Orleans.Application",
-    ];
+
+    // Only the grain calls of the application. The runtime source adds thousands of spans for membership pings and
+    // statistics publishing, which bury the traces that matter.
+    private static readonly string[] _orleansActivitySources = ["Microsoft.Orleans.Application"];
 
     /// <summary>
     /// Wires OpenTelemetry logs, metrics and traces. The OTLP endpoint and the service name come from the standard
@@ -33,6 +33,7 @@ public static class ObservabilityExtensions
         {
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
+            logging.AddOtlpExporter();
         });
 
         builder.Services.AddOpenTelemetry()

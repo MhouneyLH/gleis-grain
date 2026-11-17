@@ -1,0 +1,830 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itdRequest version="10.6.34.3" language="de" lengthUnit="METER" sessionID="0" client="gleis-grain-demo" clientIP="" serverID="" virtDir="static" calcTime="78.234" now="2026-11-17T00:46:34" nowWD="3" logRequestId="4c0063233f195b76">
+  <clientHeaderLines/>
+  <itdInfoLinkList>
+    <itdBannerInfoList>
+      <infoLink>
+        <paramList>
+          <param edit="0">
+            <type>system</type>
+            <name>infoID</name>
+            <value>11469_LL_ICSLAG</value>
+          </param>
+          <param edit="0">
+            <type>system</type>
+            <name>incidentDateTime</name>
+            <value>07/05/2025 07:00 - 27/11/2026 23:00</value>
+          </param>
+          <param edit="0">
+            <type>system</type>
+            <name>seqID</name>
+            <value>5</value>
+          </param>
+        </paramList>
+        <infoLinkText>L 26: Verlegung Haltestelle Theater</infoLinkText>
+        <infoLinkURL>http://localhost:8080/ics/XSLT_CM_SHOWADDINFO_REQUEST?infoID=11469_LL_ICSLAG&amp;seqID=5</infoLinkURL>
+        <infoLinkImage/>
+        <infoText>
+          <content>&lt;p&gt;&lt;strong&gt;Von Mittwoch, 7. Mai 2025, ca. 7.00 Uhr&amp;nbsp;&lt;/strong&gt;&lt;br /&gt;&lt;strong&gt;bis vorauss. Freitag, 27. November 2026, Betriebsende&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;wird die Haltestelle Theater in Fahrtrichtung St. Margarethen aufgrund von Bauarbeiten beim Theater um ca. 90 Meter vor die Originalhaltestelle verlegt.&lt;/p&gt;</content>
+          <subtitle>L 26: Verlegung Haltestelle Theater</subtitle>
+          <subject></subject>
+          <additionalText></additionalText>
+          <image></image>
+          <outputClientText>
+            <htmlText></htmlText>
+            <wmlText></wmlText>
+            <smsText></smsText>
+            <speechText></speechText>
+          </outputClientText>
+        </infoText>
+      </infoLink>
+      <infoLink>
+        <paramList>
+          <param edit="0">
+            <type>system</type>
+            <name>infoID</name>
+            <value>12091_LL_ICSLAG</value>
+          </param>
+          <param edit="0">
+            <type>system</type>
+            <name>incidentDateTime</name>
+            <value>25/09/2026 04:00 - 20/02/2027 00:00</value>
+          </param>
+          <param edit="0">
+            <type>system</type>
+            <name>seqID</name>
+            <value>6</value>
+          </param>
+        </paramList>
+        <infoLinkText>L 191,192: Umleitung wegen Sperre Bahnunterführung Gerstmayrstraße, ab 25.9.</infoLinkText>
+        <infoLinkURL>http://localhost:8080/ics/XSLT_CM_SHOWADDINFO_REQUEST?infoID=12091_LL_ICSLAG&amp;seqID=6</infoLinkURL>
+        <infoLinkImage/>
+        <infoText>
+          <content>&lt;p&gt;&lt;strong&gt;Ab Freitag, 25. September 2026, Betriebsebeginn,&lt;/strong&gt;&lt;br /&gt;&lt;strong&gt;bis voraussichtlich Freitag, 19. Februar 2027, Betriebsende,&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;wird aufgrund des viergleisigen Ausbaus der Westbahnstrecke die Bahnunterf&amp;uuml;hrung Gerstmayrstra&amp;szlig;e gesperrt.&lt;/p&gt;
+&lt;p&gt;Die &lt;strong&gt;Haltestellen ASK&amp;Ouml; Leonding&lt;/strong&gt; und &lt;strong&gt;Schiefersteinstra&amp;szlig;e&lt;/strong&gt; k&amp;ouml;nnen daher in diesem Zeitraum &lt;strong&gt;nicht bedient&lt;/strong&gt; werden.&lt;/p&gt;
+&lt;p&gt;Die Linie 191 bedient zus&amp;auml;tzlich die &lt;strong&gt;Ersatzhaltestelle Bahnhaltestelle&lt;/strong&gt;.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;Die &lt;strong&gt;Linien 191 und 192&lt;/strong&gt; werden wie folgt &lt;strong&gt;umgeleitet&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;Linie 191 - Fahrtrichtung St. Martin:&lt;br /&gt;&lt;/span&gt;&amp;hellip; Hst. Gernlandweg &amp;ndash; Lehnergutstra&amp;szlig;e &amp;ndash; &lt;strong&gt;Ersatzhst. Schiefersteinstra&amp;szlig;e&lt;/strong&gt; (vor der Kreuzung Gerstmayrstr.) &amp;ndash; Gerstmayrstra&amp;szlig;e &amp;ndash; F&amp;uuml;chselbachstra&amp;szlig;e &amp;ndash; &lt;strong&gt;Ersatzhst. Bahnhaltestelle&lt;/strong&gt; - Kreisverkehr Paschinger Stra&amp;szlig;e &amp;ndash; Hst. Paschinger Stra&amp;szlig;e &amp;ndash; weiter lt. Linienplan&lt;/p&gt;
+&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;Linie 191 - Fahrtrichtung Gaumberg:&lt;br /&gt;&lt;/span&gt;&amp;hellip; Hst. Paschinger Stra&amp;szlig;e &amp;ndash; Kreisverkehr F&amp;uuml;chselbachstra&amp;szlig;e &amp;ndash;&amp;nbsp;&lt;strong&gt;Ersatzhst. Bahnhaltestelle&lt;/strong&gt; - Gerstmayrstra&amp;szlig;e &amp;ndash; Lehnergutstra&amp;szlig;e &amp;ndash; &lt;strong&gt;Ersatzhst. Schiefersteinstr.&lt;/strong&gt; &amp;ndash; weiter lt. Linienplan&lt;/p&gt;
+&lt;p class="MsoNormal" style="tab-stops: 35.45pt;"&gt;&lt;span style="text-decoration: underline;"&gt;&lt;span lang="DE" style="mso-bidi-font-size: 12.0pt; mso-bidi-font-family: Arial;"&gt;Linie 192 - Fahrtrichtung St. Martin:&lt;/span&gt;&lt;/span&gt;&lt;strong&gt;&lt;span lang="DE" style="mso-bidi-font-size: 12.0pt; mso-bidi-font-family: Arial;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/strong&gt;&amp;hellip; Hst. Bahnhaltestelle Leonding &amp;ndash; F&amp;uuml;chselbachbr&amp;uuml;cke &amp;ndash; Kreisverkehr &amp;ndash; F&amp;uuml;chselbachbr&amp;uuml;cke &amp;ndash; Gerstmayrstra&amp;szlig;e &amp;ndash; Lehnergutstra&amp;szlig;e &amp;ndash; &lt;strong&gt;Ersatzhst. Schiefersteinstra&amp;szlig;e &lt;/strong&gt;&amp;ndash; weiter lt. Linienplan&lt;/p&gt;</content>
+          <subtitle>L 191,192: Umleitung wegen Sperre Bahnunterführung Gerstmayrstraße, ab 25.9.</subtitle>
+          <subject></subject>
+          <additionalText></additionalText>
+          <image></image>
+          <outputClientText>
+            <htmlText></htmlText>
+            <wmlText></wmlText>
+            <smsText>L 191,192: Ab Fr 25.9. Betriebsb. bis Fr. 19.2.2027 Umleitung weg Sperre Unterführung. Hst. ASKÖ Leonding u. Schiefersteinstr. entfallen.</smsText>
+            <speechText></speechText>
+          </outputClientText>
+        </infoText>
+      </infoLink>
+    </itdBannerInfoList>
+  </itdInfoLinkList>
+  <itdDepartureMonitorRequest requestID="0">
+    <itdOdv type="stop" usage="dm" anyObjFilter="0">
+      <itdOdvPlace state="identified" method="itp">
+        <odvPlaceElem omc="44001001" placeID="4" value="44001001:4" mainPlace="1" stateless="placeID:44001001:4">Linz/Donau</odvPlaceElem>
+        <odvPlaceInput></odvPlaceInput>
+      </itdOdvPlace>
+      <itdOdvName state="identified" method="itp">
+        <odvNameElem selected="1" matchQuality="100000" x="5446403" y="809425" mapName="NAV5" stopID="60500520" value="60500520:1" isTransferStop="0" stateless="60500520">Stadion</odvNameElem>
+        <odvNameInput>60500520</odvNameInput>
+      </itdOdvName>
+    </itdOdv>
+    <itdDateTime ttpFrom="20260831" ttpTo="20270911">
+      <itdDate weekday="3" year="2026" month="11" day="17"/>
+      <itdTime hour="0" minute="46"/>
+    </itdDateTime>
+    <itdDMDateTime deparr="dep"/>
+    <itdDateRange>
+      <itdDate day="17" month="11" year="2026" weekday="3"/>
+      <itdDate day="18" month="11" year="2026" weekday="4"/>
+      <itdDate day="19" month="11" year="2026" weekday="5"/>
+      <itdDate day="20" month="11" year="2026" weekday="6"/>
+      <itdDate day="21" month="11" year="2026" weekday="7"/>
+      <itdDate day="22" month="11" year="2026" weekday="1"/>
+      <itdDate day="23" month="11" year="2026" weekday="2"/>
+      <itdDate day="24" month="11" year="2026" weekday="3"/>
+      <itdDate day="25" month="11" year="2026" weekday="4"/>
+      <itdDate day="26" month="11" year="2026" weekday="5"/>
+      <itdDate day="27" month="11" year="2026" weekday="6"/>
+      <itdDate day="28" month="11" year="2026" weekday="7"/>
+      <itdDate day="29" month="11" year="2026" weekday="1"/>
+      <itdDate day="30" month="11" year="2026" weekday="2"/>
+      <itdDate day="01" month="12" year="2026" weekday="3"/>
+    </itdDateRange>
+    <itdTripOptions>
+      <itdPtOptions active="-1" maxChanges="9" maxTime="360" maxWait="120" routeType="LEASTTIME" changeSpeed="normal" lineRestriction="400" useProxFootSearch="0" useProxFootSearchOrigin="0" useProxFootSearchDestination="0" useProxFootSearchVia="0" bike="0" plane="0" noCrowded="0" noSolidStairs="0" noEscalators="0" noElevators="0" lowPlatformVhcl="0" wheelchair="0" needElevatedPlt="0" assistance="0" SOSAvail="0" noLonelyTransfer="0" illumTransfer="0" overgroundTransfer="0" noInsecurePlaces="0" accessProfile="0" strictMode="0" noRamps="0" needSolidPavement="0" needTactileGuidanceOnlyWhenAlighting="0" needTactileGuidanceOnlyWhenBoarding="0" needAccessibleStops="0" noTrainCrossing="0" noBoardingMidStreet="0" wheelchairSpaceStop="0" gapMaxWidth="-1" minWidth="-1" minLength="-1" minCapacity="-1" stepMaxHeight="-1" stepMaxNumber="-1" maxRampLength="-1" maxInclination="-1" stepVehicleMaxHeight="-1" stepVehicleMaxNumber="-1" maxInclinationToVeh="-1" usePlatformRamp="0" useVehRamp="0" usePlatformLift="0" useVehLift="0" wheelchairAreaVeh="0" privateTransport="0" streetConnStopsAccepted="0" activeImp="-1" activeCom="-1" activeSec="-1" twoSidedAlt="0" level="unknown">
+        <excludedMeans>
+          <meansElem value="0" selected="0">Train</meansElem>
+          <meansElem value="1" selected="0">Commuter railway</meansElem>
+          <meansElem value="2" selected="0">Subway</meansElem>
+          <meansElem value="3" selected="0">City rail</meansElem>
+          <meansElem value="4" selected="0">Tram</meansElem>
+          <meansElem value="5" selected="0">Bus</meansElem>
+          <meansElem value="6" selected="0">Regional bus</meansElem>
+          <meansElem value="7" selected="0">Express bus</meansElem>
+          <meansElem value="8" selected="0">Cable car/Rack railw</meansElem>
+          <meansElem value="9" selected="0">Ferry</meansElem>
+          <meansElem value="10" selected="0">DRT (area-bound)</meansElem>
+          <meansElem value="11" selected="0">Other</meansElem>
+          <meansElem value="12" selected="0">Airplane</meansElem>
+          <meansElem value="13" selected="0">Train (local)</meansElem>
+          <meansElem value="14" selected="0">Train (intercity)</meansElem>
+          <meansElem value="15" selected="0">Zug Fernv m Zuschlag</meansElem>
+          <meansElem value="16" selected="0">Zug Fernv m spez Fpr</meansElem>
+          <meansElem value="17" selected="0">SEV Schienenersatzv</meansElem>
+          <meansElem value="18" selected="0">Rail shuttle</meansElem>
+          <meansElem value="19" selected="0">Peoples bus</meansElem>
+          <meansElem value="20" selected="0">Rufbus (liniengeb.)</meansElem>
+          <meansElem value="21" selected="0">Coach</meansElem>
+        </excludedMeans>
+      </itdPtOptions>
+      <itdItOptions>
+        <itRouter logASCII="false" logSVG="false"/>
+        <itPedestrian computeMonomodalTrip="false" computationType="PT_AND_IT" itIncidentData="false" useElevation="false" speedFactor="100" costFactor="0" distanceFactor="50" traveltimeFactor="50" noTunnel="false" noBridge="false" noFerry="false" maxTime="25" minTime="0" maxLength="2147483647" minLength="0" ignoreRestrictions="false" computeAlternativeRoutes="false" level="connection" prefIllum="0" prefToilet="0" prefBench="0" useHdcAcc="0" useGeoRefs="0"/>
+        <itBicycle preferAsphaltTracks="false" preferGreenTracks="false" usePseudoRouting="true" useSignedRoute="false" cycleSpeed="20" prefHikePath="false" elevFac="50" useNetClasses="false" useDrawClasses="false" useEnv="false" inclEnvLeisureRoutes="false" inclEnvTrafficDensity="true" useSurfQuality="false" inclSurfQualGravel="false" inclSurfQualForrest="false" inclSurfQualSingleTrial="false" inclSurfQualCarry="false" useLayoutStructural="false" useLayoutDirections="false" prefPedestrianSeperated="false" useRecommRoute="false" computeMonomodalTrip="false" computationType="PT_AND_IT" itIncidentData="false" useElevation="false" speedFactor="100" costFactor="0" distanceFactor="50" traveltimeFactor="50" noTunnel="false" noBridge="false" noFerry="false" maxTime="25" minTime="0" maxLength="2147483647" minLength="0" ignoreRestrictions="false" computeAlternativeRoutes="false" level="unknown"/>
+        <mitCar computeMonomodalTrip="false" computationType="PT_AND_IT" itIncidentData="false" useElevation="false" speedFactor="100" costFactor="0" distanceFactor="50" traveltimeFactor="50" noTunnel="false" noBridge="false" noFerry="false" maxTime="25" minTime="0" maxLength="2147483647" minLength="0" ignoreRestrictions="false" computeAlternativeRoutes="false" level="unknown" mitProfileData="false" mitIncidentData="false" mitOnlineData="false" noHighway="false" noTollRoad="false" prefSerSt="false"/>
+        <mitTaxi computeMonomodalTrip="false" computationType="PT_AND_IT" itIncidentData="false" useElevation="false" speedFactor="100" costFactor="0" distanceFactor="50" traveltimeFactor="50" noTunnel="false" noBridge="false" noFerry="false" maxTime="25" minTime="0" maxLength="2147483647" minLength="0" ignoreRestrictions="false" computeAlternativeRoutes="false" level="unknown" mitProfileData="false" mitIncidentData="false" mitOnlineData="false" noHighway="false" noTollRoad="false" prefSerSt="false"/>
+        <departureTransport>
+          <individualTransport meansCode="100" value="10" speed="normal" selected="1"/>
+          <individualTransport meansCode="101" value="10" speed="normal" selected="0"/>
+          <individualTransport meansCode="102" value="10" speed="normal" selected="0"/>
+          <individualTransport meansCode="103" value="10" speed="normal" selected="0"/>
+          <individualTransport meansCode="104" value="10" speed="normal" selected="0"/>
+          <individualTransport meansCode="105" value="10" speed="normal" selected="0"/>
+          <individualTransport meansCode="106" value="25" speed="normal" selected="0"/>
+          <individualTransport meansCode="107" value="25" speed="normal" selected="0"/>
+        </departureTransport>
+      </itdItOptions>
+      <itdUsedOptions calcNumberOfTrips="4" dwellTime="00:00" prevDepsPerLeg="0" nextDepsPerLeg="0" calcCO2="0" realtime="1" realOnlyInfo="0" itemType="STOPLINK"/>
+    </itdTripOptions>
+    <itdServingLines>
+      <itdServingLine selected="1" code="3" number="17" symbol="17" motType="5" productId="0" realtime="0" direction="Hitzing" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60500337" stateless="esg:02017:E:H:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:0">
+        <itdNoTrain name="Autobus"/>
+        <motDivaParams line="02017" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:17:"/>
+        <itdRouteDescText>Linz Fernheizkraftwerk - Leonding Hitzing</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="17" symbol="17" motType="5" productId="0" realtime="0" direction="Fernheizkraftwerk" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60502170" stateless="esg:02017:E:R:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:1">
+        <itdNoTrain name="Autobus"/>
+        <motDivaParams line="02017" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:17:"/>
+        <itdRouteDescText>Leonding Hitzing - Linz Fernheizkraftwerk</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="19" symbol="19" motType="5" productId="0" realtime="0" direction="Pichlinger See" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60500312" stateless="esg:02019:E:H:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:2">
+        <itdNoTrain name="Autobus"/>
+        <motDivaParams line="02019" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:19:"/>
+        <itdRouteDescText>Linz Fernheizkraftwerk - Linz Pichlinger See</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="19" symbol="19" motType="5" productId="0" realtime="0" direction="Fernheizkraftwerk" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60502170" stateless="esg:02019:E:R:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:3">
+        <itdNoTrain name="Autobus"/>
+        <motDivaParams line="02019" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:19:"/>
+        <itdRouteDescText>Linz Pichlinger See - Linz Fernheizkraftwerk</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="26" symbol="26" motType="5" productId="0" realtime="0" direction="St. Margarethen" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60501340" stateless="esg:02026:E:R:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:4">
+        <itdNoTrain name="Autobus"/>
+        <motDivaParams line="02026" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:26:"/>
+        <itdRouteDescText>Linz Stadion - Linz St. Margarethen</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="45" symbol="45" motType="5" productId="5" realtime="0" direction="Froschberg" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60500560" stateless="esg:03045:E:H:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:5">
+        <itdNoTrain name="Obus"/>
+        <motDivaParams line="03045" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:45:"/>
+        <itdRouteDescText>Linz Stieglbauernstraße - Linz Froschberg</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="45" symbol="45" motType="5" productId="5" realtime="0" direction="Hauptbahnhof" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60501720" stateless="esg:03045:E:R:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:6">
+        <itdNoTrain name="Obus"/>
+        <motDivaParams line="03045" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:45:"/>
+        <itdRouteDescText>Linz Froschberg - Linz Stieglbauernstraße</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="46" symbol="46" motType="5" productId="5" realtime="0" direction="Froschberg" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60500560" stateless="esg:03046:E:H:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:7">
+        <itdNoTrain name="Obus"/>
+        <motDivaParams line="03046" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:46:"/>
+        <itdRouteDescText>Linz Hafenportal - Linz Froschberg</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="46" symbol="46" motType="5" productId="5" realtime="0" direction="Hauptbahnhof" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60501720" stateless="esg:03046:E:R:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:8">
+        <itdNoTrain name="Obus"/>
+        <motDivaParams line="03046" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:46:"/>
+        <itdRouteDescText>Linz Froschberg - Linz Hafenportal</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+      <itdServingLine selected="1" code="3" number="194" symbol="194" motType="5" productId="1" realtime="0" direction="Neue Heimat" valid="Fahrplan ab 31.8.2026" compound="0" TTB="0" STT="0" ROP="0" type="unknown" spTr="" destID="60501570" stateless="esg:04194:E:H:f26" oK="520" vF="20260831" vT="20270911" lineDisplay="line" index="5:9">
+        <itdNoTrain name="Stadtteilbus"/>
+        <motDivaParams line="04194" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:194:"/>
+        <itdRouteDescText>Linz Stadion - Linz Neue Heimat</itdRouteDescText>
+        <itdOperator>
+          <code>1</code>
+          <name>Linz Linien GmbH</name>
+        </itdOperator>
+        <genAttrList>
+          <genAttrElem>
+            <name>OperatorURL</name>
+            <value>http://www.linzag.at</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdServingLine>
+    </itdServingLines>
+    <itdDepartureList>
+      <itdDeparture stopID="60500520" x="5446451" y="809438" mapName="NAV5" area="1" platform="2" gid="at:44:41258" pointGid="at:44:41258:0:2" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="264">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="10" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="10" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="325" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Hauptbahnhof" directionFrom="Linz/Donau Froschberg" destID="60501720" stateless="esg:03046:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Froschberg - Linz Hafenportal</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+            <genAttrElem>
+              <name>LocalLineText</name>
+              <value>46* Linienbezeichnung EFA</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+        <genAttrList>
+          <genAttrElem>
+            <name>LocalLineText</name>
+            <value>46* Linienbezeichnung EFA</value>
+          </genAttrElem>
+        </genAttrList>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="267">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="13" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="13" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="478" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03046:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Hafenportal - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446451" y="809438" mapName="NAV5" area="1" platform="2" gid="at:44:41258" pointGid="at:44:41258:0:2" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="275">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="21" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="21" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="1" code="3" number="45" symbol="45" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Hauptbahnhof" directionFrom="Linz/Donau Froschberg" destID="60501720" stateless="esg:03045:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03045" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:45:"/>
+          <itdRouteDescText>Linz Froschberg - Linz Stieglbauernstraße</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="277">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="23" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="23" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="428" code="3" number="45" symbol="45" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03045:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03045" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:45:"/>
+          <itdRouteDescText>Linz Stieglbauernstraße - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="278">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="24" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="24" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="130" code="3" number="19" symbol="19" motType="5" mtSubcode="0" productId="0" realtime="0" direction="Meixnerkreuzung" directionFrom="Linz/Donau Europaplatz" destID="60500120" stateless="esg:02019:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Autobus"/>
+          <motDivaParams line="02019" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:19:"/>
+          <itdRouteDescText>Linz Fernheizkraftwerk - Linz Pichlinger See</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446451" y="809438" mapName="NAV5" area="1" platform="2" gid="at:44:41258" pointGid="at:44:41258:0:2" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="281">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="27" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="27" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="166" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Hauptbahnhof" directionFrom="Linz/Donau Froschberg" destID="60501720" stateless="esg:03046:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Froschberg - Linz Hafenportal</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="284">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="30" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="30" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="479" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03046:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Hafenportal - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446451" y="809438" mapName="NAV5" area="1" platform="2" gid="at:44:41258" pointGid="at:44:41258:0:2" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="290">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="36" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="36" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="2" code="3" number="45" symbol="45" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Hauptbahnhof" directionFrom="Linz/Donau Froschberg" destID="60501720" stateless="esg:03045:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03045" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:45:"/>
+          <itdRouteDescText>Linz Froschberg - Linz Stieglbauernstraße</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="291">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="37" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="37" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="429" code="3" number="45" symbol="45" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03045:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03045" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:45:"/>
+          <itdRouteDescText>Linz Stieglbauernstraße - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="292">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="38" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="38" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="78" code="3" number="17" symbol="17" motType="5" mtSubcode="0" productId="0" realtime="0" direction="Hitzing" directionFrom="Linz/Donau Fernheizkraftwerk" destID="60500337" stateless="esg:02017:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Autobus"/>
+          <motDivaParams line="02017" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:17:"/>
+          <itdRouteDescText>Linz Fernheizkraftwerk - Leonding Hitzing</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="295">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="41" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="41" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="481" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03046:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Hafenportal - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446451" y="809438" mapName="NAV5" area="1" platform="2" gid="at:44:41258" pointGid="at:44:41258:0:2" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="296">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="42" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="42" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="167" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Hauptbahnhof" directionFrom="Linz/Donau Froschberg" destID="60501720" stateless="esg:03046:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Froschberg - Linz Hafenportal</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="302">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="48" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="48" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="133" code="3" number="19" symbol="19" motType="5" mtSubcode="0" productId="0" realtime="0" direction="Pichlinger See" directionFrom="Linz/Donau Europaplatz" destID="60500312" stateless="esg:02019:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Autobus"/>
+          <motDivaParams line="02019" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:19:"/>
+          <itdRouteDescText>Linz Fernheizkraftwerk - Linz Pichlinger See</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446447" y="809437" mapName="NAV5" area="1" platform="1" gid="at:44:41258" pointGid="at:44:41258:0:1" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="304">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="50" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="50" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="15" code="3" number="19" symbol="19" motType="5" mtSubcode="0" productId="0" realtime="0" direction="Fernheizkraftwerk" directionFrom="Leonding Meixnerkreuzung" destID="60502170" stateless="esg:02019:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Autobus"/>
+          <motDivaParams line="02019" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:19:"/>
+          <itdRouteDescText>Linz Pichlinger See - Linz Fernheizkraftwerk</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446451" y="809438" mapName="NAV5" area="1" platform="2" gid="at:44:41258" pointGid="at:44:41258:0:2" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="304">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="50" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="50" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="3" code="3" number="45" symbol="45" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Hauptbahnhof" directionFrom="Linz/Donau Froschberg" destID="60501720" stateless="esg:03045:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03045" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:45:"/>
+          <itdRouteDescText>Linz Froschberg - Linz Stieglbauernstraße</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="304">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="50" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="50" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="483" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03046:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Hafenportal - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446333" y="809399" mapName="NAV5" area="1" platform="3" gid="at:44:41258" pointGid="at:44:41258:0:3" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="306">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="52" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="52" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="3" code="3" number="26" symbol="26" motType="5" mtSubcode="0" productId="0" realtime="0" direction="St. Margarethen" directionFrom="Linz/Donau Stadion" destID="60501340" stateless="esg:02026:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Autobus"/>
+          <motDivaParams line="02026" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:26:"/>
+          <itdRouteDescText>Linz Stadion - Linz St. Margarethen</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="309">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="55" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="55" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="430" code="3" number="45" symbol="45" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03045:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03045" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:45:"/>
+          <itdRouteDescText>Linz Stieglbauernstraße - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446451" y="809438" mapName="NAV5" area="1" platform="2" gid="at:44:41258" pointGid="at:44:41258:0:2" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="310">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="56" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="5" minute="56" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="169" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Hauptbahnhof" directionFrom="Linz/Donau Froschberg" destID="60501720" stateless="esg:03046:E:R:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="R" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Froschberg - Linz Hafenportal</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+      <itdDeparture stopID="60500520" x="5446376" y="809414" mapName="NAV5" area="1" platform="0" gid="at:44:41258" pointGid="at:44:41258:0:0" platformName="" plannedPlatformName="" stopName="Linz/Donau Stadion" nameWO="Stadion" countdown="317">
+        <itdDateTime>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="6" minute="3" second="0" ap=""/>
+        </itdDateTime>
+        <itdDateTimeBaseTimetable>
+          <itdDate year="2026" month="11" day="17" weekday="3"/>
+          <itdTime hour="6" minute="3" second="0"/>
+        </itdDateTimeBaseTimetable>
+        <itdServingLine key="484" code="3" number="46" symbol="46" motType="5" mtSubcode="0" productId="5" realtime="0" direction="Froschberg" directionFrom="Linz/Donau Hauptbahnhof" destID="60500560" stateless="esg:03046:E:H:f26" lineDisplay="line">
+          <itdNoTrain name="Obus"/>
+          <motDivaParams line="03046" project="f26" direction="H" supplement="E" network="esg" gid="at:esg:46:"/>
+          <itdRouteDescText>Linz Hafenportal - Linz Froschberg</itdRouteDescText>
+          <itdOperator>
+            <code>1</code>
+            <name>Linz Linien GmbH</name>
+          </itdOperator>
+          <genAttrList>
+            <genAttrElem>
+              <name>OperatorURL</name>
+              <value>http://www.linzag.at</value>
+            </genAttrElem>
+          </genAttrList>
+        </itdServingLine>
+      </itdDeparture>
+    </itdDepartureList>
+  </itdDepartureMonitorRequest>
+</itdRequest>

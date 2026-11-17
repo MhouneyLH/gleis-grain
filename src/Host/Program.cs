@@ -37,6 +37,11 @@ builder
 var app = builder.Build();
 
 app.UseGleisGrainHttp();
+
+// The built Vue app (npm run build in src/Frontend writes to wwwroot), so the host works without the Vite dev server.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapGleisGrainDashboard();
 
 // All module endpoints live under /api, so the frontend dev server proxies one prefix.
@@ -47,5 +52,8 @@ app.MapGroup("/api")
     .MapIngestionEndpoints()
     .MapGameEndpoints()
     .MapClusterEndpoints();
+
+// Deep links of the single page app (/projector, /stop/...) get index.html. The API keeps its own 404.
+app.MapFallbackToFile("{*path:regex(^(?!api/).*$)}", "index.html");
 
 await app.RunAsync();

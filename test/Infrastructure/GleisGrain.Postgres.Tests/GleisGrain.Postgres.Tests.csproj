@@ -3,6 +3,16 @@
   <ItemGroup>
     <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="Microsoft.Orleans.TestingHost" />
+    <PackageReference Include="Microsoft.Orleans.Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Common/GleisGrain.Common.csproj" />
+  </ItemGroup>
+
+  <!-- The SQL scripts of the repo, linked and not copied: the test loads the very same files as the AppHost. -->
+  <ItemGroup>
+    <Content Include="../../../db/**" Link="db/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

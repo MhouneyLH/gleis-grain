@@ -25,6 +25,8 @@ The one test project that needs Docker is `test/Infrastructure/GleisGrain.Postgr
 3. Keep a pull request to one bounded context where you can. A change in `Common` or the build files runs every module's CI, so keep those separate.
 4. Fill in the pull request template. CI must be green and the build free of warnings.
 
+CI only runs the modules a change touches, plus the boundary tests in `test/Modules`. A change to `Common`, the build props or the workflows runs all of them. The frontend job runs when `src/Frontend` changes, the Postgres job when `db/` or `test/Infrastructure` changes.
+
 ## Commit messages
 
 [Conventional Commits](https://www.conventionalcommits.org/), with the context as scope:
@@ -48,7 +50,8 @@ The build is strict on purpose: warnings are errors, analyzers run at the Recomm
 
 - Each module is a bounded context with one aggregate per grain. The domain class (`Stop`, `Player`, ...) is plain C#: no Orleans, no I/O, time through `TimeProvider`. The grain is a thin wrapper that loads state, calls the domain, persists and publishes.
 - Prefer the simplest thing that shows the idea. No abstraction without a second user.
-- Ids are strongly typed `readonly record struct`s defined in the owning module's Contracts project.
+- Every aggregate has a strongly typed id, a `readonly record struct` such as `StopId`, so a `StopId` cannot be passed where a `TripId` is expected. It is defined in the Contracts project of the owning module; the shared pieces (`IStronglyTypedId`, the JSON converter) are in `Common.Abstractions`.
+- Ids parse from routes through `IParsable`, so an invalid id is a 400 before the handler runs. The grain key is the id value (`IGrainWithStringKey`).
 - Expected failures are `DomainError` records thrown as `DomainException` in the endpoint handler. Never throw them across a grain call, return an outcome instead.
 
 ### Module boundaries

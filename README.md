@@ -47,7 +47,7 @@ The browser gets changes through server-sent events on `GET /api/cluster/events`
 
 ## Layout
 
-This is a modular monolith: one deployable (`src/Host`) that contains all bounded contexts as modules.
+A modular monolith: one deployable (`src/Host`) that contains all bounded contexts as modules. Several replicas of it form one Orleans cluster of identical silos. Splitting a module into its own deployable later needs only a small host that calls its `Add...Module` and `Map...Endpoints`.
 
 ```
 src/
@@ -56,73 +56,24 @@ src/
   Common/             options, HTTP, OpenTelemetry and Orleans setup shared by all modules
   Common.Abstractions/ tiny shared base for strongly typed ids, safe to reference from Contracts
   Features/<Module>/
-    GleisGrain.<Module>/            the module, a class library
-      <Module>Module.cs             its only public type: Add...Module and Map...Endpoints
-      Endpoints/                    one file per endpoint: request, response, handler
-      Domain/                       domain model, persisted state, grain
-      <Module>Options.cs
-      Metrics.cs  Logs.cs  Errors.cs
+    GleisGrain.<Module>/            the module: Endpoints/, Domain/, options, metrics, logs, errors
     GleisGrain.<Module>.Contracts/  grain interfaces, snapshots and the module's ids
   Frontend/           Vue 3 + Vite app (Leaflet map, phone and projector views)
 db/                   SQL: the Orleans schema scripts and init.sh that loads them
-test/                 mirrors src, plus test/Modules for boundary and composition tests
-                      and test/Infrastructure for the Postgres integration test
+test/                 mirrors src, plus test/Modules (module boundaries) and test/Infrastructure (Postgres)
 docs/                 requirements, API, architecture diagram and talk notes
 ```
 
-Rules that keep it modular (checked by `test/Modules`):
-- A module exposes only its `<Module>Module` class, everything else is `internal`.
-- Modules call each other only through the other module's Contracts project, never its internals.
-- Contracts do not reference modules, `Common` or ASP.NET Core.
-- Every module has its own database, options section, metrics and tests.
+The domain class (for example `Stop`) is plain C# and knows nothing about Orleans. The grain is a thin wrapper that loads the state, calls the domain class and writes the state back. API and silo run in the same process, so endpoints call `IGrainFactory` directly. Modules talk to each other through grain calls on their Contracts interfaces. Cluster membership and reminders live in the shared `orleans` database, grain state in each module's own database.
 
-Adding a module means: one project and its Contracts, one `Add...Module` and one `Map...Endpoints` call in `src/Host/Program.cs`, and its storage and meter name in the same file.
+## More
 
-Splitting back into several deployables is possible later: a small host per module that calls only its own `Add...Module` and `Map...Endpoints`.
+- [CONTRIBUTING.md](CONTRIBUTING.md): build and test commands, workflow, commit messages, the rules that keep the modules apart, releases.
+- [docs/api.md](docs/api.md): the HTTP endpoints and live events.
+- [docs/architecture.md](docs/architecture.md): the architecture diagram.
+- [docs/requirements.md](docs/requirements.md): features, demo script and open questions.
+- Run all tests with `dotnet test --solution gleis-grain.slnx`. The Postgres test needs Docker and skips without it.
 
-## Orleans and the domain model
+## License
 
-The domain class (for example `Stop`) is plain C# and knows nothing about Orleans. The grain is a thin wrapper that loads the state, calls the domain class and writes the state back. That keeps the business rules testable without a silo.
-
-API and silo run in the same process, so endpoints call `IGrainFactory` directly. The host is one silo with the grains of every module, and several replicas of it form a cluster of identical silos.
-
-Modules talk to each other through grain calls on their Contracts interfaces. Cluster membership and reminders live in the shared `orleans` database. Grain state lives in each module's own database.
-
-## Strongly typed ids
-
-Every aggregate has its own id type, for example `StopId`. They are `readonly record struct`s, so a `StopId` cannot be passed where a `TripId` is expected. The value is the id the EFA server uses.
-
-- Each id is defined in the Contracts project of the context that owns it.
-- Common.Abstractions only holds the shared pieces: the `IStronglyTypedId` interface and a JSON converter. Common adds an OpenAPI transformer, so ids show up as plain strings in the API docs.
-- Ids parse from routes through `IParsable`, so an invalid id is rejected with a 400 before the handler runs.
-- The grain key is the id value (`IGrainWithStringKey`).
-
-## Releases
-
-Releases are cut by pushing a tag on `main`. The release workflow checks the tag, builds and tests with that version and creates a GitHub release with generated notes.
-
-- `1.2.3` is a release.
-- `1.2.3-rc.1` is a release candidate and is marked as pre-release.
-
-```
-git tag 1.2.3-rc.1
-git push origin 1.2.3-rc.1
-```
-
-Architecture diagram: [docs/architecture.md](docs/architecture.md).
-
-## Development
-
-- .NET SDK 10.0.402, pinned in `global.json` without roll forward.
-- Package versions are managed centrally in `Directory.Packages.props` and pinned exactly. Each project has a `packages.lock.json`, and CI restores in locked mode.
-- Warnings are errors. Style and analyzer rules are in `.editorconfig`.
-- Postgres runs as one container with one database per context (`stops`, `trips`, `alerts`, `ingestion`, `game`) plus `orleans`. The schema comes from `db/`.
-- CI runs only the modules that were touched, plus the boundary and composition tests. A change to Common, build props or the workflows runs all of them. The frontend job runs when `src/Frontend` changes, the Postgres job when `db/` or `test/Infrastructure` changes.
-
-## Testing
-
-Run everything with `dotnet test --solution gleis-grain.slnx`, the frontend with `npm test` in `src/Frontend`. Tests use xunit.v3.
-
-- **Unit tests** per module and for Common. The domain classes are plain C#, so they need no silo.
-- **Integration tests with an in-memory `TestCluster`** (Orleans TestingHost) run grains and their calls between modules without a database.
-- **One Postgres test** (`test/Infrastructure/GleisGrain.Postgres.Tests`) starts `postgres:17.11` with Testcontainers, loads the very same scripts from `db/` and checks the real AdoNet providers: a silo joins the cluster, grain state survives a deactivation, a reminder fires. It needs Docker and skips with a message when there is none.
+[MIT](LICENSE).

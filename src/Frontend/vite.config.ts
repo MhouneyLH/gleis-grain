@@ -1,8 +1,8 @@
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vitest/config'
 
-// Aspire injects the service address as services__<name>__<endpoint>__<index>.
-const backend = process.env['services__gleis-grain__http__0'] ?? 'http://localhost:5080'
+// Aspire gives the dev server the address of the host as GLEIS_GRAIN_HTTP (npm drops variable names with a hyphen).
+const backend = process.env['GLEIS_GRAIN_HTTP'] ?? 'http://localhost:5080'
 
 export default defineConfig({
   base: '/',

@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-The dev server proxies `/api` (including the SSE stream, unbuffered) to the host. The target is `services__gleis-grain__http__0` (set by Aspire) and falls back to `http://localhost:5080`.
+The dev server proxies `/api` (including the SSE stream, unbuffered) to the host. The target is `GLEIS_GRAIN_HTTP` (set by Aspire) and falls back to `http://localhost:5080`.
 
 ## Scripts
 

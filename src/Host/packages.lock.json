@@ -337,8 +337,11 @@
       "gleisgrain.stops": {
         "type": "Project",
         "dependencies": {
+          "GleisGrain.Cluster.Contracts": "[1.0.0, )",
           "GleisGrain.Common": "[1.0.0, )",
+          "GleisGrain.Ingestion.Contracts": "[1.0.0, )",
           "GleisGrain.Stops.Contracts": "[1.0.0, )",
+          "GleisGrain.Trips.Contracts": "[1.0.0, )",
           "Microsoft.Orleans.Runtime": "[10.4.0, )",
           "Microsoft.Orleans.Sdk": "[10.4.0, )"
         }

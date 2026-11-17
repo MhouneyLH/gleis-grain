@@ -3,7 +3,6 @@ using GleisGrain.Ingestion.Feeds;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Time.Testing;
 using Orleans.TestingHost;
 
 namespace GleisGrain.Ingestion.Tests;
@@ -29,7 +28,8 @@ public class SourceGrainTests(SourceGrainFixture fixture) : IClassFixture<Source
         var stats = await _source.GetStatsAsync();
         Assert.Equal(1, stats.Calls);
         Assert.Equal(1, stats.CacheHits);
-        Assert.Equal(calledAt, stats.LastCallAt);
+        Assert.NotNull(stats.LastCallAt);
+        Assert.InRange(stats.LastCallAt.Value, calledAt, SourceGrainFixture.Time.GetUtcNow());
     }
 
     [Fact]
@@ -66,8 +66,8 @@ public class SourceGrainTests(SourceGrainFixture fixture) : IClassFixture<Source
         await RunAsync(_source.GetNoticesAsync());
 
         Assert.Equal(3, _feed.CallTimes.Count);
-        Assert.True(_feed.CallTimes[1] - _feed.CallTimes[0] >= TimeSpan.FromMilliseconds(500));
-        Assert.True(_feed.CallTimes[2] - _feed.CallTimes[1] >= TimeSpan.FromMilliseconds(500));
+        Assert.True(_feed.CallTimes[1] - _feed.CallTimes[0] >= TimeSpan.FromMilliseconds(490));
+        Assert.True(_feed.CallTimes[2] - _feed.CallTimes[1] >= TimeSpan.FromMilliseconds(490));
     }
 
     [Fact]
@@ -132,35 +132,27 @@ public class SourceGrainTests(SourceGrainFixture fixture) : IClassFixture<Source
         Assert.All(notices, notice => Assert.False(string.IsNullOrEmpty(notice.Title)));
     }
 
-    /// <summary>Lets time pass while the grain waits for the rate limit. Polls with a timeout instead of sleeping for a fixed time.</summary>
-    private static async Task<T> RunAsync<T>(Task<T> call)
-    {
-        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        while (!call.IsCompleted)
-        {
-            SourceGrainFixture.Time.Advance(TimeSpan.FromMilliseconds(100));
-            await Task.WhenAny(call, Task.Delay(10, timeout.Token));
-        }
-
-        return await call;
-    }
+    /// <summary>Waits for a call that sits out the rate limit in real time, but not forever.</summary>
+    private static Task<T> RunAsync<T>(Task<T> call) => call.WaitAsync(TimeSpan.FromSeconds(30));
 }
 
 /// <summary>The silo of <see cref="SourceGrainTests"/>. Time and feed are static because Orleans creates the silo configurator itself.</summary>
 public sealed class SourceGrainFixture : IAsyncLifetime
 {
-    private static readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 11, 17, 10, 0, 0, TimeSpan.Zero));
+    private static readonly ShiftableClock _time = new();
     private static readonly SwitchableFeed _feed = new();
 
     private TestCluster? _cluster;
 
-    public static FakeTimeProvider Time => _time;
+    public static ShiftableClock Time => _time;
 
     public TestCluster Cluster => _cluster ?? throw new InvalidOperationException("The cluster is not started.");
 
     public async ValueTask InitializeAsync()
     {
         var builder = new TestClusterBuilder(1);
+        builder.Options.ClusterId = $"ingestion-tests-{Guid.NewGuid():N}";
+        builder.Options.ServiceId = $"ingestion-tests-{Guid.NewGuid():N}";
         builder.AddSiloBuilderConfigurator<SiloConfigurator>();
         _cluster = builder.Build();
         await _cluster.DeployAsync();

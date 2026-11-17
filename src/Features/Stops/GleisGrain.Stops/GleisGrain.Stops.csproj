@@ -8,6 +8,13 @@
   <ItemGroup>
     <ProjectReference Include="../../../Common/GleisGrain.Common.csproj" />
     <ProjectReference Include="../GleisGrain.Stops.Contracts/GleisGrain.Stops.Contracts.csproj" />
+    <ProjectReference Include="../../Trips/GleisGrain.Trips.Contracts/GleisGrain.Trips.Contracts.csproj" />
+    <ProjectReference Include="../../Ingestion/GleisGrain.Ingestion.Contracts/GleisGrain.Ingestion.Contracts.csproj" />
+    <ProjectReference Include="../../Cluster/GleisGrain.Cluster.Contracts/GleisGrain.Cluster.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Catalogue/stops.json" LogicalName="stops.json" />
   </ItemGroup>
 
   <ItemGroup>

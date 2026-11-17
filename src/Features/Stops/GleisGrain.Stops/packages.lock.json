@@ -279,6 +279,12 @@
         "resolved": "10.0.3",
         "contentHash": "MaGhRfGunmrj/nHjtsi9XkhlYJ/ERGWrbA+BiSKNtGnAjc9XlG5EhAvak6VRcX5LYzPF6pBO8nJ613dTgzabig=="
       },
+      "gleisgrain.cluster.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
+      },
       "gleisgrain.common": {
         "type": "Project",
         "dependencies": {
@@ -300,6 +306,13 @@
       },
       "gleisgrain.common.abstractions": {
         "type": "Project"
+      },
+      "gleisgrain.ingestion.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "GleisGrain.Common.Abstractions": "[1.0.0, )",
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
       },
       "gleisgrain.stops.contracts": {
         "type": "Project",

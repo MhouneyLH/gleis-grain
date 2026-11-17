@@ -9,4 +9,9 @@
     <ProjectReference Include="../../../../src/Features/Ingestion/GleisGrain.Ingestion/GleisGrain.Ingestion.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The catalogue of stops: every one of them needs a replay recording. -->
+    <None Include="../../../../src/Features/Stops/GleisGrain.Stops/Catalogue/stops.json" Link="stops.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

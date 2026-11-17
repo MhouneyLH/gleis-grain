@@ -11,6 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Recorded EFA answers for ReplayFeed, found at runtime as Replay/departures/<stopId>.xml and Replay/notices.xml. -->
+    <EmbeddedResource Include="Replay/**/*.xml" LogicalName="Replay/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="GleisGrain.Ingestion.Tests" />
   </ItemGroup>
 

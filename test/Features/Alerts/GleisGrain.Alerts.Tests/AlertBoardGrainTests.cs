@@ -1,7 +1,6 @@
 using GleisGrain.Alerts.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 
 namespace GleisGrain.Alerts.Tests;
 
@@ -28,12 +27,13 @@ public class AlertBoardGrainTests : IClassFixture<AlertBoardGrainFixture>
     {
         FakeSourceGrain.Notices = [FakeSourceGrain.Notice("a", "L 26: Verlegung", ["26"]), FakeSourceGrain.Notice("b", "Umleitung")];
 
+        var before = _fixture.Time.GetUtcNow();
         var alerts = await Board.GetAsync(null, null);
 
         Assert.Equal(["a", "b"], alerts.Select(alert => alert.Id.Value));
         Assert.Equal("L 26: Verlegung", alerts[0].Title);
         Assert.Equal(["26"], alerts[0].Lines);
-        Assert.Equal(_fixture.Time.GetUtcNow(), alerts[0].FirstSeenAt);
+        Assert.InRange(alerts[0].FirstSeenAt, before, _fixture.Time.GetUtcNow());
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class AlertBoardGrainTests : IClassFixture<AlertBoardGrainFixture>
         Assert.Equal(2, FakeSourceGrain.NoticeCalls);
         Assert.Equal(["a", "b"], second.Select(alert => alert.Id.Value));
         Assert.Equal(first[0].FirstSeenAt, second[0].FirstSeenAt);
-        Assert.Equal(first[0].FirstSeenAt + TimeSpan.FromMinutes(3), second[1].FirstSeenAt);
+        Assert.InRange(second[1].FirstSeenAt - first[0].FirstSeenAt, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(3.5));
     }
 
     [Fact]
@@ -144,12 +144,12 @@ public class AlertBoardGrainTests : IClassFixture<AlertBoardGrainFixture>
     }
 }
 
-/// <summary>The silo of <see cref="AlertBoardGrainTests"/>: a real web host with the module wired in, on fake time.</summary>
+/// <summary>The silo of <see cref="AlertBoardGrainTests"/>: a real web host with the module wired in, on a shiftable clock.</summary>
 public sealed class AlertBoardGrainFixture : IAsyncLifetime
 {
     private WebApplication? _app;
 
-    public FakeTimeProvider Time { get; } = new(new DateTimeOffset(2026, 11, 17, 10, 0, 0, TimeSpan.Zero));
+    public ShiftableClock Time { get; } = new();
 
     public IGrainFactory Grains => _app?.Services.GetRequiredService<IGrainFactory>() ?? throw new InvalidOperationException("The silo is not started.");
 

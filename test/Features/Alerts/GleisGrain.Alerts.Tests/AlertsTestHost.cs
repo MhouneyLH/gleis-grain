@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Time.Testing;
+using Orleans.Configuration;
 
 namespace GleisGrain.Alerts.Tests;
 
 /// <summary>
 /// A web host with one silo and the Alerts module wired in: in-memory storage and reminders, free ports,
-/// the fake source grain of this assembly instead of Ingestion, and fake time.
+/// the fake source grain of this assembly instead of Ingestion, and a shiftable clock.
 /// </summary>
 internal static class AlertsTestHost
 {
-    public static async Task<WebApplication> StartAsync(FakeTimeProvider? time = null, TimeSpan? reminderPeriod = null)
+    public static async Task<WebApplication> StartAsync(ShiftableClock? time = null, TimeSpan? reminderPeriod = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls($"http://127.0.0.1:{FreePort()}");
@@ -31,6 +31,11 @@ internal static class AlertsTestHost
         builder.UseOrleans(silo =>
         {
             silo.UseLocalhostClustering(siloPort: FreePort(), gatewayPort: FreePort());
+            silo.Configure<ClusterOptions>(cluster =>
+            {
+                cluster.ClusterId = $"alerts-tests-{Guid.NewGuid():N}";
+                cluster.ServiceId = $"alerts-tests-{Guid.NewGuid():N}";
+            });
             silo.AddMemoryGrainStorage(AlertsModule.StorageName);
             silo.UseInMemoryReminderService();
         });

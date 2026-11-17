@@ -25,6 +25,8 @@ public class GetAlertsEndpointTests
         var filtered = await client.GetFromJsonAsync<JsonElement>("/api/alerts?line=L26&stop=60500280", TestContext.Current.CancellationToken);
         var emptyFilter = await client.GetFromJsonAsync<JsonElement>("/api/alerts?line=&stop=", TestContext.Current.CancellationToken);
 
+        await app.StopAsync(TestContext.Current.CancellationToken);
+
         Assert.Equal(2, all.GetArrayLength());
         Assert.Equal(2, emptyFilter.GetArrayLength());
         var alert = Assert.Single(filtered.EnumerateArray());
@@ -44,6 +46,8 @@ public class GetAlertsEndpointTests
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
 
         var response = await client.GetAsync("/api/alerts", TestContext.Current.CancellationToken);
+
+        await app.StopAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
         var problem = await response.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);

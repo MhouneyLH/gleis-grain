@@ -20,7 +20,7 @@ public sealed class TripsSiloConfigurator : ISiloConfigurator
         var clock = Clocks[siloBuilder.Configuration[KeySetting]!];
 
         siloBuilder.AddMemoryGrainStorage(TripsModule.StorageName);
-        siloBuilder.Services.AddSingleton<TimeProvider>(clock);
+        siloBuilder.Services.AddSingleton<TimeProvider>(new TestClock(clock));
         siloBuilder.Services.AddSingleton<TripsMetrics>();
     }
 }

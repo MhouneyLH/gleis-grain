@@ -7,7 +7,8 @@ namespace GleisGrain.Trips.Tests;
 
 public sealed class TripGrainTests : IAsyncLifetime
 {
-    private static readonly DateTimeOffset _plannedAt = new(2026, 11, 17, 10, 5, 0, TimeSpan.Zero);
+    // Orleans reads the test clock too, so it starts at the real time instead of a date hours away.
+    private static readonly DateTimeOffset _plannedAt = StartOfMinute(DateTimeOffset.UtcNow.AddMinutes(20));
 
     private readonly FakeTimeProvider _time = new(_plannedAt.AddMinutes(-20));
     private readonly string _key = Guid.NewGuid().ToString("N");
@@ -116,6 +117,9 @@ public sealed class TripGrainTests : IAsyncLifetime
         Assert.NotNull(trip);
         Assert.Equal(3, trip.DelayMinutes);
     }
+
+    private static DateTimeOffset StartOfMinute(DateTimeOffset value) =>
+        new(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0, TimeSpan.Zero);
 
     private ITripGrain Grain(string id) => Cluster.Client.GetGrain<ITripGrain>(id);
 

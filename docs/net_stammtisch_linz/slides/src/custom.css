@@ -4,10 +4,11 @@
   --r-main-font: "Segoe UI", system-ui, -apple-system, sans-serif;
   --r-heading-font: "Segoe UI", system-ui, -apple-system, sans-serif;
   --r-main-font-size: 38px;
-  --r-heading-color: #ffd166;
-  --r-link-color: #4cc9f0;
-  --r-link-color-hover: #90e0ef;
+  --r-heading-color: #b58cff;
+  --r-link-color: #c9a9ff;
+  --r-link-color-hover: #e0ccff;
   --accent: #06d6a0;
+  --purple: #b58cff;
 }
 .reveal { text-align: left; }
 .reveal h1, .reveal h2, .reveal h3 { text-transform: none; letter-spacing: 0; }
@@ -16,11 +17,15 @@
 .reveal ul, .reveal ol { display: block; margin-left: 0.8em; }
 .reveal li { margin: 0.35em 0; }
 .reveal code { color: var(--accent); }
-.reveal pre { width: 100%; font-size: 0.55em; box-shadow: none; }
+.reveal pre { width: 100%; font-size: 0.55em; box-shadow: none; background: #111b33; border-left: 5px solid var(--accent); border-radius: 6px; }
+.reveal pre code { background: transparent; }
 .reveal pre code { max-height: 480px; }
 .reveal blockquote { width: 100%; border-left: 6px solid var(--accent); background: transparent; box-shadow: none; padding-left: 0.8em; }
 .reveal table { font-size: 0.75em; }
 .reveal th, .reveal td { padding: 0.3em 0.6em; }
+.reveal th { color: var(--purple); }
+.reveal strong { color: var(--purple); }
+.reveal ul li::marker { color: var(--purple); }
 .reveal img { background: transparent; border: 0; box-shadow: none; max-height: 520px; }
 .reveal .small { font-size: 0.65em; opacity: 0.85; }
 .reveal .center { text-align: center; }
@@ -46,4 +51,4 @@
   position: absolute; left: 24px; bottom: 10px; z-index: 30;
   font-size: 16px; color: #8fa0c4; letter-spacing: 0.02em; pointer-events: none;
 }
-.reveal .slide-number { font-size: 18px; color: #8fa0c4; background: transparent; right: 24px; bottom: 10px; }
+.reveal .slide-number { font-size: 18px; color: #8fa0c4; background: transparent; right: 130px; bottom: 10px; }

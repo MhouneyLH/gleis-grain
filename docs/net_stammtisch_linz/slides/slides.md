@@ -35,35 +35,29 @@ Lucas Hünniger & Raffael Rehberger
 
 ---
 
-## Agenda (45 min)
-
-| Min | Topic |
-|---|---|
-| 0-4 | Why actors |
-| 4-10 | Grains and state |
-| 10-15 | Timers vs reminders |
-| 15-21 | Concurrency and hot spots |
-| 21-27 | Cluster in action |
-| 27-33 | Versioning |
-| 33-37 | Kubernetes and load test |
-| 37-45 | Takeaways and discussion |
-
-Note:
-Discussion matters more than finishing every slide. The Kubernetes and load test block is the first one to cut if time runs short. Demo moments are woven into the blocks, not saved for the end.
+## Agenda
+ 
+- Why actors?
+- Grains and state
+- Timers vs reminders
+- Concurrency and hot spots
+- Cluster in action
+- Versioning
+- Kubernetes and load test
+- Take this home
 
 ---
 
 ## Why actors?
 
-- At Fronius: a device is an actor
-- Same idea here: a **stop** is an actor
+- A **stop** is an actor
 - One identity, its own state, one request at a time
 - Nobody searches "all stops", you ask one stop
 
-<!-- TODO IMAGE: diagram "device = actor" next to "stop = actor" -->
+<!-- TODO IMAGE: diagram "stop = actor": one identity, its own state, one request at a time -->
 
 Note:
-One sentence on Fronius: Orleans runs services around the inverter firmware updates, without any internal details. The domain started as an Uber-style dispatch plan, a stop replaces the geo cell: partition by key, the spatial problem becomes a key lookup.
+Everybody has waited at a stop in Linz, so the domain is easy to picture. It started as an Uber-style dispatch plan, a stop replaces the geo cell: partition by key, the spatial problem becomes a key lookup.
 
 ---
 

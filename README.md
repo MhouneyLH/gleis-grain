@@ -2,9 +2,7 @@
 
 Showcase for Microsoft Orleans built on public transport data from Linz AG. Stops, trips and service notices are virtual actors, kept up to date with reminders and timers.
 
-The project is the demo for a talk about the actor paradigm at the .NET Stammtisch Linz.
-
-> Work in progress. The six modules, the Vue frontend and the infrastructure (Postgres schema, three host replicas, CI) are built side by side, so single features may still be stubs. The HTTP contract between host and frontend is in [docs/api.md](docs/api.md).
+The project is the demo for [a talk about the actor paradigm at the .NET Stammtisch Linz](https://www.meetup.com/net-stammtisch-linz/events/317130107/).
 
 ## Data source
 

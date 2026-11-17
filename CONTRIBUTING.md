@@ -13,10 +13,25 @@ Without the devcontainer you need the .NET SDK from `global.json` (pinned, no ro
 | Build | `dotnet build gleis-grain.slnx` |
 | Test everything | `dotnet test --solution gleis-grain.slnx` |
 | Test one project | `dotnet test --project test/Features/Stops/GleisGrain.Stops.Tests` |
-| Run the whole demo | `dotnet run --project src/AppHost` |
+| Run the whole demo | `dotnet run --project src/AppHost` (live data), or `--launch-profile replay` for recorded data |
+| Try the API | the `.http` files in `src/Host/http` (VS Code REST Client, Rider, Visual Studio) |
 | Frontend | `cd src/Frontend`, then `npm ci`, `npm run dev`, `npm run test`, `npm run build` |
 
 The one test project that needs Docker is `test/Infrastructure/GleisGrain.Postgres.Tests`. It skips itself when Docker is missing.
+
+## Running the demo
+
+`dotnet run --project src/AppHost` starts everything. The Aspire dashboard on http://localhost:15000 lists every resource and its links:
+
+- **Postgres and pgAdmin.** The first start creates one database per context (`stops`, `trips`, `alerts`, `ingestion`, `game`) plus `orleans` and loads the Orleans schema from [db/](db/orleans/README.md). Postgres runs these scripts only on an empty data volume. After a schema change reset it with `docker volume rm gleis-grain-postgres`, which also deletes all data.
+- **gleis-grain**, the host, in three replicas. Each replica is one Orleans silo with its own silo and gateway port, assigned by Aspire. http://localhost:5080 load balances over the replicas:
+  - `/dashboard` is the Orleans Dashboard: silos, grains, activations and request rates. It is on through `Orleans:EnableDashboard` in `src/Host/appsettings.json` and off by default in code, because it exposes internals of the cluster.
+  - `/scalar` has the API docs, `/api/...` is the API.
+- **frontend**, the Vite dev server of the Vue app with hot reload, shown as "Frontend". It proxies `/api` to the host.
+
+Two launch profiles pick where departures come from: `live` (default) asks the Linz AG server, `replay` serves recorded responses, so the demo works offline and the server is never hit: `dotnet run --project src/AppHost --launch-profile replay`. The AppHost also turns the chaos button on (`Cluster:EnableChaos`).
+
+To see the cluster, open pgAdmin from the dashboard and run `SELECT * FROM orleansmembershiptable;`. Every AppHost start is a new cluster id, so filter on the newest `deploymentid`.
 
 ## Workflow
 
@@ -100,7 +115,7 @@ Grain state lives as a blob in Postgres and survives deployments, so treat it li
 
 ## Frontend
 
-The Vue app in `src/Frontend` talks to the host only through the endpoints in [docs/api.md](docs/api.md). If you change an endpoint or an event payload, change that document in the same pull request. Keep state logic in plain TypeScript modules without Vue or Leaflet imports, so it can be unit tested.
+The Vue app in `src/Frontend` talks to the host only through the endpoints in [docs/api.md](docs/api.md). If you change an endpoint or an event payload, change that document and the matching `.http` file in `src/Host/http` in the same pull request. Keep state logic in plain TypeScript modules without Vue or Leaflet imports, so it can be unit tested.
 
 ## Releases
 

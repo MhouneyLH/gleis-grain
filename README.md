@@ -12,21 +12,9 @@ Linz AG runs an EFA server. Requests go to `https://www.linzag.at/static/XML_TRI
 
 Not checked yet: terms of use and rate limits. Live calls are the plan, so keep the polling polite. Recorded responses can be replayed (`Ingestion:Mode`), so the demo and the tests do not depend on the server.
 
-## Getting Started
+## Run it
 
-Everything runs in the devcontainer (.NET 10, Node 22, Docker access), so you only need VS Code with the Dev Containers extension and Docker on the host.
-
-1. Open the repo in VS Code and choose "Reopen in Container".
-2. Start the AppHost: `dotnet run --project src/AppHost`
-3. The Aspire dashboard is on http://localhost:15000. It lists every resource and its links:
-   - **Postgres and pgAdmin.** The first start loads the Orleans schema and creates one database per context plus `orleans` (see [db/](db/orleans/README.md)). Postgres runs these scripts only on an empty data volume. After a schema change reset it with `docker volume rm gleis-grain-postgres`, which also deletes all data.
-   - **gleis-grain**, the host, in three replicas. Each replica is one Orleans silo with its own silo and gateway port that Aspire assigns. http://localhost:5080 load balances over the replicas:
-     - `/dashboard` is the Orleans Dashboard: silos, grains, activations and request rates. It is switched on with `Orleans:EnableDashboard` in `src/Host/appsettings.json` and off by default in code, because it exposes internals of the cluster.
-     - `/scalar` has the API docs, `/api/...` is the API.
-   - **frontend**, the Vite dev server of the Vue app in `src/Frontend`, with hot reload. Its link is shown on the dashboard as "Frontend". It proxies `/api` to the host.
-4. The AppHost turns the chaos button on (`Cluster:EnableChaos`) and starts the host with `Ingestion:Mode=Live`. For recorded data: `dotnet run --project src/AppHost -- Ingestion:Mode=Replay`.
-
-To see the cluster, open pgAdmin from the dashboard and run `SELECT * FROM orleansmembershiptable;`. Every AppHost start is a new cluster id, so filter on the newest `deploymentid`.
+In the devcontainer: `dotnet run --project src/AppHost`. The Aspire dashboard on http://localhost:15000 links everything: the app on http://localhost:5080 (three host replicas, one Orleans silo each), the Orleans Dashboard, Scalar, the Vue frontend and pgAdmin. `--launch-profile replay` serves recorded departures instead of asking Linz AG. Setup and what the AppHost starts: [CONTRIBUTING.md](CONTRIBUTING.md#running-the-demo).
 
 ## Bounded contexts
 

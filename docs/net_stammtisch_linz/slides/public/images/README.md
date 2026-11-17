@@ -1,0 +1,12 @@
+# Images and diagrams
+
+Drop files here (PNG, SVG, JPG, WebP). Vite serves this folder as-is, so a file `public/images/hbf.svg` is used in `slides.md` as:
+
+```markdown
+![Hauptbahnhof is hot](./images/hbf.svg)
+```
+
+Tips:
+- Prefer SVG for diagrams (sharp on a projector). Excalidraw can export SVG. The Mermaid sources are in `docs/architecture.md` and `docs/net_stammtisch_linz/how-orleans-works.md` of the repo.
+- Speaker photo: square, at least 800 x 800 px. QR code for the audience page: SVG or PNG, high contrast.
+- Every spot waiting for an image is marked in `slides.md` with `<!-- TODO IMAGE: ... -->` and a dashed `placeholder` box.

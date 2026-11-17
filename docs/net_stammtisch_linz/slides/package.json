@@ -1,0 +1,20 @@
+{
+  "name": "gleis-grain-slides",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Slides for Next Stop: Virtual Actors, .NET Stammtisch Linz",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "reveal.js": "5.2.1"
+  },
+  "devDependencies": {
+    "@types/reveal.js": "5.2.2",
+    "typescript": "5.9.3",
+    "vite": "7.1.12"
+  }
+}

@@ -4,28 +4,34 @@
 
 .NET Stammtisch Linz
 
-Lucas Hünniger
+Lucas Hünniger & Raffael Rehberger
 
 <!-- TODO IMAGE: title background, for example a Linz tram at the Hauptbahnhof (public/images/title.jpg) -->
 
-Note:
-Welcome. 45 minutes including discussion, so ask questions any time. Have the demo running before the talk starts (`dotnet run --project src/AppHost`, optionally the `replay` launch profile as a stage-safe fallback).
-
 ---
 
-## Who am I
+## Who we are
 
-- Lucas Hünniger
-- Backend Engineer at Fronius
-- Orleans is part of my daily work
-- Cloud Native, OpenTelemetry, .NET
-- Master's in Software Engineering, Hagenberg
-- Volleyball in Linz in summer
-
-<div class="placeholder">TODO IMAGE: speaker photo (public/images/lucas.jpg, square, at least 800 x 800 px)</div>
-
-Note:
-Keep it to 30 seconds. Mention Edusim Engineering only if there is time. Check with Fronius that the firmware rollout mention is fine (general, no internal details).
+<div class="speakers">
+  <div class="speaker">
+    <div class="photo"><!-- TODO IMAGE: replace with <img src="/images/lucas.jpg" alt="Lucas Hünniger"> (square, at least 800 x 800 px) -->TODO IMAGE<br>lucas.jpg</div>
+    <h3>Lucas Hünniger</h3>
+    <ul>
+      <li>Backend Engineer by day, Hobby Platform Engineer at night</li>
+      <li>Orleans is part of daily work</li>
+      <li>Cloud Native, OpenTelemetry, .NET</li>
+    </ul>
+  </div>
+  <div class="speaker">
+    <div class="photo"><!-- TODO IMAGE: replace with <img src="/images/speaker2.jpg" alt="Second speaker"> (square, at least 800 x 800 px) -->TODO IMAGE<br>speaker2.jpg</div>
+    <h3>Raffael Rehberger</h3>
+    <ul>
+      <li>TODO: role in one line</li>
+      <li>TODO: link to the topic</li>
+      <li>TODO: interests</li>
+    </ul>
+  </div>
+</div>
 
 ---
 

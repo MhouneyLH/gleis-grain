@@ -29,3 +29,14 @@
   border: 3px dashed #5b6b8c; border-radius: 12px; padding: 1.2em; text-align: center;
   color: #8fa0c4; font-size: 0.7em;
 }
+
+/* Two speakers side by side: photo on top of each column, a few short bullets below. */
+.reveal .speakers { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2em; align-items: start; }
+.reveal .speaker { text-align: center; }
+.reveal .speaker .photo {
+  width: 250px; height: 250px; margin: 0 auto 0.5em; border-radius: 50%; overflow: hidden;
+  border: 3px dashed #5b6b8c; color: #8fa0c4; font-size: 0.5em; display: flex; align-items: center; justify-content: center;
+}
+.reveal .speaker .photo img { width: 100%; height: 100%; object-fit: cover; max-height: none; }
+.reveal .speaker h3 { margin: 0.2em 0 0.3em; font-size: 1.05em; color: var(--accent); }
+.reveal .speaker ul { font-size: 0.7em; text-align: left; margin-left: 1em; }

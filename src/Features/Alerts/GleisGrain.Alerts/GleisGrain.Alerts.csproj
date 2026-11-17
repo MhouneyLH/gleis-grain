@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="../../../Common/GleisGrain.Common.csproj" />
     <ProjectReference Include="../GleisGrain.Alerts.Contracts/GleisGrain.Alerts.Contracts.csproj" />
+    <ProjectReference Include="../../Ingestion/GleisGrain.Ingestion.Contracts/GleisGrain.Ingestion.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

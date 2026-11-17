@@ -308,6 +308,13 @@
       "gleisgrain.common.abstractions": {
         "type": "Project"
       },
+      "gleisgrain.ingestion.contracts": {
+        "type": "Project",
+        "dependencies": {
+          "GleisGrain.Common.Abstractions": "[1.0.0, )",
+          "Microsoft.Orleans.Sdk": "[10.4.0, )"
+        }
+      },
       "Microsoft.AspNetCore.OpenApi": {
         "type": "CentralTransitive",
         "requested": "[10.0.13, )",

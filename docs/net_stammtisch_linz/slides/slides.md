@@ -15,14 +15,14 @@ Note:
 
 <div class="speakers">
   <div class="speaker">
-    <img src="/img/lucas.png" alt="Lucas Hünniger">
+    <img src="/images/lucas.png" alt="Lucas Hünniger">
     <h3>Lucas Hünniger</h3>
     <p>Backend Engineer by day, Hobby Pla   tform Engineer by night</p>
     <p>Orleans is part of daily work</p>
     <p>Cloud Native, OpenTelemetry, .NET</p>
   </div>
   <div class="speaker">
-    <img src="/img/raffi.jpg" alt="Raffael Rehberger">
+    <img src="/images/raffi.jpg" alt="Raffael Rehberger">
     <h3>Raffael Rehberger</h3>
     <p>TODO: role in one line</p>
     <p>TODO: link to the topic</p>
@@ -44,11 +44,9 @@ Note:
 - Timers vs reminders
 - Concurrency and hot spots
 - Versioning
-- Kubernetes -> bridge to loda tests & testing in general
+- Kubernetes
 - Testing
 - Take this home
-
-Questions
 
 Note:
 - Speaker: Lucas
@@ -66,8 +64,6 @@ Timings in minutes (start-end of the talk):
 - Take this home: 2 min (39-41)
 - Questions: 5 min (41-46)
 
-Total: 46 min of 45. Over budget by 1 min, trim something.
-
 ---
 
 ## Project Intro
@@ -75,6 +71,9 @@ Total: 46 min of 45. Over budget by 1 min, trim something.
 - diagram
 - what is tech stack
 - showing frontend example
+
+Note:
+- Speaker: Lucas
 
 ---
 
@@ -88,7 +87,7 @@ Total: 46 min of 45. Over budget by 1 min, trim something.
 <!-- TODO IMAGE: diagram "stop = actor": one identity, its own state, one request at a time -->
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Raffi
 
 Everybody has waited at a stop in Linz, so the domain is easy to picture. Partition by key: you ask one stop, not the whole network.
 
@@ -107,7 +106,7 @@ var board = await stop.GetBoardAsync();
 ```
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Raffi
 
 Careful: the snippet is illustrative, check the real method names in `Endpoints/GetStop.cs` before showing code. Office analogy from how-orleans-works.md: grain = clerk for one stop, silo = building, cluster = all buildings, activation = clerk at the desk. A typo in an id silently gets its own empty grain, so validate ids at the edge.
 
@@ -118,6 +117,10 @@ Careful: the snippet is illustrative, check the real method names in `Endpoints/
 ```csharp
 myexample
 ```
+
+Note:
+- Speaker: Lucas
+
 
 ---
 
@@ -133,7 +136,7 @@ myexample
 <!-- TODO IMAGE: diagram of the cluster with silos and grains (Mermaid source in how-orleans-works.md, "The big picture") -->
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas
 
 Vertical slide, can be skipped. Location transparency: you never say which silo.
 
@@ -145,11 +148,18 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 - sequence diagram to show one full call from frontend to grain calls
     - what happens in orleans middleware -> communication protocol, binary serialization, grain directory 
 
+Note:
+- Speaker: Raffi
+
 ---
 
 ## Timers vs reminders
 - persisting
 - eventually consistent behavior of reminders
+
+
+Note:
+- Speaker: Raffi
 
 ---
 
@@ -160,7 +170,8 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 - hot grain: Hauptbahnhof -> bad architectural decision or batching
     - sourcegrain -> grain chains block each other, one global grain; show at rate limiter
 
----
+Note:
+- Speaker: Lucas
 
 ---
 
@@ -181,7 +192,7 @@ internal sealed class StopState
 ```
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas
 
 This is in the repo on state, snapshots, ids and grain interfaces. Snippet shortened from the real `StopState` (more fields with ids 2 and 3). State is a blob and old blobs stay across deployments, so this matters a lot.
 
@@ -197,7 +208,7 @@ This is in the repo on state, snapshots, ids and grain interfaces. Snippet short
 <!-- TODO IMAGE: timeline of a rolling update with v1 and v2 silos -->
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas
 
 PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no rolling update demo (optional demo step 6, extra field such as platform on `StopGrain`). Present as a talk topic or show a pre-recorded run. Discussion question: how do you roll out a breaking state change safely?
 
@@ -205,7 +216,10 @@ PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no 
 
 ## Demo Time
 
-- 
+Note:
+- Speaker: Lucas | Raffi
+
+<!-- HIIIIIIIIIIIER STARTEN DIE GENERIERTEN SLIDES -->
 
 ---
 
@@ -284,7 +298,7 @@ Demo step 3 (F1, F5). Audience action: bet on a delay. Show the timer while some
 - The price: a slow call blocks the next ones
 - Deadlock: A waits for B, B waits for A, timeout
 
-<img src="./img/spiderman_deadlock.webp">
+<img src="./images/spiderman_deadlock.webp">
 
 Note:
 - Speaker: Lucas | Raffi
@@ -539,13 +553,3 @@ Four sentences, then back to discussion.
 
 Note:
 - Speaker: Lucas
-
-Timings (minutes, running total in brackets):
-- Project Intro - What are actors? ... and why??? [5min]: 5 min (0-5)
-- Grains and state - Cluster in action [5min]: 5 min (5-10)
-- Timers vs reminders - Concurrency and hot spots [5min]: 3 min (10-13)
-- Versioning - Kubernetes -> bridge to loda tests & testing in general [3min]: 5 min (13-18)
-- Testing - Take this home [2min]: 3 min (18-21)
-- Questions: 5 min (21-26)
-
-Total: 26 min of 45.

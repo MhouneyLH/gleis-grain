@@ -15,14 +15,14 @@ Note:
 
 <div class="speakers">
   <div class="speaker">
-    <img src="/images/lucas.jpg" alt="Lucas Hünniger">
+    <img src="/img/lucas.png" alt="Lucas Hünniger">
     <h3>Lucas Hünniger</h3>
-    <p>Backend Engineer by day, Hobby Platform Engineer by night</p>
+    <p>Backend Engineer by day, Hobby Pla   tform Engineer by night</p>
     <p>Orleans is part of daily work</p>
     <p>Cloud Native, OpenTelemetry, .NET</p>
   </div>
   <div class="speaker">
-    <img src="/images/raffi.jpg" alt="Raffael Rehberger">
+    <img src="/img/raffi.jpg" alt="Raffael Rehberger">
     <h3>Raffael Rehberger</h3>
     <p>TODO: role in one line</p>
     <p>TODO: link to the topic</p>
@@ -36,22 +36,37 @@ Note:
 ---
 
 ## Agenda
- 
-- Project Intro [5min]
-- What are actors? ... and why??? [5min]
-- Grains and state [5min]
-- Cluster in action [5min]
-- Timers vs reminders [3min]
-- Concurrency and hot spots [5min]
-- Versioning [5min]
-- Kubernetes -> bridge to loda tests & testing in general [3min]
-- Testing [3min]
-- Take this home [2min]
 
-[5min] Questions
+- Project Intro
+- What are actors? ... and why???
+- Grains and state
+- Cluster in action
+- Timers vs reminders
+- Concurrency and hot spots
+- Versioning
+- Kubernetes -> bridge to loda tests & testing in general
+- Testing
+- Take this home
+
+Questions
 
 Note:
 - Speaker: Lucas
+
+Timings in minutes (start-end of the talk):
+- Project Intro: 5 min (0-5)
+- What are actors? ... and why???: 5 min (5-10)
+- Grains and state: 5 min (10-15)
+- Cluster in action: 5 min (15-20)
+- Timers vs reminders: 3 min (20-23)
+- Concurrency and hot spots: 5 min (23-28)
+- Versioning: 5 min (28-33)
+- Kubernetes -> bridge to loda tests & testing in general: 3 min (33-36)
+- Testing: 3 min (36-39)
+- Take this home: 2 min (39-41)
+- Questions: 5 min (41-46)
+
+Total: 46 min of 45. Over budget by 1 min, trim something.
 
 ---
 
@@ -524,3 +539,13 @@ Four sentences, then back to discussion.
 
 Note:
 - Speaker: Lucas
+
+Timings (minutes, running total in brackets):
+- Project Intro - What are actors? ... and why??? [5min]: 5 min (0-5)
+- Grains and state - Cluster in action [5min]: 5 min (5-10)
+- Timers vs reminders - Concurrency and hot spots [5min]: 3 min (10-13)
+- Versioning - Kubernetes -> bridge to loda tests & testing in general [3min]: 5 min (13-18)
+- Testing - Take this home [2min]: 3 min (18-21)
+- Questions: 5 min (21-26)
+
+Total: 26 min of 45.

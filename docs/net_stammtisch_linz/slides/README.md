@@ -19,7 +19,7 @@ Keys: arrows to move, `S` opens the speaker view with notes and timer, `F` fulls
 - Diagram and image spots are marked with `<!-- TODO IMAGE: ... -->` and a dashed `placeholder` box. Put the file into `public/images/` (see the README there) and replace the box with `![alt](./images/name.svg)`.
 - Slides marked PLANNED, NOT BUILT in the notes (versioning demo, Kubernetes, load test) are not implemented in the repo yet.
 - Look and feel: `src/custom.css`. Settings (size, transition): `src/main.ts`.
-- TODO placeholders to replace: audience QR code and URL, slides URL, speaker photo.
+- TODO placeholders to replace: slides URL, speaker photo.
 
 ## Import into Bolt or StackBlitz
 

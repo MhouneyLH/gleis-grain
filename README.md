@@ -14,6 +14,8 @@ Not checked yet: terms of use and rate limits. Live calls are the plan, so keep 
 
 In the devcontainer: `dotnet run --project src/AppHost`. The Aspire dashboard on http://localhost:15000 links everything: the app on http://localhost:5080 (three host replicas, one Orleans silo each), the Orleans Dashboard, Scalar, the Vue frontend and pgAdmin. `--launch-profile replay` serves recorded departures instead of asking Linz AG. Setup and what the AppHost starts: [CONTRIBUTING.md](CONTRIBUTING.md#running-the-demo).
 
+Grain versioning demo: the AppHost starts `gleis-grain-v1` (three silos) and builds a second copy of the host with the grain interface version 2, `gleis-grain-v2` (three silos), which waits for you. Start its replicas in the Aspire dashboard (silos named `v2-...` join the cluster next to the `v1-...` ones), then stop the `gleis-grain-v1` replicas: the stop grains move to the v2 silos while the app keeps running. A reverse proxy named `gleis-grain` keeps http://localhost:5080 stable during the rollout.
+
 ## Bounded contexts
 
 | Context   | Aggregate | What it owns                                                               |

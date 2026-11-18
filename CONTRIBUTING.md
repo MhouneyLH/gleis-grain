@@ -24,12 +24,23 @@ The one test project that needs Docker is `test/Infrastructure/GleisGrain.Postgr
 `dotnet run --project src/AppHost` starts everything. The Aspire dashboard on http://localhost:15000 lists every resource and its links:
 
 - **Postgres and pgAdmin.** The first start creates one database per context (`stops`, `trips`, `alerts`, `ingestion`, `game`) plus `orleans` and loads the Orleans schema from [db/](db/orleans/README.md). Postgres runs these scripts only on an empty data volume. After a schema change reset it with `docker volume rm gleis-grain-postgres`, which also deletes all data.
-- **gleis-grain**, the host, in three replicas. Each replica is one Orleans silo with its own silo and gateway port, assigned by Aspire. http://localhost:5080 load balances over the replicas:
+- **gleis-grain** is a YARP reverse proxy on http://localhost:5080 (override the port with `Gateway:Port`) in front of the two host builds below. **gleis-grain-v1** is the host in three replicas, **gleis-grain-v2** the same host built with `-p:GrainVersion=2` in three replicas that are not started automatically (see "Grain versioning demo").
+- Each replica is one Orleans silo with its own silo and gateway port, assigned by Aspire. http://localhost:5080 load balances over the running replicas of both builds. The host serves:
   - `/dashboard` is the Orleans Dashboard: silos, grains, activations and request rates. It is on through `Orleans:EnableDashboard` in `src/Host/appsettings.json` and off by default in code, because it exposes internals of the cluster.
   - `/scalar` has the API docs, `/api/...` is the API.
 - **frontend**, the Vite dev server of the Vue app with hot reload, shown as "Frontend". It proxies `/api` to the host.
 
 Two launch profiles pick where departures come from: `live` (default) asks the Linz AG server, `replay` serves recorded responses, so the demo works offline and the server is never hit: `dotnet run --project src/AppHost --launch-profile replay`. The AppHost also turns the chaos button on (`Cluster:EnableChaos`).
+
+### Grain versioning demo
+
+`IStopGrain` carries `[Version(1)]`, or `[Version(2)]` when built with `-p:GrainVersion=2` (compile constant `GRAIN_V2` in the Stops projects). The AppHost builds the v2 host into `artifacts/v2` after every AppHost build (skip with `-p:SkipGrainV2Build=true`), so it does not touch the bin and obj folders of the normal build. To build it by hand:
+
+```
+dotnet build src/Host -p:GrainVersion=2 --artifacts-path artifacts/v2
+```
+
+Rollout on stage: start the three `gleis-grain-v2-...` replicas in the Aspire dashboard, wait until `/api/cluster/silos` lists six Active silos, then stop the three `gleis-grain-v1-...` replicas. The silo name is `v<version>-<random>`, see [docs/api.md](docs/api.md#grain-versioning). The same works with the Aspire CLI: `aspire resource <replica name> start`.
 
 To see the cluster, open pgAdmin from the dashboard and run `SELECT * FROM orleansmembershiptable;`. Every AppHost start is a new cluster id, so filter on the newest `deploymentid`.
 

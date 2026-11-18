@@ -231,7 +231,7 @@ Note:
 
 ## Clustering Table
 
-![image](/images/tbale.png)
+![image](/images/table.png)
 
 ---
 

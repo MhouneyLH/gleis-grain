@@ -73,3 +73,4 @@
 .reveal .deck-refs sup.ref { font-size: 0.8em; margin-right: 0.35em; }
 .reveal .deck-refs a { color: var(--r-link-color); }
 .reveal .deck-refs div + div { margin-top: 0.2em; }
+.reveal img.diagram { display: block; margin: 0 auto; max-height: 470px; width: auto; max-width: 100%; }

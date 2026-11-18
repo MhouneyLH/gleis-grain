@@ -250,6 +250,19 @@ Note:
 
 ---
 
+## Concurrency: turn-based execution
+
+<img class="diagram" src="/images/concurreny_turn_based.png" alt="Three callers send requests to one grain, the grain answers them one at a time">
+
+<p class="small">One request at a time per grain: no locks, no data races inside a grain</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Orleans runs the code of a grain in turns: one request at a time, a second request waits in the queue until the first turn is finished. That is why a grain needs no locks. The price: a slow call blocks everybody who waits behind it (next slides: reentrancy, ReadOnly, StatelessWorker). Ask: what happens while the grain awaits another call?
+
+---
+
 ## Versioning: serialization
 
 - `[GenerateSerializer]` on every state and contract

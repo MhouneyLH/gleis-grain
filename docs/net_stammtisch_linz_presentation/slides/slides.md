@@ -62,62 +62,62 @@ Total: 46 min of 45. Over budget by 1 min, trim something.
 
 ---
 
-## Project Intro: the domain
+#![Display at station](/images/station_display.png)
 
-- Linz AG tram network, everybody knows a stop
-- **Stop**, **trip**, **notice**, **audience** are actors
-- Live departures from the Linz AG EFA server (XML)
-
-<div class="placeholder">photo of a Linz tram at Hauptbahnhof (or a stop display)</div>
-<!-- TODO IMAGE: photo of a Linz tram at Hauptbahnhof (or a stop display), name: tram_hbf.jpg -->
-
-Note:
-- Speaker: Lucas
-
-Everybody has waited at a stop in Linz. Data comes from the Linz AG EFA server as XML (live, or recorded responses replayed with `Ingestion:Mode`). Linz AG terms of use and rate limits are not checked yet, keep polling polite.
+Raise your hands if you stood in front of such a station display in Linz.
 
 ---
 
-## What you will see
-
-- The Overview page on the projector
-- 80 simulated people pick stops
-- We break the cluster
-- A rolling version update
-
-<p class="small">Map data © OpenStreetMap contributors<sup class="ref">1</sup></p>
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://www.openstreetmap.org/copyright">https://www.openstreetmap.org/copyright</a></div>
-
-
-Note:
-- Speaker: Lucas | Raffi
-
-Shape = silo is the design for the demo, colour = grain version belongs to the versioning demo (PLANNED, not built yet, see versioning). Public OpenStreetMap tiles are fine for a demo, the attribution has to stay visible.
+![EFA - Elektronische Fahrplanauskunft der LinzAG](/images/efa.png)
 
 ---
 
-## Demo: Showcase
+## Domain: Trip
 
-Note:
-- Speaker: Lucas | Raffi
+![Trip](/images/board_trip.png)
 
-About 2 min. We only use localhost, so the audience cannot join from their phones. An audience simulator (resource `simulator` in the Aspire dashboard, not started automatically) acts like about 80 people through the public API. Be honest: say they are simulated people. What to do (steps marked PLAN depend on the frontend being finished):
-1. Before the talk: `dotnet run --project src/AppHost`. If the Wi-Fi is bad: `dotnet run --project src/AppHost --launch-profile replay` (recorded departures, no Linz AG calls).
-2. Open the Aspire dashboard http://localhost:15000. Say: "Three replicas, one Orleans silo each, one cluster."
-3. Open the Overview page `/overview` and make it full screen on the beamer. Say: "Every dot is a stop, every stop is a grain."
-4. In the Aspire dashboard click start on `simulator`. Say: "Now 80 people join, simulated ones, they come in over about 40 seconds."
-5. Dots light up and grow with the number of watchers. About 40 percent watch Hauptbahnhof, the rest spread over the 25 stops, and they move around and read boards. Say: "Nobody created these actors, the first call activated them."
-6. Point at Hauptbahnhof. Say: "One stop gets hot, we come back to this."
-7. Point at the silo shapes and the watcher bars. Say: "The shape tells you which silo hosts the grain." (PLAN: shape = silo is not built yet, confirm.)
+---
 
-If it fails: if the simulator does not start, start it again from the dashboard. Restart with `--launch-profile replay`; if the app itself is down, play the pre-recorded video (TODO: record it, keep it local on the laptop) and keep talking.
+## Domain: Stop
+
+![Stop](/images/map_stops.png)
+
+---
+
+## Domain: Alerts
+
+![Alert](/images/alerts.png)
+
+---
+
+## Our Tech Stack
+
+| What               | Tech                                       |
+|:------------------:|:------------------------------------------:|
+| Langauge & Runtime | C# / .NET 10                               |
+| Actor Framework    | Microsoft Orleans                          |
+| App Orchestration  | .NET Aspire                                |
+| Database           | PostgreSQL                                 |
+| API                | ASP.NET Core Minimal API with Scalar       |
+| Frontend           | Vue 3, Vite                                |
+| Observability      | OpenTelemetrry                             |
+
+---
+
+## What are actors? ... and why??? I
+
+![Actor Communication](/images/actors.png)
+
+- Actor A can send Messages to an Inbox of Actor B
+- Actor B consumed one message at a time (purely sequential)
+- Actors should be focused (K.I.S.S, Do one thing, do it well)
+- Actors can additionally hold state
 
 ---
 
 ## What are actors? ... and why??? II
 
-![Actors in Orleans](images/grains.png)
+![Actors in Orleans](/images/grains.png)
 
 ---
 
@@ -153,6 +153,30 @@ public class StopGrain(IOptions<StopsOptions> options, ILogger<StopGrain> logger
 
 ---
 
+## Virtual actors in Orleans<sup class="ref">1</sup>
+
+- A **grain** is an object with an identity and its own state<sup class="ref">2</sup>
+- You never create or destroy it, you just call it
+- Orleans activates it on the first call, forgets it when idle
+- It *always exists logically*, like virtual memory
+
+```csharp
+var stop = grains.GetGrain<IStopGrain>(stopId);
+var board = await stop.GetBoardAsync();
+```
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/overview/#the-virtual-actor-model">https://dotnet.github.io/orleans/docs/overview/#the-virtual-actor-model</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-identity/">https://dotnet.github.io/orleans/docs/grains/grain-identity/</a></div>
+</div>
+
+Note:
+- Speaker: Raffi
+
+Careful: the snippet is illustrative, check the real method names in `Endpoints/GetStop.cs` before showing code. Office analogy from how-orleans-works.md: grain = clerk for one stop, silo = building, cluster = all buildings, activation = clerk at the desk. A typo in an id silently gets its own empty grain, so validate ids at the edge.
+
+---
+
 ## A grain with persistent state<sup class="ref">1</sup>
 
 - `IPersistentState<StopState>`, named storage, Postgres behind it
@@ -172,7 +196,7 @@ public sealed class StopGrain(
 </div>
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas
 
 In the repo: `StopGrain` with `StopState` (src/Features/Stops). The domain class can be unit tested without a silo. Restart a silo in the demo: the state is still there (demo step 2). Write-behind (do not persist every refresh) and `[OneWay]` are talking points only, not implemented.
 
@@ -185,7 +209,7 @@ In the repo: `StopGrain` with `StopState` (src/Features/Stops). The domain class
 <div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider">https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider</a></div>
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas
 
 Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, Firestore, ADO.NET, Redis, Memory for tests). We use ADO.NET with Postgres, one database per module. State is read when the grain activates and written when the grain asks for it.
 
@@ -239,6 +263,7 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 
 ![cluster](/images/cluster.png)
 
+- Grain Activation
 - Grain Placement<sup class="ref">1</sup>
 - Grain Communication
 
@@ -266,6 +291,10 @@ protected IGrainTimer RegisterGrainTimer<TState>(
 ---
 
 ## Timer vs. Reminders - The Reminder<sup class="ref">2</sup>
+
+```csharp
+public Task<IGrainReminder> RegisterOrUpdateReminder(this Grain grain, string reminderName, TimeSpan dueTime, TimeSpan period);
+```
 
 - reminders are persistent across activations
 - less precision (minutes, days, weeks, months)

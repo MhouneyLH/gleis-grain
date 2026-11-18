@@ -740,10 +740,10 @@ If it fails:
 
 <!-- HIIIIIIIIIIIER STARTEN DIE GENERIERTEN SLIDES -->
 
-## A grain with persistent state
+## A grain with persistent state<sup class="ref">1</sup>
 
 - `IPersistentState<StopState>`, named storage, Postgres behind it
-- State is a blob, one generic table
+- State is a blob, one generic table<sup class="ref">2</sup>
 - Domain class `Stop`: plain C#, no Orleans
 - Grain: thin wrapper, load, call, save
 
@@ -752,6 +752,11 @@ public sealed class StopGrain(
     [PersistentState("stop", StopsOptions.StorageName)]
     IPersistentState<StopState> state, ...) : Grain, IStopGrain
 ```
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/">https://dotnet.github.io/orleans/docs/grains/grain-persistence/</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/relational-storage/">https://dotnet.github.io/orleans/docs/grains/grain-persistence/relational-storage/</a></div>
+</div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -776,7 +781,7 @@ Lessons learned from daily work. In the repo the stop board is refreshed from Li
 
 ---
 
-## Timers vs reminders
+## Timers vs reminders<sup class="ref">1</sup>
 
 | | Timer | Reminder |
 |---|---|---|
@@ -785,6 +790,8 @@ Lessons learned from daily work. In the repo the stop board is refreshed from Li
 | Use for | Frequent, fine to lose | Must happen anyway |
 | In gleis-grain | Faster refresh while watched | Refresh every minute, resolve bets |
 
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/timers-and-reminders/">https://dotnet.github.io/orleans/docs/grains/timers-and-reminders/</a></div>
+
 Note:
 - Speaker: Lucas | Raffi
 
@@ -792,7 +799,7 @@ Rule of thumb: if it must happen even after a crash, use a reminder. Real code: 
 
 ---
 
-## One request at a time
+## One request at a time<sup class="ref">1</sup>
 
 - Every grain has a mailbox, one message at a time
 - No locks inside the grain
@@ -800,6 +807,8 @@ Rule of thumb: if it must happen even after a crash, use a reminder. Real code: 
 - Deadlock: A waits for B, B waits for A, timeout
 
 <img src="./images/spiderman_deadlock.webp">
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/">https://dotnet.github.io/orleans/docs/grains/request-scheduling/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -812,7 +821,7 @@ Planned: the Trip <-> Stop deadlock demo is not built, treat it as a whiteboard 
 
 - Everybody picks the same stop
 - One activation, one mailbox, one thread
-- Fix: a `[StatelessWorker]` board cache
+- Fix: a `[StatelessWorker]` board cache<sup class="ref">1</sup>
 - Many local copies, read from a snapshot
 
 ```csharp
@@ -821,6 +830,8 @@ public class StopBoardCacheGrain : Grain, IStopBoardCacheGrain
 ```
 
 <!-- TODO IMAGE: chart, watchers per stop with Hauptbahnhof as the tall bar -->
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/stateless-worker-grains/">https://dotnet.github.io/orleans/docs/grains/stateless-worker-grains/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -845,7 +856,7 @@ Module Ingestion: EFA XML client, parser, rate limiting, live or replayed respon
 
 ---
 
-## Cluster: membership
+## Cluster: membership<sup class="ref">1</sup>
 
 - Silos watch each other and vote a dead silo out
 - Membership lives in the shared `orleans` Postgres database
@@ -856,6 +867,8 @@ Module Ingestion: EFA XML client, parser, rate limiting, live or replayed respon
 SELECT * FROM orleansmembershiptable;
 ```
 
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/implementation/cluster-management/">https://dotnet.github.io/orleans/docs/implementation/cluster-management/</a></div>
+
 Note:
 - Speaker: Lucas | Raffi
 
@@ -865,12 +878,17 @@ In pgAdmin on the big screen, the audience sees the dead silo flip. Details in h
 
 ## Cluster: directory and placement
 
-- Directory: distributed, in memory, split over all silos by hash ranges
+- Directory: distributed, in memory, split over all silos by hash ranges<sup class="ref">1</sup>
 - Normally one activation per grain
-- Placement: where does a new activation go?
+- Placement: where does a new activation go?<sup class="ref">2</sup>
 - Default since Orleans 9.2: resource optimized (before: random)
 
 <!-- TODO IMAGE: hash ring diagram (Mermaid in how-orleans-works.md, "Who knows where a grain lives?") -->
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/host/grain-directory/">https://dotnet.github.io/orleans/docs/host/grain-directory/</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-placement/">https://dotnet.github.io/orleans/docs/grains/grain-placement/</a></div>
+</div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -899,12 +917,14 @@ Splitting a module into its own deployable later needs only a small host that ca
 
 ---
 
-## Kubernetes
+## Kubernetes<sup class="ref">1</sup>
 
 - `UseKubernetesHosting()` from `Microsoft.Orleans.Hosting.Kubernetes`
 - Pod labels `orleans/serviceId`, `orleans/clusterId`
 - Downward API env vars, RBAC, probes, long grace period
 - Load test with NBomber on replayed XML
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/deployment/kubernetes/">https://dotnet.github.io/orleans/docs/deployment/kubernetes/</a></div>
 
 Note:
 - Speaker: Raffi
@@ -914,9 +934,14 @@ Note:
 ## Testing
 
 - Domain classes: plain unit tests, no silo
-- Grains: in-process `TestCluster`
+- Grains: in-process `TestCluster`<sup class="ref">1</sup>
 - Storage: in-memory in tests
-- Postgres: Testcontainers (skips without Docker)
+- Postgres: Testcontainers (skips without Docker)<sup class="ref">2</sup>
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/testing/">https://dotnet.github.io/orleans/docs/grains/testing/</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.testcontainers.org/">https://dotnet.testcontainers.org/</a></div>
+</div>
 
 Note:
 - Speaker: Raffi

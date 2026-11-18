@@ -97,3 +97,4 @@
 .reveal pre.cs .l { display: block; line-height: 1.5; }
 .reveal section ul:has(+ pre.cs.single) { font-size: 0.8em; }
 .reveal section ul:has(+ pre.cs.single) li { margin: 0.2em 0; }
+.reveal img.diagram.wide { width: 100%; max-height: 330px; object-fit: contain; }

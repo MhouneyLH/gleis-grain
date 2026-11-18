@@ -289,6 +289,19 @@ Ask the room first: "Who sees the problem?" Give them a moment, then click. Clic
 
 ---
 
+## Deadlock: the call cycle
+
+<img class="diagram" src="/images/conc_01_deadlock.png" alt="Sequence diagram: StopGrain awaits TripGrain, TripGrain calls back into StopGrain and waits in the queue until the 30 s timeout">
+
+<p class="small">Stop waits for Trip, Trip waits for Stop: nothing moves until the timeout</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+A awaits B, B calls back into A, but A is still busy waiting for B, so the call back sits in the queue. Nobody can proceed until the call times out (default response timeout 30 s). Same picture as the code on the last slide, now as a sequence.
+
+---
+
 ## Fix 1: reentrancy
 
 - `[Reentrant]` on the grain class
@@ -298,12 +311,23 @@ Ask the room first: "Who sees the problem?" Give them a moment, then click. Clic
 
 <pre class="cs single"><code class="no-highlight" data-noescape><span class="l">[Reentrant]</span><span class="l">public sealed class StopGrain : Grain, IStopGrain</span><span class="l">{</span><span class="l">    public async Task&lt;Board&gt; GetBoardAsync()</span><span class="l">    {</span><span class="l">        var delay = await trip.GetDelayAsync();</span><span class="l">        // while we wait here, other requests may run</span><span class="l">        return Build(delay);</span><span class="l">    }</span><span class="l">}</span></code></pre>
 
-<!-- TODO IMAGE: diagram, Stop awaits Trip, the call back from Trip is accepted while Stop waits -->
-
 Note:
 - Speaker: Lucas | Raffi
 
 Fix for the deadlock: the stop awaits the trip, the trip calls back into the stop, and because the grain is reentrant it takes the call while it waits. There is still never more than one thread inside the grain, but two requests can be half done at the same time, so do not assume the state is unchanged after an await. Use it for the grain class, or prefer AlwaysInterleave on a single method.
+
+---
+
+## Fix 1: reentrancy, the picture
+
+<img class="diagram" src="/images/conc_02_fix_reentrant.png" alt="Sequence diagram: with Reentrant the StopGrain accepts the call back from TripGrain while it waits">
+
+<p class="small">With [Reentrant] the call back is accepted while the stop waits</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+With `[Reentrant]` the grain takes the call back while it waits for the trip. It is still one thread, but calls interleave at every await, so the state can change in between.
 
 ---
 
@@ -316,12 +340,23 @@ Fix for the deadlock: the stop awaits the trip, the trip calls back into the sto
 
 <pre class="cs single"><code class="no-highlight" data-noescape><span class="l">public interface IStopGrain : IGrainWithStringKey</span><span class="l">{</span><span class="l">    [AlwaysInterleave]</span><span class="l">    Task&lt;Board&gt; GetBoardAsync();</span><span class="l"> </span><span class="l">    Task&lt;int&gt; WatchAsync(string watcher);</span><span class="l">}</span></code></pre>
 
-<!-- TODO IMAGE: diagram, only GetBoardAsync passes the queue -->
-
 Note:
 - Speaker: Lucas | Raffi
 
 Smaller hammer than [Reentrant]: only the marked method interleaves with other requests, everything else stays turn-based. Here the call back into GetBoardAsync is allowed while the stop waits for the trip. Make sure the method is safe to run in the middle of another one.
+
+---
+
+## Fix 2: interleave one method, the picture
+
+<img class="diagram" src="/images/conc_03_fix_always_interleave.png" alt="Diagram: only the AlwaysInterleave method GetBoardAsync passes the queue, other requests keep waiting">
+
+<p class="small">Only the marked method passes the queue, the rest stays turn-based</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Smaller hammer: only the method marked `[AlwaysInterleave]` may run while another request waits. Everything else in the grain stays turn-based, so the risk is limited to that one method.
 
 ---
 
@@ -334,12 +369,102 @@ Smaller hammer than [Reentrant]: only the marked method interleaves with other r
 
 <pre class="cs single"><code class="no-highlight" data-noescape><span class="l">// Stops reports what it sees, it does not wait for an answer</span><span class="l">GrainFactory.GetGrain&lt;ITripGrain&gt;(departure.TripId.Value)</span><span class="l">    .ReportAsync(report)</span><span class="l">    .Ignore();</span><span class="l"> </span><span class="l">public interface ITripGrain : IGrainWithStringKey</span><span class="l">{</span><span class="l">    [OneWay]</span><span class="l">    Task ReportAsync(TripReport report);</span><span class="l">}</span></code></pre>
 
-<!-- TODO IMAGE: diagram, Stop sends the report one-way to Trip, nothing comes back -->
-
 Note:
 - Speaker: Lucas | Raffi
 
 The best fix is a design without a cycle. In the repo, a stop reports every departure to its trip with a one-way call and does not wait (`ReportAsync` is `[OneWay]`, the call is `.Ignore()`d), and the trip never calls the stop. A lost report is fine, the next refresh brings another. Rule of thumb: events and reports go one way, questions go to one place.
+
+---
+
+## Fix 3: change the call flow, the picture
+
+<img class="diagram" src="/images/conc_04_fix_oneway.png" alt="Diagram: Stop sends the report one-way to Trip, nothing comes back">
+
+<p class="small">Best fix: no cycle. Stop reports to Trip and does not wait</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+The best fix is no cycle: Stop reports to Trip one-way and does not wait, nothing comes back. This is what gleis-grain does.
+
+---
+
+## Which fix when?
+
+| Fix | Scope | Risk | Use when |
+|---|---|---|---|
+| `[OneWay]` / no call back | the call | a lost message is lost | reports and events |
+| `[AlwaysInterleave]` | one method | runs in the middle of others | a read that is safe any time |
+| `[Reentrant]` | the whole grain | state can change at every await | last resort, simple grain |
+
+Note:
+- Speaker: Lucas | Raffi
+
+Prefer a design without a cycle. Interleave only when you have to, and then as narrow as possible.
+
+---
+
+## Cheat sheet: slow grain?
+
+<img class="diagram wide" src="/images/conc_05_cheatsheet.png" alt="Flow chart: grain slow? read-heavy, cycle between grains, one key too hot, must be global, otherwise profile the turn">
+
+
+Note:
+- Speaker: Lucas | Raffi
+
+Grain slow? Follow the arrows: read-heavy means StatelessWorker or ReadOnly, a cycle means a reentrancy fix or OneWay, a too hot key means split or batch, and if it must be global keep one grain and add a cache. Otherwise profile the turn and make it shorter.
+
+---
+
+## ReadOnly: reads interleave
+
+<img class="diagram" src="/images/conc_06_readonly.png" alt="Diagram: ReadOnly methods run together while a write method waits">
+
+<p class="small">Reads run together, a write waits for them and they wait for it</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Methods marked `[ReadOnly]` may interleave with each other, so many reads run together. A normal (write) method still waits for them, and they wait for it.
+
+---
+
+## StatelessWorker: many copies
+
+<img class="diagram" src="/images/conc_07_stateless_worker.png" alt="Diagram: a StatelessWorker has several local copies per silo, before and after">
+
+<p class="small">Several local copies per silo, served by the local silo</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+A `[StatelessWorker]` is not one single activation: Orleans creates several local copies per silo (up to the CPU core count by default) and calls are served by the local silo. That fits caches and read-heavy lookups. Here `StopBoardCacheGrain` caches the board for a few seconds in front of `StopGrain`.
+
+---
+
+## Hot grain: Hauptbahnhof
+
+<img class="diagram" src="/images/conc_08_hot_grain.png" alt="Diagram: many phones pick the same stop, one StopGrain takes every call while other silos idle">
+
+<p class="small">One stop, one activation, one mailbox: everybody waits there</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+About 100 phones pick the same stop, so one StopGrain on one silo takes every call while the other silos idle. First ask: is the key a bad architectural decision, or can we batch and cache?
+
+---
+
+## SourceGrain: one global gateway
+
+<img class="diagram" src="/images/conc_09_source_grain.png" alt="Diagram: many StopGrains call one SourceGrain which calls the Linz AG server">
+
+<p class="small">One grain is right here: one rate limit for the whole cluster</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Here one grain is right: a single SourceGrain is the one rate limiter for the whole cluster, with a minimum of 500 ms between calls to the Linz AG server and results cached per stop for 20 s. The price: grain chains block each other, so one slow server call delays every caller. The cache and the stale fallback soften this.
 
 ---
 

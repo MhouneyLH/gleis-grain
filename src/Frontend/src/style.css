@@ -256,10 +256,9 @@ input {
 .panel-surface {
   pointer-events: auto;
   border-radius: 16px;
-  background: rgb(13 17 23 / 0.78);
+  background: rgb(13 17 23 / 0.94);
   border: 1.5px solid rgb(255 255 255 / 0.14);
   box-shadow: 0 8px 28px rgb(0 0 0 / 0.45);
-  backdrop-filter: blur(6px);
 }
 
 /* Small uppercase caption, like the panel titles. */

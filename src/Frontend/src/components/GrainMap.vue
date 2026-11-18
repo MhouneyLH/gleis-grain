@@ -24,6 +24,7 @@ const element = ref<HTMLDivElement | null>(null)
 let base: BaseMap | null = null
 const markers = new Map<string, { marker: L.Marker; signature: string; flashSeq: number }>()
 let fitted = false
+let frame: number | undefined
 
 const escapeHtml = (text: string) =>
   text.replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] ?? ch)
@@ -100,16 +101,28 @@ function render(): void {
   }
 }
 
+/** The stream can send many events per frame; redraw at most once per frame. */
+function scheduleRender(): void {
+  if (frame !== undefined) return
+  frame = requestAnimationFrame(() => {
+    frame = undefined
+    render()
+  })
+}
+
 onMounted(() => {
   if (element.value) base = createBaseMap(element.value, { zoomControl: false })
-  render()
+  scheduleRender()
 })
-onBeforeUnmount(() => base?.destroy())
+onBeforeUnmount(() => {
+  if (frame !== undefined) cancelAnimationFrame(frame)
+  base?.destroy()
+})
 
-watch(() => props.stops, render)
-watch(() => props.layoutKey, render)
-watch(() => props.view.dots, render, { deep: true })
-watch(() => [props.selectedId, props.pinned], render, { deep: true })
+watch(() => props.stops, scheduleRender)
+watch(() => props.layoutKey, scheduleRender)
+watch(() => props.view.dots, scheduleRender, { deep: true })
+watch(() => [props.selectedId, props.pinned], scheduleRender, { deep: true })
 </script>
 
 <template>
@@ -127,10 +140,6 @@ watch(() => [props.selectedId, props.pinned], render, { deep: true })
 
 <style>
 /* Not scoped: Leaflet creates these elements itself. */
-.grain-map .osm-tiles {
-  filter: invert(1) hue-rotate(180deg) brightness(0.72) contrast(0.9) saturate(0.45);
-}
-
 .grain-map .leaflet-control-attribution {
   background: rgb(13 17 23 / 0.75);
   color: #94a0b4;
@@ -162,11 +171,6 @@ watch(() => [props.selectedId, props.pinned], render, { deep: true })
   width: 100%;
   height: 100%;
   overflow: visible;
-  transition: filter 0.4s ease;
-}
-
-.gd.on .gd-core {
-  filter: drop-shadow(0 0 7px var(--c)) drop-shadow(0 1px 2px rgb(0 0 0 / 0.7));
 }
 
 .gd.off .gd-core rect,
@@ -190,8 +194,7 @@ watch(() => [props.selectedId, props.pinned], render, { deep: true })
   position: absolute;
   inset: -10px;
   border: 5px solid #ffc83d;
-  box-shadow: 0 0 0 2px #0d1117, 0 0 18px #ffc83d;
-  animation: gd-sel 1.2s ease-in-out infinite alternate;
+  box-shadow: 0 0 0 2px #0d1117;
 }
 
 .gd-pin {
@@ -209,12 +212,6 @@ watch(() => [props.selectedId, props.pinned], render, { deep: true })
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.5);
 }
 
-@keyframes gd-sel {
-  to {
-    box-shadow: 0 0 0 2px #0d1117, 0 0 6px #ffc83d;
-  }
-}
-
 .gd-ring {
   inset: 0;
   border: 4px solid var(--c);
@@ -224,11 +221,6 @@ watch(() => [props.selectedId, props.pinned], render, { deep: true })
 .gd.woke .gd-ring,
 .gd.moved .gd-ring {
   animation: gd-ring 1.1s ease-out 3;
-}
-
-.gd.woke .gd-core,
-.gd.moved .gd-core {
-  animation: gd-blink 0.45s ease-in-out 5;
 }
 
 .gd-badge {
@@ -270,13 +262,6 @@ watch(() => [props.selectedId, props.pinned], render, { deep: true })
   to {
     transform: scale(3);
     opacity: 0;
-  }
-}
-
-@keyframes gd-blink {
-  50% {
-    filter: brightness(2.2) drop-shadow(0 0 12px #fff);
-    transform: scale(1.25);
   }
 }
 </style>

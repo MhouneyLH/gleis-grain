@@ -115,7 +115,7 @@ Note:
 
 ---
 
-## Demo 1: live map
+## Demo: Showcase
 
 - Start the audience simulator
 - About 80 simulated people join
@@ -568,7 +568,7 @@ Built in the frontend (shape = silo slot, colour = grain version, size = watcher
 
 ---
 
-## Demo: rolling update
+## Demo: Versioning
 
 - Red dots: everything runs v1
 - Start v2 next to v1
@@ -603,14 +603,7 @@ If it fails:
 
 ---
 
-## Demo Time
-
-Note:
-- Speaker: Lucas | Raffi
-
 <!-- HIIIIIIIIIIIER STARTEN DIE GENERIERTEN SLIDES -->
-
----
 
 ## A grain with persistent state
 
@@ -661,22 +654,6 @@ Note:
 - Speaker: Lucas | Raffi
 
 Rule of thumb: if it must happen even after a crash, use a reminder. Real code: `RegisterGrainTimer` and `RegisterOrUpdateReminder` in `StopGrain`, reminders in `PlayerGrain` (bet resolution) and `AlertBoardGrain`. Reminder period is an option per context. Exact timer period: check the options before quoting a number.
-
----
-
-## Demo 2: place a bet
-
-- Pick a stop
-- Guess the delay of the next departure (0 to 15 minutes)
-- Exact guess: 3 points, off by one: 1 point
-- A reminder resolves the bet
-
-<div class="placeholder">TODO IMAGE: screenshot of the bet screen</div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-Demo step 3 (F1, F5). Betting is not part of the talk, skip this slide. Show the timer while someone watches, the reminder otherwise. Bets survive a silo restart because the state is persisted and the reminder is durable. 
 
 ---
 
@@ -800,24 +777,6 @@ Note:
 - Speaker: Lucas | Raffi
 
 `GET /api/cluster/events`. An event raised on any silo reaches a browser connected to any replica. A dead silo drops out by itself because its subscription expires. Deliberately not Orleans streams.
-
----
-
-## Demo 3: break the cluster
-
-- Kill a silo
-- Map dots change colour, membership flips
-- Grains come back on the other silos
-- Bets still resolve
-
-<div class="placeholder">TODO IMAGE: screenshot of the map with silo colours, before and after</div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-Demo step 5 (F6, F7). Action: the presenter kills a silo, the simulated people keep going. The chaos button kills the replica that receives the request, only when `Cluster:EnableChaos` is true (the AppHost sets it for the demo). Needs the 3 replicas. Rehearse it, and keep a screen recording as a backup.
-
-
 
 ---
 

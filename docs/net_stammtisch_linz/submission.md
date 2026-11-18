@@ -1,17 +1,8 @@
 # Submission for .NET Stammtisch Linz
 
-Host asked for: title, abstract, speaker bio, photo. Not for the repo, copy from here.
-Style follows the other speakers on the group page: informative title with a colon, a hook question in the abstract, a 2-3 sentence bio.
-
 ## Title
 
-Recommended:
-**Next Stop: Virtual Actors - Microsoft Orleans with Live Linz Data**
-
-Alternatives:
-- Gleis Grain: Virtual Actors on the Linz Tram Network
-- Kill a Silo, Keep the Trams Running
-- Every Stop is an Actor: Microsoft Orleans on the Linz Tram Network
+"Next Stop: Virtual Actors | Microsoft Orleans on the Linz tram network"
 
 ## Abstract
 
@@ -26,13 +17,3 @@ I use Orleans every day at work, so besides the fun parts you also get the lesso
 Lucas Hünniger is a Backend Engineer at Fronius with ~4 years of experience and a freshly earned Master's degree in Software Engineering from Hagenberg. Orleans is part of his daily work there and he is just as passionate about Cloud Native, OpenTelemetry and .NET in general. Together with friends, he co-founded Edusim Engineering.
 
 When he is not coding, you will find him playing volleyball, and you are welcome to join him on the courts in Linz next summer! :)
-
-
-## Photo
-- Portrait, square or close to it, at least 800 x 800 px, face clearly visible, plain background.
-- Shown small on the Meetup speaker card.
-
-## Before sending
-- Check with Fronius that the mention of firmware rollouts is fine. It is general, no internal details.
-- Talk length: 45 minutes including discussion.
-- Technical needs: projector, internet for the live data, phones for the audience.

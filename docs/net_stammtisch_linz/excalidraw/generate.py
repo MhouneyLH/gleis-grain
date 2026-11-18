@@ -355,7 +355,70 @@ def version_compat():
     c.save("11-version-compatibility.excalidraw")
 
 
+# ---------------- before / after helpers ----------------
+GBG = "#12351f"; RBG = "#3a1220"
+
+
+def before_after_frame(c, h):
+    c.line([(580, 20), (580, h)], DIM, 2, "dashed")
+    c.text(290, 40, "BEFORE", 36, RED)
+    c.text(870, 40, "AFTER", 36, BGREEN)
+
+
+# ---------------- 12 hot grain before / after ----------------
+def hot_before_after():
+    c = Canvas()
+    before_after_frame(c, 600)
+    for i, y in enumerate([130, 230, 330]):
+        c.box(20, y, 150, 70, "phone" if i < 2 else "100 phones", GREY, 22)
+        c.arrow([(170, y + 35), (350, 290)], RED, 3)
+    c.box(350, 200, 210, 180, "StopGrain\nHauptbahnhof", RED, 24, sw=5, bg=RBG, tcolor="#ffc9d4")
+    c.text(290, 500, "one mailbox:\neverybody waits", 26, RED)
+    for i, y in enumerate([130, 230, 330]):
+        c.box(610, y, 130, 70, "phone" if i < 2 else "phones", GREY, 22)
+    for k, sy in enumerate([110, 310]):
+        c.rect(790, sy, 190, 150, DIM, "transparent", 2, "dashed")
+        c.text(885, sy + 22, "Silo %d" % (k + 1), 20, DIM)
+        c.box(805, sy + 40, 160, 90, "board cache\ncopy", GREEN, 22, bg=GBG, tcolor="#d3f9d8")
+    c.arrow([(740, 165), (805, 190)], GREY, 2)
+    c.arrow([(740, 265), (805, 210)], GREY, 2)
+    c.arrow([(740, 265), (805, 370)], GREY, 2)
+    c.arrow([(740, 365), (805, 390)], GREY, 2)
+    c.box(1030, 220, 120, 110, "Stop\nGrain", GREY, 24)
+    c.arrow([(965, 190), (1030, 250)], BGREEN, 3)
+    c.arrow([(965, 390), (1030, 300)], BGREEN, 3)
+    c.text(1090, 370, "one call\nper 5 s", 22, BGREEN)
+    c.text(870, 505, "stateless copies + TTL cache", 26, BGREEN)
+    c.text(870, 555, "price: boards are a few seconds old", 22, YEL)
+    c.save("12-hot-grain-before-after.excalidraw")
+
+
+# ---------------- 13 source grain before / after ----------------
+def source_before_after():
+    c = Canvas()
+    before_after_frame(c, 620)
+    names = ["StopGrain", "StopGrain", "Alert grain", "Reminder"]
+    for i, n in enumerate(names):
+        y = 100 + i * 90
+        c.box(20, y, 160, 64, n, GREY, 22)
+        c.arrow([(180, y + 32), (400, 285)], RED, 3)
+    c.box(400, 230, 160, 110, "Linz AG\nserver", RED, 24, bg=RBG, tcolor="#ffc9d4")
+    c.text(290, 500, "every grain calls the\nserver: no limit,\nhammering", 24, RED)
+    for i, n in enumerate(names[:3]):
+        y = 100 + i * 90
+        c.box(600, y, 140, 64, n, GREY, 20)
+        c.arrow([(740, y + 32), (800, 250)], GREY, 3)
+    c.box(800, 190, 170, 130, "SourceGrain\nONE", GREEN, 24, sw=5, bg=GBG, tcolor="#d3f9d8")
+    c.arrow([(970, 255), (1030, 255)], GREEN, 3)
+    c.box(1030, 205, 120, 100, "Linz AG\nserver", DIM, 22)
+    for i, t in enumerate(["min 500 ms between calls", "cache per stop, 20 s", "stale answer if the feed fails"]):
+        c.box(620, 390 + i * 60, 400, 48, t, GREEN, 22, bg=GBG, tcolor="#d3f9d8")
+    c.text(870, 610, "price: one chokepoint,\na slow call delays everybody", 22, YEL)
+    c.save("13-source-grain-before-after.excalidraw")
+
+
 if __name__ == "__main__":
     deadlock(); reentrant(); always_interleave(); oneway(); cheatsheet()
     readonly(); stateless(); hotgrain(); source()
     rolling_update(); version_compat()
+    hot_before_after(); source_before_after()

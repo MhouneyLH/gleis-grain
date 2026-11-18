@@ -31,7 +31,7 @@ Rollout demo: start the three `gleis-grain-v2-...` replicas, wait until `/api/cl
 ## Workflow
 
 1. Open an issue first for anything bigger than a small fix, so we can agree on the idea. Use the issue templates.
-2. Branch from `main`. Name the branch after the change: `feat/stops-board-cache`, `fix/game-leaderboard-order`.
+2. Branch from `main`. Name the branch after the change: `feat/stops-board-cache`, `fix/game-player-nickname`.
 3. Keep a pull request to one bounded context where you can. A change in `Common` or the build files runs every module's CI, so keep those separate.
 4. Fill in the pull request template. CI must be green and the build free of warnings.
 
@@ -43,7 +43,7 @@ CI only runs the modules a change touches, plus the boundary tests in `test/Modu
 
 ```
 feat(stops): refresh the board while somebody watches
-fix(game): keep the highest score when reports arrive out of order
+fix(game): reject empty nicknames
 docs(readme): explain the Orleans Dashboard link
 ```
 

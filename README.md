@@ -12,15 +12,15 @@ Linz AG runs an EFA server (XML over HTTP). The departure monitor returns the de
 
 In the devcontainer: `dotnet run --project src/AppHost`, or `--launch-profile replay` for recorded departures. The Aspire dashboard on http://localhost:15000 links everything: the app on http://localhost:5080 (three host replicas, one Orleans silo each), the Vue frontend, the Orleans Dashboard, Scalar and pgAdmin.
 
-- **Audience:** the `simulator` resource plays about 80 virtual people through the public API. Click start on it in the dashboard, then steer the crowd (for example 50 people on Hauptbahnhof for a hot grain) with `src/Simulator/http/simulator.http` or the panel on the projector page.
+- **Audience:** the `simulator` resource plays about 80 virtual people through the public API. Click start on it in the dashboard, then steer the crowd (for example 50 people on Hauptbahnhof for a hot grain) with `src/Simulator/http/simulator.http` or the panel on the Overview page.
 - **Versioning demo:** the AppHost also knows a second build of the host with grain interface version 2. Start its replicas in the dashboard, then stop the v1 replicas: the stop grains move over while the app keeps running.
 
 Details and troubleshooting: [CONTRIBUTING.md](CONTRIBUTING.md#running-the-demo).
 
 ## What you see
 
-- **Projector page** (`/projector`): a full-screen map of Linz. Every dot is a stop and a grain: it is lit while the grain is active, its **shape** is the silo that hosts it, its **colour** the grain version (red v1, blue v2) and its size the number of watchers. Floating panels show silos, stats, events, the chaos button and the simulation controls; `H` hides them.
-- **Audience page** (`/`): pick a stop on the map and see its live departure board. A guest name is created automatically, nobody has to sign in.
+- **Overview page** (`/overview`): a full-screen map of Linz. Every dot is a stop and a grain: it is lit while the grain is active, its **shape** is the silo that hosts it, its **colour** the grain version (red v1, blue v2) and its size the number of watchers. Floating panels show silos, stats, events, the chaos button and the simulation controls; `H` hides them.
+- **Map page** (`/`): pick a stop on the map and see its live departure board. A guest name is created automatically, nobody has to sign in.
 - **Departure board and notices** for every stop and line.
 
 ## Bounded contexts
@@ -31,7 +31,7 @@ Details and troubleshooting: [CONTRIBUTING.md](CONTRIBUTING.md#running-the-demo)
 | Trips     | Trip      | A trip with its delay state                                                |
 | Alerts    | AlertBoard | The current service notices, filterable by line or stop                    |
 | Ingestion | Source    | The EFA XML client, parsing, rate limiting, live or replayed responses     |
-| Game      | Player    | Nicknames, the chosen stop, delay bets and the leaderboard (bets are hidden in the frontend) |
+| Game      | Player    | Nicknames and the chosen stop |
 | Cluster   | Hub       | Silo overview, stats, the chaos button, the live event stream (SSE)        |
 
 They call each other only through their Contracts projects. Live updates reach the browser through server-sent events on `GET /api/cluster/events`; the payloads are in `LivePayloads.cs` (Cluster Contracts). The HTTP API is documented by Scalar on the running host (http://localhost:5080/scalar) and by the `.http` files in `src/Host/http`. See also [ARCHITECTURE.md](ARCHITECTURE.md).
@@ -54,7 +54,7 @@ docs/                the talk (slides, diagrams)
 
 ## The talk
 
-The slides (reveal.js, speaker notes, diagram sources) are in [docs/net_stammtisch_linz_presentation](docs/net_stammtisch_linz_presentation). Run them with `npm install && npm run dev` in its `slides` folder.
+The slides (reveal.js, speaker notes, diagram sources) are in [docs/net_stammtisch_linz_presentation](docs/net_stammtisch_linz_presentation). Run them with `npm install && npm run dev` in its `slides` folder. What to do for which demo: [demo-runbook.md](docs/net_stammtisch_linz_presentation/demo-runbook.md).
 
 ## Tests
 

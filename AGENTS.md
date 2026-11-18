@@ -50,7 +50,7 @@ cd docs/net_stammtisch_linz_presentation/slides && npm install && npm run build
 - **Grain versioning demo.** `IStopGrain` is `[Version(1)]`, or `[Version(2)]` with `-p:GrainVersion=2`. Silo names are `v<version>-<random>`; the frontend derives version (colour) and slot (shape) from them. v2 only adds.
 - **Fake clocks and Orleans test silos.** Do not register a frozen `FakeTimeProvider` as the silo's global `TimeProvider`: Orleans uses it for membership and the silo declares itself dead. Use a clock that is the system clock plus an offset (`ShiftableClock` in the Alerts and Ingestion tests), and a unique ClusterId/ServiceId per test host.
 - **Replay feed** is a loop on a fixed clock (departures really leave, trip ids stay stable). Recordings are real Linz AG answers; re-record in daytime with `src/Features/Ingestion/GleisGrain.Ingestion/Replay/record.sh`. Check the Linz AG terms of use before making the repo public.
-- **Orleans reminders** cannot be shorter than 1 minute by default. Bets resolve at most once a minute.
+- **Orleans reminders** cannot be shorter than 1 minute by default.
 - **The simulator control API and the `/sim` proxy** work with the Vite dev server only, not with the built `wwwroot`.
 
 ## Slides (`docs/net_stammtisch_linz_presentation/slides`)

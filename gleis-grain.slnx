@@ -3,6 +3,7 @@
     <Project Path="src/AppHost/GleisGrain.AppHost.csproj" />
     <Project Path="src/Common/GleisGrain.Common.csproj" />
     <Project Path="src/Host/GleisGrain.Host.csproj" />
+    <Project Path="src/Simulator/GleisGrain.Simulator.csproj" />
     <Project Path="src/Common.Abstractions/GleisGrain.Common.Abstractions.csproj" />
   </Folder>
   <Folder Name="/src/Features/Stops/">
@@ -51,6 +52,9 @@
   </Folder>
   <Folder Name="/test/Features/Cluster/">
     <Project Path="test/Features/Cluster/GleisGrain.Cluster.Tests/GleisGrain.Cluster.Tests.csproj" />
+  </Folder>
+  <Folder Name="/test/Simulator/">
+    <Project Path="test/Simulator/GleisGrain.Simulator.Tests/GleisGrain.Simulator.Tests.csproj" />
   </Folder>
   <Folder Name="/test/Infrastructure/">
     <Project Path="test/Infrastructure/GleisGrain.Postgres.Tests/GleisGrain.Postgres.Tests.csproj" />

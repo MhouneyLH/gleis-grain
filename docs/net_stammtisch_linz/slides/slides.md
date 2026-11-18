@@ -24,9 +24,9 @@ Note:
   <div class="speaker">
     <img src="/images/raffi.jpg" alt="Raffael Rehberger">
     <h3>Raffael Rehberger</h3>
-    <p>TODO: role in one line</p>
-    <p>TODO: link to the topic</p>
-    <p>TODO: interests</p>
+    <p>Team Lead, Cloud Architect</p>
+    <p>Orleans is part of daily work</p>
+    <p>F(L)OSS Software, Music Production, Linux</p>
   </div>
 </div>
 
@@ -139,19 +139,39 @@ If it fails: restart with `--launch-profile replay`; if the app itself is down, 
 
 ---
 
-## What are actors? ... and why???
+## What are actors? ... and why??? II
 
-- how we would do with classic microservice -> netflix architecture horror
-- A **stop** is an actor
-- One identity, its own state, one request at a time
-- Nobody searches "all stops", you ask one stop
+![Actors in Orleans](images/grains.png)
 
-<!-- TODO IMAGE: diagram "stop = actor": one identity, its own state, one request at a time -->
+---
 
-Note:
-- Speaker: Raffi
+## Stop Grain (simplified)
 
-Everybody has waited at a stop in Linz, so the domain is easy to picture. Partition by key: you ask one stop, not the whole network.
+```csharp
+[GrainType("stop")]
+public class StopGrain(IOptions<StopsOptions> options, ILogger<StopGrain> logger) : Grain, IStopGrain {
+    private Stop? _stop;
+
+    public override Task OnActivateAsync(CancellationToken ct) {
+        ...
+    }
+
+    public override Task OnDeactivateAsync(DeactivationReason reason, CancellationToken ct) {
+        ...
+    }
+
+    public async Task<StopBoardSnapshot?> GetBoardAsync() {
+        ... 
+    }
+
+    public async Task<int> WatchAsync(string watcher) {
+        ...
+    }
+
+    public async Task<int> UnwatchAsync(string watcher) {
+        ...
+    }
+```
 
 ---
 
@@ -174,18 +194,6 @@ Careful: the snippet is illustrative, check the real method names in `Endpoints/
 
 ---
 
-## Example: StopGrain
-
-```csharp
-myexample
-```
-
-Note:
-- Speaker: Lucas
-
-
----
-
 ## Grain persistence<sup class="ref">1</sup>
 
 <img class="persistence" src="/images/persistance_overview.png" alt="Overview of grain persistence">
@@ -199,14 +207,14 @@ Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, F
 
 ---
 
-## Grains, silos, cluster
+## Grains, Silos, Cluster
 
-| Orleans | Office |
-|---|---|
-| Grain | Clerk for exactly one stop |
-| Silo | An office building (a .NET process) |
-| Cluster | All buildings |
-| Activation | Clerk at the desk right now |
+| Orleans    | Office                              |
+|------------|-------------------------------------|
+| Grain      | Clerk for exactly one stop          |
+| Silo       | An office building (a .NET process) |
+| Cluster    | All buildings                       |
+| Activation | Clerk at the desk right now         |
 
 <!-- TODO IMAGE: diagram of the cluster with silos and grains (Mermaid source in how-orleans-works.md, "The big picture") -->
 
@@ -219,22 +227,34 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 
 ## Cluster in Action
 
-- placement strategies
-- sequence diagram to show one full call from frontend to grain calls
-    - what happens in orleans middleware -> communication protocol, binary serialization, grain directory 
+![cluster](/images/cluster.png)
+
+- Grain Placement
+- Grain Communication
 
 Note:
 - Speaker: Raffi
 
 ---
 
-## Timers vs reminders
-- persisting
-- eventually consistent behavior of reminders
+## Timers vs. Reminders - The Timer
 
+```csharp
+protected IGrainTimer RegisterGrainTimer<TState>(
+    Func<TState, CancellationToken, Task> callback, // function invoked when the timer ticks
+    TState state,                                   // object to pass to callback
+    GrainTimerCreationOptions options)              // timer creation options
+```
 
-Note:
-- Speaker: Raffi
+- only for current activation
+- standard System.Threading.Timer
+- non persistent
+- high precision (millisecond ticks)
+
+## Timer vs. Reminders - The Reminder
+
+- reminders are persistent across activations
+- less precision (minutes, days, weeks, months)
 
 ---
 

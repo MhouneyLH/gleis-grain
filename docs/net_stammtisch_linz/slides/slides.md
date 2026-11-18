@@ -17,7 +17,7 @@ Note:
   <div class="speaker">
     <img src="/images/lucas.png" alt="Lucas Hünniger">
     <h3>Lucas Hünniger</h3>
-    <p>Backend Engineer by day, Hobby Pla   tform Engineer by night</p>
+    <p>Backend Engineer by day, Hobby Platform Engineer by night</p>
     <p>Orleans is part of daily work</p>
     <p>Cloud Native, OpenTelemetry, .NET</p>
   </div>
@@ -37,32 +37,28 @@ Note:
 
 ## Agenda
 
-- Project Intro
-- What are actors? ... and why???
-- Grains and state
-- Cluster in action
-- Timers vs reminders
-- Concurrency and hot spots
-- Versioning
-- Kubernetes
-- Testing
-- Take this home & try it out
+1. Project intro and showcase
+2. Actors, grains and state
+3. Cluster, timers and reminders
+4. Concurrency and hot spots
+5. Versioning
+6. Kubernetes and testing
+7. Take this home & try it out
 
 Note:
 - Speaker: Lucas
 
 Timings in minutes (start-end of the talk):
-- Project Intro: 5 min (0-5)
-- What are actors? ... and why???: 5 min (5-10)
-- Grains and state: 5 min (10-15)
-- Cluster in action: 5 min (15-20)
-- Timers vs reminders: 3 min (20-23)
+- Project intro and showcase: 5 min (0-5)
+- Actors, grains and state (what are actors ... and why, grains and state): 10 min (5-15)
+- Cluster, timers and reminders (cluster in action 5 min, timers vs reminders 3 min): 8 min (15-23)
 - Concurrency and hot spots: 5 min (23-28)
 - Versioning: 5 min (28-33)
-- Kubernetes -> bridge to loda tests & testing in general: 3 min (33-36)
-- Testing: 3 min (36-39)
-- Take this home: 2 min (39-41)
+- Kubernetes and testing (Kubernetes is the bridge to load tests and testing in general): 6 min (33-39)
+- Take this home & try it out: 2 min (39-41)
 - Questions: 5 min (41-46)
+
+Total: 46 min of 45. Over budget by 1 min, trim something.
 
 ---
 
@@ -82,49 +78,26 @@ Everybody has waited at a stop in Linz. Data comes from the Linz AG EFA server a
 
 ---
 
-## Project Intro: the map
-
-- Stops are dots on a map
-- Dot size: how many people watch the stop
-- Shape and colour: which silo and which version runs the grain
-
-<div class="placeholder">screenshot: projector page, map with stops as dots (silo shapes, size by watchers)</div>
-<!-- TODO IMAGE: screenshot of the projector page `/projector`, map with stops as dots, name: map_projector.png. Map tiles are from OpenStreetMap: keep the attribution "© OpenStreetMap contributors" visible. -->
-
-<p class="small">Map data © OpenStreetMap contributors<sup class="ref">1</sup></p>
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://www.openstreetmap.org/copyright">https://www.openstreetmap.org/copyright</a></div>
-
-Note:
-- Speaker: Lucas
-
-Shape = silo is the design for the demo, colour = grain version belongs to the versioning demo (PLANNED, not built yet, see versioning). Public OpenStreetMap tiles are fine for a demo, the attribution has to stay visible.
-
----
-
-## Project Intro: what you will see
+## What you will see
 
 - The map on the projector
 - 80 simulated people pick stops
 - We break the cluster
 - A rolling version update
 
-<div class="placeholder">screenshot: Aspire dashboard with 3 gleis-grain replicas</div>
-<!-- TODO IMAGE: screenshot of the Aspire dashboard with 3 gleis-grain replicas, name: aspire_replicas.png -->
+<p class="small">Map data © OpenStreetMap contributors<sup class="ref">1</sup></p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://www.openstreetmap.org/copyright">https://www.openstreetmap.org/copyright</a></div>
+
 
 Note:
 - Speaker: Lucas | Raffi
 
+Shape = silo is the design for the demo, colour = grain version belongs to the versioning demo (PLANNED, not built yet, see versioning). Public OpenStreetMap tiles are fine for a demo, the attribution has to stay visible.
+
 ---
 
 ## Demo: Showcase
-
-- Start the audience simulator
-- About 80 simulated people join
-- Watch the dots light up and grow
-
-<div class="placeholder">screenshot: projector map with simulated watchers, Hauptbahnhof is the big dot</div>
-<!-- TODO IMAGE: screenshot of the projector page `/projector` with simulated watchers, Hauptbahnhof hot, name: map_simulated.png -->
 
 Note:
 - Speaker: Lucas | Raffi
@@ -289,6 +262,8 @@ protected IGrainTimer RegisterGrainTimer<TState>(
 - standard System.Threading.Timer
 - non persistent
 - high precision (millisecond ticks)
+
+---
 
 ## Timer vs. Reminders - The Reminder<sup class="ref">2</sup>
 

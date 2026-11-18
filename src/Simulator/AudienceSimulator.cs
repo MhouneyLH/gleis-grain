@@ -19,7 +19,9 @@ public sealed class AudienceSimulator(
     private static readonly TimeSpan SummaryInterval = TimeSpan.FromSeconds(10);
 
     private readonly SimulatorOptions _options = options.Value;
-    private IReadOnlyList<VirtualPerson>? _crowd;
+    // The worker thread ticks, request threads steer: every access to the scenario and its people takes the lock.
+    private readonly Lock _gate = new();
+    private Scenario? _scenario;
     private DateTimeOffset _catalogueRetryAt;
     private DateTimeOffset _nextSummaryAt;
     private int _moves;
@@ -29,33 +31,78 @@ public sealed class AudienceSimulator(
     public async Task TickAsync(CancellationToken cancellationToken)
     {
         var now = time.GetUtcNow();
-        if (_crowd is null)
+        if (_scenario is null)
         {
             await TryStartAsync(now, cancellationToken);
             return;
         }
 
-        // Decisions (and the shared Random) stay on this thread; only the HTTP calls run in parallel.
-        var work = _crowd
-            .Select(person => (Person: person, Action: person.Due(now)))
-            .Where(item => item.Action != PersonAction.None)
-            .Select(item => (item.Person, item.Action, Stop: item.Action is PersonAction.ReadBoard ? item.Person.StopId! : item.Person.ChooseStop()))
-            .ToList();
+        // Decisions (and the shared Random) stay under the lock; only the HTTP calls run in parallel.
+        List<(VirtualPerson Person, PersonAction Action, string Stop)> work;
+        lock (_gate)
+        {
+            work = _scenario.People
+                .Select(person => (Person: person, Action: person.Due(now)))
+                .Where(item => item.Action != PersonAction.None)
+                .Select(item => (item.Person, item.Action, Stop: item.Action is PersonAction.ReadBoard ? item.Person.StopId! : item.Person.ChooseStop()))
+                .ToList();
+        }
+
         var succeeded = await Task.WhenAll(work.Select(item => PerformAsync(item.Person, item.Action, item.Stop, cancellationToken)));
 
         var finished = time.GetUtcNow();
-        for (var i = 0; i < work.Count; i++)
+        lock (_gate)
         {
-            Record(work[i].Person, work[i].Action, work[i].Stop, succeeded[i], finished);
-        }
+            for (var i = 0; i < work.Count; i++)
+            {
+                Record(work[i].Person, work[i].Action, work[i].Stop, succeeded[i], finished);
+            }
 
-        if (finished >= _nextSummaryAt)
-        {
-            var joined = _crowd.Count(person => person.StopId is not null);
-            logger.Summary(joined, _moves, _reads, _errors);
-            _nextSummaryAt = finished + SummaryInterval;
+            if (finished >= _nextSummaryAt)
+            {
+                logger.Summary(_scenario.Joined, _moves, _reads, _errors);
+                _nextSummaryAt = finished + SummaryInterval;
+            }
         }
     }
+
+    /// <summary>What the presenter has set up and how far the crowd has come.</summary>
+    public ScenarioSnapshot Snapshot()
+    {
+        lock (_gate)
+        {
+            return SnapshotLocked();
+        }
+    }
+
+    /// <summary>Exactly <paramref name="people"/> virtual people are pinned to the stop (see <see cref="Scenario.Pin"/>).</summary>
+    /// <exception cref="ScenarioException">The request is invalid.</exception>
+    /// <exception cref="ScenarioNotReadyException">The stop catalogue has not been loaded yet.</exception>
+    public ScenarioSnapshot Pin(string stopId, int people)
+    {
+        lock (_gate)
+        {
+            Ready().Pin(stopId, people, time.GetUtcNow());
+            return SnapshotLocked();
+        }
+    }
+
+    /// <exception cref="ScenarioNotReadyException">The stop catalogue has not been loaded yet.</exception>
+    public ScenarioSnapshot ReleaseAll()
+    {
+        lock (_gate)
+        {
+            Ready().ReleaseAll(time.GetUtcNow());
+            return SnapshotLocked();
+        }
+    }
+
+    private Scenario Ready() => _scenario ?? throw new ScenarioNotReadyException();
+
+    private ScenarioSnapshot SnapshotLocked() =>
+        _scenario is null
+            ? new ScenarioSnapshot(0, 0, [], _options.HotStopShare)
+            : new ScenarioSnapshot(_scenario.People.Count, _scenario.Joined, _scenario.Pinned, _options.HotStopShare);
 
     private async Task TryStartAsync(DateTimeOffset now, CancellationToken cancellationToken)
     {
@@ -68,8 +115,12 @@ public sealed class AudienceSimulator(
         {
             var stopIds = await client.GetStopIdsAsync(cancellationToken);
             var picker = new StopPicker(stopIds, StopPicker.HauptbahnhofId, _options.HotStopShare, random);
-            _crowd = Crowd.Create(_options, picker, random, now);
-            _nextSummaryAt = now + SummaryInterval;
+            lock (_gate)
+            {
+                _scenario = new Scenario(_options, stopIds, picker, random, now);
+                _nextSummaryAt = now + SummaryInterval;
+            }
+
             logger.Started(_options.People, stopIds.Count, _options.BaseUrl);
         }
         catch (Exception ex) when (ex is HttpRequestException or JsonException or ArgumentException

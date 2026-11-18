@@ -1,0 +1,15 @@
+@baseUrl = http://localhost:5090
+@hauptbahnhof = 60501720
+
+### Hot station: 100 virtual people crowd Hauptbahnhof. Watch the stop grain on the Orleans Dashboard.
+PUT {{baseUrl}}/scenario/pinned/{{hauptbahnhof}}
+Content-Type: application/json
+
+{ "people": 100 }
+
+### Check it: 100 pinned at Hauptbahnhof
+GET {{baseUrl}}/scenario
+Accept: application/json
+
+### Reset: everybody goes back to the random behaviour
+DELETE {{baseUrl}}/scenario/pinned

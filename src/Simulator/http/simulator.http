@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:5090
+# Linz Hauptbahnhof and Landgutstrasse, stops of src/Features/Stops/GleisGrain.Stops/Catalogue/stops.json
+@hauptbahnhof = 60501720
+@otherStop = 60501700
+
+### What is going on: people created, people joined, who is pinned where, the share of random picks for Hauptbahnhof.
+### The simulator resource must be started in the Aspire dashboard first.
+### PUT and DELETE answer 503 until the simulator has loaded the stop catalogue from the gateway.
+GET {{baseUrl}}/scenario
+Accept: application/json
+
+### Hot grain: exactly 50 virtual people watch Hauptbahnhof and read its board about every 15 seconds.
+### Free people are used first, missing ones are created (up to Simulator:MaxPeople) and join at once.
+### Pinned people are not moved by the random movement.
+PUT {{baseUrl}}/scenario/pinned/{{hauptbahnhof}}
+Content-Type: application/json
+
+{ "people": 50 }
+
+### 30 people at another stop. The pins add up, in total at most Simulator:MaxPeople.
+PUT {{baseUrl}}/scenario/pinned/{{otherStop}}
+Content-Type: application/json
+
+{ "people": 30 }
+
+### Fewer than before releases the surplus to the random behaviour, 0 removes the pin.
+PUT {{baseUrl}}/scenario/pinned/{{hauptbahnhof}}
+Content-Type: application/json
+
+{ "people": 0 }
+
+### Release everybody: the crowd moves randomly again.
+DELETE {{baseUrl}}/scenario/pinned
+
+### Unknown stop: 400 problem details
+PUT {{baseUrl}}/scenario/pinned/does-not-exist
+Content-Type: application/json
+
+{ "people": 5 }

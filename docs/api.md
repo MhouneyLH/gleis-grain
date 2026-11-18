@@ -60,6 +60,18 @@ Player:
 | POST | `/api/cluster/chaos/kill` | 202, then the replica that got the request exits abruptly. 404 `cluster.chaos.disabled` unless `Cluster:EnableChaos` is true. |
 | GET | `/api/cluster/events` | Server-sent events, see below. |
 
+## Simulator control API
+
+The audience simulator (`src/Simulator`, started from the Aspire dashboard) steers the crowd through its own small API on http://localhost:5090 (`Simulator:Port`). It is separate from the host API above. JSON is camelCase, errors are problem details (RFC 9457). Calls are in `src/Simulator/http/simulator.http`.
+
+| Method | Path | Body | Answer |
+|---|---|---|---|
+| GET | `/scenario` | | `{ "people": 80, "joined": 80, "pinned": [ { "stopId": "60501720", "people": 50 } ], "hotStopShare": 0.4 }` |
+| PUT | `/scenario/pinned/{stopId}` | `{ "people": 50 }` | 200 with the new scenario. 400 for an unknown stop, `people` outside 0..`Simulator:MaxPeople` (500) or more pinned people in total than `MaxPeople`. 503 while the stop catalogue is not loaded yet. |
+| DELETE | `/scenario/pinned` | | 200 with the new scenario: every pinned person is released. |
+
+`PUT` pins exactly that many virtual people to the stop: they watch it, read its board like a phone page and are not moved by the random movement. Free people are used first, missing ones are created (up to `MaxPeople`) and join at once. A lower number releases the surplus to the random behaviour, `0` removes the pin.
+
 ## Live events
 
 `GET /api/cluster/events` is `text/event-stream`. Every event has `event: <type>` and a JSON `data:`. The payload records are in `GleisGrain.Cluster.Contracts/LivePayloads.cs`.

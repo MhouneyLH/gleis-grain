@@ -64,3 +64,4 @@
 .reveal h4 { text-transform: none; letter-spacing: 0; }
 .reveal h3 + h4 { margin-top: 0; font-size: 0.8em; color: var(--accent); font-weight: 400; }
 .reveal section a { text-decoration: underline; text-underline-offset: 0.15em; }
+.reveal img.persistence { display: block; margin: 0 auto; max-height: 520px; width: auto; max-width: 100%; }

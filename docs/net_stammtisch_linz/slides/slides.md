@@ -186,6 +186,17 @@ Note:
 
 ---
 
+## Grain persistence
+
+<img class="persistence" src="/images/persistance_overview.png" alt="Overview of grain persistence">
+
+Note:
+- Speaker: Lucas | Raffi
+
+Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, Firestore, ADO.NET, Redis, Memory for tests). We use ADO.NET with Postgres, one database per module. State is read when the grain activates and written when the grain asks for it.
+
+---
+
 ## Grains, silos, cluster
 
 | Orleans | Office |

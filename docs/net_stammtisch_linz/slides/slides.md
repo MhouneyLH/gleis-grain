@@ -190,7 +190,7 @@ Note:
 
 <img class="persistence" src="/images/persistance_overview.png" alt="Overview of grain persistence">
 
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider">Orleans docs: grain persistence, choose a provider</a></div>
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider">https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider</a></div>
 
 Note:
 - Speaker: Lucas | Raffi

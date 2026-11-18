@@ -32,10 +32,10 @@ Write a green superscript number in the text and one `refs` block at the end of 
 ```html
 ## Grain persistence<sup class="ref">1</sup>
 
-<div class="refs"><sup class="ref">1</sup> <a href="https://example.com">Source title</a></div>
+<div class="refs"><sup class="ref">1</sup> <a href="https://example.com/page">https://example.com/page</a></div>
 ```
 
-For several sources put one `<div>` per source inside the `refs` block, numbered 1, 2, 3.
+The link text is the URL itself, no title. For several sources put one `<div>` per source inside the `refs` block, numbered 1, 2, 3.
 
 ## Export to PDF
 

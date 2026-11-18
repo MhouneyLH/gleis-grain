@@ -82,6 +82,20 @@ export interface ClusterStats {
   activeGrains: Record<string, number>
 }
 
+// ---- Simulator (control API, proxied under /sim) ---------------------------
+
+export interface PinnedGroup {
+  stopId: string
+  people: number
+}
+
+export interface Scenario {
+  people: number
+  joined: number
+  pinned: PinnedGroup[]
+  hotStopShare: number
+}
+
 // ---- Live events ----------------------------------------------------------
 
 export interface LiveEventMap {
@@ -134,4 +148,10 @@ export const api = {
   activations: () => request<Activation[]>('GET', '/api/cluster/activations'),
   stats: () => request<ClusterStats>('GET', '/api/cluster/stats'),
   killSilo: () => request<void>('POST', '/api/cluster/chaos/kill'),
+
+  /** The simulator control API, reached through the `/sim` dev proxy. */
+  scenario: (signal?: AbortSignal) => request<Scenario>('GET', '/sim/scenario', { signal }),
+  pinPeople: (stopId: string, people: number) =>
+    request<Scenario>('PUT', `/sim/scenario/pinned/${enc(stopId)}`, { body: { people } }),
+  releaseAll: () => request<Scenario>('DELETE', '/sim/scenario/pinned'),
 }

@@ -4,6 +4,9 @@ import { defineConfig } from 'vitest/config'
 // Aspire gives the dev server the address of the host as GLEIS_GRAIN_HTTP (npm drops variable names with a hyphen).
 const backend = process.env['GLEIS_GRAIN_HTTP'] ?? 'http://localhost:5080'
 
+// The audience simulator has its own control API; the frontend reaches it under /sim.
+const simulator = process.env['SIMULATOR_HTTP'] ?? 'http://localhost:5090'
+
 export default defineConfig({
   base: '/',
   plugins: [vue()],
@@ -14,6 +17,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/sim': {
+        target: simulator,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/sim/, ''),
+      },
       '/api': {
         target: backend,
         changeOrigin: true,

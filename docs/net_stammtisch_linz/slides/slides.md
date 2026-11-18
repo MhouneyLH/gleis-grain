@@ -1,15 +1,13 @@
 # Next Stop: Virtual Actors
 
-### Microsoft Orleans with Live Linz Data
+### Microsoft Orleans on the Linz tram network  
 
 .NET Stammtisch Linz
 
 Lucas Hünniger & Raffael Rehberger
 
-<!-- TODO IMAGE: title background, for example a Linz tram at the Hauptbahnhof (public/images/title.jpg) -->
-
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas
 
 ---
 
@@ -20,7 +18,7 @@ Note:
     <img src="/img/lucas.jpg" alt="Raffi">
     <h3>Lucas Hünniger</h3>
     <ul>
-      <li>Backend Engineer by day, Hobby Platform Engineer at night</li>
+      <li>Backend Engineer by day, Hobby Platform Engineer by night</li>
       <li>Orleans is part of daily work</li>
       <li>Cloud Native, OpenTelemetry, .NET</li>
     </ul>
@@ -57,7 +55,7 @@ Note:
 [5min] Questions
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas
 
 ---
 
@@ -518,14 +516,14 @@ Four sentences, then back to discussion.
 
 ## Thanks
 
-- Code: https://github.com/MhouneyLH/gleis-grain
-- Meetup: https://www.meetup.com/net-stammtisch-linz/events/317130107/
-- Slides: https://TODO-slides-url
-- Orleans docs: https://learn.microsoft.com/dotnet/orleans
-
-<div class="placeholder">TODO IMAGE: QR code to the repo (public/images/qr-repo.svg)</div>
+<div class="thanks">
+  <ul>
+    <li>Code + Slides: https://github.com/MhouneyLH/gleis-grain</li>
+    <li>Meetup: https://www.meetup.com/net-stammtisch-linz/events/317130107/</li>
+    <li>Orleans docs: https://dotnet.github.io/orleans/docs/</li>
+  </ul>
+  <img class="qr" src="/images/repo_qr_code.png" alt="QR code to the repository">
+</div>
 
 Note:
 - Speaker: Lucas | Raffi
-
-Replace the TODO links before the talk. Data from Linz AG (EFA server), map tiles from OpenStreetMap, credit both.

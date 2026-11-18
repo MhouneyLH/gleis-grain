@@ -52,3 +52,8 @@
   font-size: 16px; color: #8fa0c4; letter-spacing: 0.02em; pointer-events: none;
 }
 .reveal .slide-number { font-size: 18px; color: #8fa0c4; background: transparent; right: 130px; bottom: 10px; }
+
+/* Last slide: links on the left, the QR code of the repository on the right. */
+.reveal .thanks { display: grid; grid-template-columns: 1fr 300px; gap: 1.5em; align-items: center; }
+.reveal .thanks ul { font-size: 0.8em; margin-left: 0.8em; word-break: break-word; }
+.reveal .thanks img.qr { width: 300px; height: 300px; max-height: none; object-fit: contain; background: #fff; padding: 12px; border-radius: 10px; }

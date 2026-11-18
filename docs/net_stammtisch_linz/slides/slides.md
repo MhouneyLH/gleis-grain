@@ -290,7 +290,7 @@ This is in the repo on state, snapshots, ids and grain interfaces. Snippet short
 
 ## Versioning: rolling updates
 
-- `SchemaVersion` field exists, migration in `OnActivateAsync` is missing
+- `SchemaVersion` field exists, migration in `OnActivateAsync` is still missing
 - `[Version(2)]` on grain interfaces
 - Compatibility strategy and version selector
 - v1 and v2 silos coexist during a rolling update
@@ -301,7 +301,7 @@ This is in the repo on state, snapshots, ids and grain interfaces. Snippet short
 Note:
 - Speaker: Lucas
 
-PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no rolling update demo (optional demo step 6, extra field such as platform on `StopGrain`). Discussion question: how do you roll out a breaking state change safely?
+In the repo: `IStopGrain` has `[Version(1)]` in the v1 build and `[Version(2)]` in the v2 build (`-p:GrainVersion=2`), v2 only adds (a `GrainVersion` field on the board and one method). The cluster uses the BackwardCompatible strategy and the LatestVersion selector. Still PLANNED, NOT BUILT: the `SchemaVersion` migration in `OnActivateAsync` (the field exists, no migration code). Discussion question: how do you roll out a breaking state change safely?
 
 ---
 
@@ -317,7 +317,7 @@ PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no 
 Note:
 - Speaker: Lucas
 
-PLANNED, NOT BUILT: this encoding is the design for the versioning demo, another agent is building it. Confirm colours and shapes against the real frontend before the talk [CONFIRM].
+Built in the frontend (shape = silo slot, colour = grain version, size = watchers); checked on screenshots against a mock API, not yet against the real cluster. Look at it once with the real rollout before the talk.
 
 ---
 
@@ -329,23 +329,24 @@ PLANNED, NOT BUILT: this encoding is the design for the versioning demo, another
 - Dots turn blue, the app keeps answering
 
 <div class="placeholder">screenshot: Aspire dashboard with gleis-grain-v1 and gleis-grain-v2 side by side</div>
-<!-- TODO IMAGE: screenshot of the Aspire dashboard with gleis-grain-v1 and gleis-grain-v2 resources, name: aspire_v1_v2.png [CONFIRM resource names] -->
+<!-- TODO IMAGE: screenshot of the Aspire dashboard with the gleis-grain-v1-* and gleis-grain-v2-* rows, name: aspire_v1_v2.png -->
 
 Note:
 - Speaker: Lucas | Raffi
 
-PLANNED, NOT BUILT: the whole demo below is a plan, nothing of it exists in the repo yet. Resource names, buttons and colours are marked [CONFIRM] until the other agent has finished. Slot: 5 min.
+Built and run end to end in a headless AppHost (v1 and v2 silos in one cluster, grains moved to v2, calls kept working). Not yet tried: the clicks in the dashboard itself and the frontend against the gateway. Rehearse once. Slot: 5 min.
 
 Before the talk (not on stage):
-- AppHost runs 3 v1 replicas, resource `gleis-grain-v1` [CONFIRM], and a v2 resource `gleis-grain-v2` [CONFIRM] with 3 replicas that is NOT started.
+- Start with `dotnet run --project src/AppHost --launch-profile replay`. The Aspire dashboard shows 3 rows `gleis-grain-v1-*` (running) and 3 rows `gleis-grain-v2-*` (NotStarted). The app and the frontend use one stable address, the `gleis-grain` gateway on http://localhost:5080, during the whole rollout.
+- v2 is built automatically into `artifacts/v2` with every AppHost build (by hand: `dotnet build src/Host -p:GrainVersion=2 --artifacts-path artifacts/v2`).
 - Ask the audience to keep several stops open, so many grains are active (otherwise nothing to see).
 
 On stage:
 1. (0:30) Projector page: all dots red, three shapes. Say: "Everything runs version 1, three silos."
-2. (0:30) Aspire dashboard http://localhost:15000: click start on `gleis-grain-v2` [CONFIRM]. Say: "Now the new version comes up next to the old one, nobody is switched off."
-3. (0:45) Show the silo list: 6 silos, v1 and v2 side by side (Orleans Dashboard or the map legend [CONFIRM where]). Say: "One cluster, two versions."
+2. (0:30) Aspire dashboard http://localhost:15000: click start on each of the three `gleis-grain-v2-*` rows (one click per replica, so it comes up gradually). Say: "Now the new version comes up next to the old one, nobody is switched off."
+3. (0:45) Show the silo list: 6 active silos, v1 and v2 side by side (silo panel on the projector page, or `/api/cluster/silos`, or the Orleans Dashboard at /dashboard). Most grains already turn blue as soon as v2 callers arrive. Say: "One cluster, two versions."
 4. (1:15) Explain Orleans interface versioning: `[Version(2)]` on the interface, BackwardCompatible strategy, LatestVersion selector. Say: "New activations go to v2, v1 callers still work, the cluster does not care."
-5. (1:30) Click stop on the v1 replicas one by one [CONFIRM: stop button per replica]. Watch grains move to other silos and dots turn blue, while the app keeps answering (tap a stop on the phone to prove it). Say: "A rolling update without a maintenance window."
+5. (1:30) Click stop on the three `gleis-grain-v1-*` rows one by one. The v1 silos go Dead (an abrupt kill, not a graceful shutdown, so one or two requests may hang for a moment). Watch grains move to other silos and dots turn blue, while the app keeps answering (tap a stop on the phone to prove it). Say: "A rolling update without a maintenance window."
 6. (0:30) Take-away: "Interface versions plus a compatible state format make deployments boring. Think about it before the first deployment." Back to Take this home.
 
 If it fails:

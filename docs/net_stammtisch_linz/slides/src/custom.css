@@ -85,3 +85,15 @@
 .reveal .codepair .codetitle { margin: 0 0 0.3em; font-size: 0.7em; color: var(--accent); font-weight: 700; }
 .reveal .fragment.hl-box { opacity: 1; visibility: inherit; outline: 3px solid transparent; outline-offset: 3px; border-radius: 4px; transition: outline-color 0.3s, background 0.3s; }
 .reveal .fragment.hl-box.visible { outline-color: #ff4d6d; background: rgba(255, 77, 109, 0.18); }
+.reveal h2.swap { display: grid; justify-items: center; }
+.reveal h2.swap > span { grid-area: 1 / 1; }
+.reveal .codepair pre.cs { white-space: pre; }
+.reveal .codepair pre.cs .l { display: block; line-height: 1.7; }
+.reveal .memerow { display: flex; align-items: center; justify-content: center; gap: 1.2em; margin-top: 0.6em; }
+.reveal .memerow img { width: 360px; height: auto; max-height: none; margin: 0; border-radius: 6px; }
+.reveal .memerow p { font-size: 0.7em; max-width: 520px; margin: 0; text-align: left; }
+.reveal pre.cs.single { width: 100%; font-size: 0.42em; margin: 0.4em 0 0; background: #111b33; border-left: 5px solid var(--accent); border-radius: 6px; text-align: left; }
+.reveal pre.cs.single code { max-height: none; overflow: visible; padding: 0.6em 0.9em; background: transparent; }
+.reveal pre.cs .l { display: block; line-height: 1.5; }
+.reveal section ul:has(+ pre.cs.single) { font-size: 0.8em; }
+.reveal section ul:has(+ pre.cs.single) li { margin: 0.2em 0; }

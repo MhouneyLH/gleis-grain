@@ -41,6 +41,9 @@ const showRefs = (slide?: Element) => {
   refs.innerHTML = source ? source.innerHTML : "";
 };
 
+type Hljs = { highlight: (code: string, options: { language: string }) => { value: string } };
+const highlightPlugin = (Highlight as unknown as () => { hljs: Hljs })();
+
 const reveal = new Reveal({
   width: 1280,
   height: 720,
@@ -49,9 +52,16 @@ const reveal = new Reveal({
   transition: "fade",
   controls: true,
   progress: true,
-  plugins: [Markdown, Notes, Highlight],
+  plugins: [Markdown, Notes, highlightPlugin as unknown as typeof Markdown],
 });
 
 reveal.on("ready", (event) => showRefs((event as unknown as { currentSlide: Element }).currentSlide));
 reveal.on("slidechanged", (event) => showRefs((event as unknown as { currentSlide: Element }).currentSlide));
+// Line by line highlighting, so a line can carry a fragment (a rectangle on click) and still get syntax colours.
+const highlightLines = () => {
+  document.querySelectorAll("pre.cs .l").forEach((line) => {
+    line.innerHTML = highlightPlugin.hljs.highlight(line.textContent ?? "", { language: "csharp" }).value;
+  });
+};
+reveal.on("ready", highlightLines);
 reveal.initialize();

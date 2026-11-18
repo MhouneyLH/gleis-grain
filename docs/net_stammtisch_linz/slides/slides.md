@@ -265,35 +265,81 @@ Orleans runs the code of a grain in turns: one request at a time, a second reque
 
 ---
 
-## Do you see the problem?
+<h2 class="swap"><span class="fragment fade-out" data-fragment-index="3">Concurrency: Problem?</span><span class="fragment" data-fragment-index="3">Concurrency: Deadlock</span></h2>
 
 <div class="codepair">
 <div>
 <p class="codetitle">StopGrain</p>
-<pre><code class="no-highlight" data-noescape>public async Task&lt;Board&gt; GetBoardAsync()
-{
-    var trip = GrainFactory.GetGrain&lt;ITripGrain&gt;(tripId);
-    <span class="fragment custom hl-box" data-fragment-index="1">var delay = await trip.GetDelayAsync();</span>
-    return Build(delay);
-}</code></pre>
+<pre class="cs"><code class="no-highlight" data-noescape><span class="l">public async Task&lt;Board&gt; GetBoardAsync()</span><span class="l">{</span><span class="l">    var trip = GrainFactory.GetGrain&lt;ITripGrain&gt;(tripId);</span><span class="l fragment custom hl-box" data-fragment-index="1">    var delay = await trip.GetDelayAsync();</span><span class="l">    return Build(delay);</span><span class="l">}</span></code></pre>
 </div>
 <div>
 <p class="codetitle">TripGrain</p>
-<pre><code class="no-highlight" data-noescape>public async Task&lt;int&gt; GetDelayAsync()
-{
-    var stop = GrainFactory.GetGrain&lt;IStopGrain&gt;(stopId);
-    <span class="fragment custom hl-box" data-fragment-index="2">var board = await stop.GetBoardAsync();</span>
-    return Estimate(board);
-}</code></pre>
+<pre class="cs"><code class="no-highlight" data-noescape><span class="l">public async Task&lt;int&gt; GetDelayAsync()</span><span class="l">{</span><span class="l">    var stop = GrainFactory.GetGrain&lt;IStopGrain&gt;(stopId);</span><span class="l fragment custom hl-box" data-fragment-index="2">    var board = await stop.GetBoardAsync();</span><span class="l">    return Estimate(board);</span><span class="l">}</span></code></pre>
 </div>
 </div>
-
-<p class="fragment" data-fragment-index="3">Stop waits for Trip, Trip waits for Stop: neither turn ever ends. Deadlock, until the call times out.</p>
+<div class="memerow fragment" data-fragment-index="3">
+<img src="/images/spiderman_deadlock.webp" alt="Two Spider-Men pointing at each other">
+<p>Stop waits for Trip, Trip waits for Stop -> Deadlock, until the call times out</p>
+</div>
 
 Note:
 - Speaker: Lucas | Raffi
 
 Ask the room first: "Who sees the problem?" Give them a moment, then click. Click 1 marks the call from the stop to the trip, click 2 the call back from the trip to the stop, click 3 shows the result. Both grains are turn-based: while StopGrain awaits the trip, it does not accept other requests, so TripGrain's call back into StopGrain waits for a turn that never comes. Orleans reports a timeout after the response timeout (30 s by default). Next slides: the fixes (reentrancy, interleaving, a different call flow). This is an illustration: in the repo the stop reports to the trip with a one-way call (`ReportAsync` is `[OneWay]`), so there is no cycle.
+
+---
+
+## Fix 1: reentrancy
+
+- `[Reentrant]` on the grain class
+- While a call awaits, the grain accepts other requests
+- Still one thread at a time: calls interleave only at `await`
+- Price: state can change between two awaits
+
+<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">[Reentrant]</span><span class="l">public sealed class StopGrain : Grain, IStopGrain</span><span class="l">{</span><span class="l">    public async Task&lt;Board&gt; GetBoardAsync()</span><span class="l">    {</span><span class="l">        var delay = await trip.GetDelayAsync();</span><span class="l">        // while we wait here, other requests may run</span><span class="l">        return Build(delay);</span><span class="l">    }</span><span class="l">}</span></code></pre>
+
+<!-- TODO IMAGE: diagram, Stop awaits Trip, the call back from Trip is accepted while Stop waits -->
+
+Note:
+- Speaker: Lucas | Raffi
+
+Fix for the deadlock: the stop awaits the trip, the trip calls back into the stop, and because the grain is reentrant it takes the call while it waits. There is still never more than one thread inside the grain, but two requests can be half done at the same time, so do not assume the state is unchanged after an await. Use it for the grain class, or prefer AlwaysInterleave on a single method.
+
+---
+
+## Fix 2: interleave one method
+
+- `[AlwaysInterleave]` on an interface method
+- Only this method may run while another request is waiting
+- The rest of the grain stays strictly turn-based
+- Good for reads that do not touch changing state
+
+<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">public interface IStopGrain : IGrainWithStringKey</span><span class="l">{</span><span class="l">    [AlwaysInterleave]</span><span class="l">    Task&lt;Board&gt; GetBoardAsync();</span><span class="l"> </span><span class="l">    Task&lt;int&gt; WatchAsync(string watcher);</span><span class="l">}</span></code></pre>
+
+<!-- TODO IMAGE: diagram, only GetBoardAsync passes the queue -->
+
+Note:
+- Speaker: Lucas | Raffi
+
+Smaller hammer than [Reentrant]: only the marked method interleaves with other requests, everything else stays turn-based. Here the call back into GetBoardAsync is allowed while the stop waits for the trip. Make sure the method is safe to run in the middle of another one.
+
+---
+
+## Fix 3: change the call flow
+
+- Do not call back: pass the data instead of asking for it
+- `[OneWay]`: the caller does not wait for the answer
+- No wait, no cycle, no deadlock
+- This is what gleis-grain does: Stop reports to Trip
+
+<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">// Stops reports what it sees, it does not wait for an answer</span><span class="l">GrainFactory.GetGrain&lt;ITripGrain&gt;(departure.TripId.Value)</span><span class="l">    .ReportAsync(report)</span><span class="l">    .Ignore();</span><span class="l"> </span><span class="l">public interface ITripGrain : IGrainWithStringKey</span><span class="l">{</span><span class="l">    [OneWay]</span><span class="l">    Task ReportAsync(TripReport report);</span><span class="l">}</span></code></pre>
+
+<!-- TODO IMAGE: diagram, Stop sends the report one-way to Trip, nothing comes back -->
+
+Note:
+- Speaker: Lucas | Raffi
+
+The best fix is a design without a cycle. In the repo, a stop reports every departure to its trip with a one-way call and does not wait (`ReportAsync` is `[OneWay]`, the call is `.Ignore()`d), and the trip never calls the stop. A lost report is fine, the next refresh brings another. Rule of thumb: events and reports go one way, questions go to one place.
 
 ---
 

@@ -25,6 +25,18 @@ Keys: arrows to move, `S` opens the speaker view with notes and timer, `F` fulls
 
 Zip this folder without `node_modules` and `dist` and drag it into bolt.new, or push it to GitHub and open it via `https://stackblitz.com/github/<user>/<repo>/tree/<branch>/docs/net_stammtisch_linz/slides`. Bolt and StackBlitz run `npm install && npm run dev` for you.
 
+## References on a slide
+
+Write a green superscript number in the text and one `refs` block at the end of the slide. The block is shown at the bottom of the slide, above the footer:
+
+```html
+## Grain persistence<sup class="ref">1</sup>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://example.com">Source title</a></div>
+```
+
+For several sources put one `<div>` per source inside the `refs` block, numbered 1, 2, 3.
+
 ## Export to PDF
 
 Open `http://localhost:5173/?print-pdf` (also works on the `preview` server), then print from Chrome: destination "Save as PDF", layout landscape, margins none, enable "Background graphics". Add `&showNotes=true` to include the speaker notes.

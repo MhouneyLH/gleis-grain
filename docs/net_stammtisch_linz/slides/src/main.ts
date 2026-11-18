@@ -30,6 +30,17 @@ footer.className = "deck-footer";
 footer.textContent = [FOOTER.event, FOOTER.date, FOOTER.speakers].join("  ·  ");
 document.querySelector(".reveal")?.appendChild(footer);
 
+// References: a slide writes <sup class="ref">1</sup> in its text and one <div class="refs"> with the sources.
+// The div is hidden inside the slide and shown here, at the bottom above the footer, so it stays in the same place on every slide.
+const refs = document.createElement("div");
+refs.className = "deck-refs";
+document.querySelector(".reveal")?.appendChild(refs);
+
+const showRefs = (slide?: Element) => {
+  const source = slide?.querySelector(".refs");
+  refs.innerHTML = source ? source.innerHTML : "";
+};
+
 const reveal = new Reveal({
   width: 1280,
   height: 720,
@@ -41,4 +52,6 @@ const reveal = new Reveal({
   plugins: [Markdown, Notes, Highlight],
 });
 
+reveal.on("ready", (event) => showRefs((event as unknown as { currentSlide: Element }).currentSlide));
+reveal.on("slidechanged", (event) => showRefs((event as unknown as { currentSlide: Element }).currentSlide));
 reveal.initialize();

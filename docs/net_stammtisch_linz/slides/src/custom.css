@@ -65,3 +65,11 @@
 .reveal h3 + h4 { margin-top: 0; font-size: 0.8em; color: var(--accent); font-weight: 400; }
 .reveal section a { text-decoration: underline; text-underline-offset: 0.15em; }
 .reveal img.persistence { display: block; margin: 0 auto; max-height: 520px; width: auto; max-width: 100%; }
+
+/* References: green number in the text, sources at the bottom of the slide above the footer. */
+.reveal sup.ref { color: var(--accent); font-weight: 700; font-size: 0.55em; margin-left: 0.1em; }
+.reveal section .refs { display: none; }
+.reveal .deck-refs { position: absolute; left: 24px; right: 24px; bottom: 38px; z-index: 30; font-size: 17px; color: #8fa0c4; }
+.reveal .deck-refs sup.ref { font-size: 0.8em; margin-right: 0.35em; }
+.reveal .deck-refs a { color: var(--r-link-color); }
+.reveal .deck-refs div + div { margin-top: 0.2em; }

@@ -65,4 +65,15 @@ Same in both builds: silo name `v<version>-<random>` and the BackwardCompatible 
 
 ## After the talk
 
-`aspire stop` or Ctrl+C in the AppHost terminal.
+1. `aspire stop` or Ctrl+C in the AppHost terminal. `docker ps` should show no `gleis-grain-*` containers.
+2. On a dedicated demo machine, `docker stop $(docker ps -aq)` stops every container and frees the memory. On a shared machine, stop only the containers you started — other projects may be running.
+3. To start with an empty database next time, remove the Postgres volume. A **stopped** container still holds it, so remove that container first (its name changes at every AppHost start):
+
+   ```bash
+   docker ps -a --filter volume=gleis-grain-postgres   # find the stopped container id
+   docker rm <that container id>
+   docker volume rm gleis-grain-postgres
+   ```
+
+   This deletes demo data only; the next start recreates the databases and the Orleans schema. The volume keeps the password of its first start, so do this too if Postgres reports "password authentication failed".
+4. `dotnet build-server shutdown` releases idle MSBuild and Roslyn nodes left by the demo.

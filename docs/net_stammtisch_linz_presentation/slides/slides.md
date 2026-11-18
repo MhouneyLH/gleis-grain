@@ -90,20 +90,6 @@ Raise your hands if you stood in front of such a station display in Linz.
 
 ---
 
-## Our Tech Stack
-
-| What               | Tech                                       |
-|:------------------:|:------------------------------------------:|
-| Langauge & Runtime | C# / .NET 10                               |
-| Actor Framework    | Microsoft Orleans                          |
-| App Orchestration  | .NET Aspire                                |
-| Database           | PostgreSQL                                 |
-| API                | ASP.NET Core Minimal API with Scalar       |
-| Frontend           | Vue 3, Vite                                |
-| Observability      | OpenTelemetrry                             |
-
----
-
 ## What are actors?
 
 ![Actor Communication](/images/actors.png)
@@ -243,6 +229,12 @@ Note:
 
 ---
 
+## Clustering Table
+
+![image](/images/tbale.png)
+
+---
+
 ## Kubernetes<sup class="ref">1</sup>
 
 - `UseKubernetesHosting()` from `Microsoft.Orleans.Hosting.Kubernetes`
@@ -293,7 +285,11 @@ protected IGrainTimer RegisterGrainTimer<TState>(
 ## Timer vs. Reminders - The Reminder<sup class="ref">2</sup>
 
 ```csharp
-public Task<IGrainReminder> RegisterOrUpdateReminder(this Grain grain, string reminderName, TimeSpan dueTime, TimeSpan period);
+public Task<IGrainReminder> RegisterOrUpdateReminder(
+    this Grain grain, 
+    string reminderName, 
+    TimeSpan dueTime, 
+    TimeSpan period);
 ```
 
 - reminders are persistent across activations
@@ -335,22 +331,6 @@ Orleans runs the code of a grain in turns: one request at a time, a second reque
 
 ---
 
-## Reading vs changing state
-
-| Reading | Changing state |
-|---|---|
-| `[ReadOnly]` | turn-based execution |
-| `[StatelessWorker]` | `[Reentrant]` |
-| caches | `[AlwaysInterleave]` |
-| | `[OneWay]` |
-
-Note:
-- Speaker: Lucas | Raffi
-
-Two kinds of work. Changing state needs the grain to be careful: turn-based execution protects the state, and the tools on the right (Reentrant, AlwaysInterleave, OneWay) are about calls that block each other. Reading is different: many readers should not queue behind a writer, that is what ReadOnly, StatelessWorker and caches are for. Order of the next slides: Part A changing state (deadlock and the three fixes), Part B reading (ReadOnly, StatelessWorker), Part C hot spots (Hauptbahnhof, SourceGrain).
-
----
-
 <h2 class="swap"><span class="fragment fade-out" data-fragment-index="3">Concurrency: Problem?</span><span class="fragment" data-fragment-index="3">Concurrency: Deadlock</span></h2>
 
 <div class="codepair">
@@ -387,6 +367,22 @@ Note:
 - Speaker: Lucas | Raffi
 
 A awaits B, B calls back into A, but A is still busy waiting for B, so the call back sits in the queue. Nobody can proceed until the call times out (default response timeout 30 s). Same picture as the code on the last slide, now as a sequence.
+
+---
+
+## Reading vs changing state
+
+| Reading | Changing state |
+|---|---|
+| `[ReadOnly]` | turn-based execution |
+| `[StatelessWorker]` | `[Reentrant]` |
+| caches | `[AlwaysInterleave]` |
+| | `[OneWay]` |
+
+Note:
+- Speaker: Lucas | Raffi
+
+Two kinds of work. Changing state needs the grain to be careful: turn-based execution protects the state, and the tools on the right (Reentrant, AlwaysInterleave, OneWay) are about calls that block each other. Reading is different: many readers should not queue behind a writer, that is what ReadOnly, StatelessWorker and caches are for. Order of the next slides: Part A changing state (deadlock and the three fixes), Part B reading (ReadOnly, StatelessWorker), Part C hot spots (Hauptbahnhof, SourceGrain).
 
 ---
 
@@ -535,22 +531,6 @@ Methods marked `[ReadOnly]` may interleave with each other, so many reads run to
 
 ---
 
-## StatelessWorker: many copies<sup class="ref">1</sup>
-
-- `[StatelessWorker]` on the grain class
-- Orleans creates several copies per silo, calls are served locally
-- No state of its own that has to stay in sync
-- Good for caches and lookups, copies ask the real grain when needed
-
-<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">[StatelessWorker]</span><span class="l">public class StopBoardCacheGrain : Grain, IStopBoardCacheGrain</span><span class="l">{</span><span class="l">    // one id, but many activations per silo</span><span class="l">    public Task&lt;StopBoardSnapshot?&gt; GetBoardAsync() { ... }</span><span class="l">}</span></code></pre>
-
-Note:
-- Speaker: Lucas | Raffi
-
-`[StatelessWorker]` is the one case where one id has several activations (up to the CPU core count per silo by default, `[StatelessWorker(n)]` limits it). A copy is never the source of truth: it may only hold data it can rebuild. The real `StopBoardCacheGrain` follows in part C.
-
----
-
 ## StatelessWorker: many copies
 
 <img class="diagram" src="/images/conc_07_stateless_worker.png" alt="Diagram: a StatelessWorker has several local copies per silo, before and after">
@@ -661,25 +641,6 @@ This is in the repo on state, snapshots, ids and grain interfaces. Snippet short
 
 ---
 
-## Versioning: rolling updates
-
-- `SchemaVersion` field exists, migration in `OnActivateAsync` is still missing
-- `[Version(2)]` on grain interfaces<sup class="ref">1</sup>
-- Compatibility strategy and version selector
-- v1 and v2 silos coexist during a rolling update<sup class="ref">2</sup>
-
-<div class="refs">
-  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-versioning/grain-versioning/">https://dotnet.github.io/orleans/docs/grains/grain-versioning/grain-versioning/</a></div>
-  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-versioning/deploying-new-versions-of-grains/">https://dotnet.github.io/orleans/docs/grains/grain-versioning/deploying-new-versions-of-grains/</a></div>
-</div>
-
-Note:
-- Speaker: Lucas
-
-In the repo: `IStopGrain` has `[Version(1)]` in the v1 build and `[Version(2)]` in the v2 build (`-p:GrainVersion=2`), v2 only adds (a `GrainVersion` field on the board and one method). The cluster uses the BackwardCompatible strategy and the LatestVersion selector. Still PLANNED, NOT BUILT: the `SchemaVersion` migration in `OnActivateAsync` (the field exists, no migration code). Discussion question: how do you roll out a breaking state change safely?
-
----
-
 ## Versioning: rolling updates<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/ver_10_rolling_update.png" alt="Three stages: only v1 silos, v2 silos join the same cluster, v1 silos stopped; red is v1, blue is v2, the shape is the silo">
@@ -692,21 +653,6 @@ Note:
 - Speaker: Lucas | Raffi
 
 Read it top to bottom. First only v1 silos run, then three v2 silos join the same cluster, and during that time both versions are in one cluster (BackwardCompatible strategy, LatestVersion selector). Then we stop the v1 silos. Grains that lived on a stopped silo are activated again on a v2 silo at their next call.
-
----
-
-## Versioning: compatibility<sup class="ref">1</sup>
-
-<img class="diagram" src="/images/ver_11_version_compatibility.png" alt="A v1 caller can call a v2 grain (BackwardCompatible), a new activation goes to a v2 silo (LatestVersion), v2 only adds methods and fields with new ids">
-
-<p class="small">v2 only adds, so v1 callers keep working while the rollout runs</p>
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-versioning/version-selector-strategy/">https://dotnet.github.io/orleans/docs/grains/grain-versioning/version-selector-strategy/</a></div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-BackwardCompatible means a v1 caller may call a v2 grain, which is why the rollout can run under load. LatestVersion means a new activation is placed on a v2 silo. This only holds if v2 just adds: a new method, a new field with a new `[Id]`. Never reuse or retype an id.
 
 ---
 

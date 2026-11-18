@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 declare module 'vue-router' {
   interface RouteMeta {
-    /** Pages without the top navigation (the projector). */
+    /** Pages without the top navigation (the overview). */
     bare?: boolean
     title?: string
   }
@@ -11,13 +11,15 @@ declare module 'vue-router' {
 export const router = createRouter({
   history: createWebHistory('/'),
   routes: [
-    { path: '/', name: 'audience', component: () => import('./views/AudienceView.vue'), meta: { title: 'Play' } },
+    { path: '/', name: 'map', component: () => import('./views/MapView.vue'), meta: { title: 'Map' } },
     {
-      path: '/projector',
-      name: 'projector',
-      component: () => import('./views/ProjectorView.vue'),
-      meta: { bare: true, title: 'Projector' },
+      path: '/overview',
+      name: 'overview',
+      component: () => import('./views/OverviewView.vue'),
+      meta: { bare: true, title: 'Overview' },
     },
+    // Old bookmarks and slides.
+    { path: '/projector', redirect: '/overview' },
     {
       path: '/stop/:id',
       name: 'stop',

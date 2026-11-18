@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { api, ApiError, type Alert, type StopBoard } from '../api'
 import AlertList from '../components/AlertList.vue'
 import DepartureTable from '../components/DepartureTable.vue'
 import { usePolling } from '../composables/usePolling'
+import { useStops } from '../composables/useStops'
 import { formatTime } from '../live/format'
 
 const props = defineProps<{ id: string }>()
+
+const router = useRouter()
+const { stops } = useStops()
+const sortedStops = computed(() => [...stops.value].sort((a, b) => a.name.localeCompare(b.name)))
 
 const board = ref<StopBoard | null>(null)
 const alerts = ref<Alert[]>([])
@@ -46,6 +52,9 @@ watch(
 <template>
   <main class="page board-page">
     <header>
+      <select v-if="stops.length > 0" class="field picker" :value="id" aria-label="Choose a stop" @change="router.push(`/stop/${($event.target as HTMLSelectElement).value}`)">
+        <option v-for="stop in sortedStops" :key="stop.id" :value="stop.id">{{ stop.name }}</option>
+      </select>
       <h1 class="page-title">{{ board?.name ?? (notFound ? 'Unknown stop' : 'Departures') }}</h1>
       <p v-if="board" class="muted num">
         {{ board.watchers }} {{ board.watchers === 1 ? 'watcher' : 'watchers' }} · updated {{ formatTime(board.refreshedAt) }} · refreshes every 15 s
@@ -67,6 +76,11 @@ watch(
 <style scoped>
 .board-page {
   max-width: 1100px;
+}
+
+.picker {
+  max-width: 360px;
+  margin-bottom: 10px;
 }
 
 .section {

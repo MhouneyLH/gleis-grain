@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import ToastHost from './components/ToastHost.vue'
+import { HOT_STOP } from './live/simulation'
 
 const route = useRoute()
 </script>
@@ -19,9 +20,11 @@ const route = useRoute()
       <span>gleis<b>grain</b></span>
     </RouterLink>
     <nav>
-      <RouterLink to="/" exact-active-class="on">Play</RouterLink>
+      <RouterLink to="/" exact-active-class="on">Map</RouterLink>
+      <RouterLink to="/overview" active-class="on">Overview</RouterLink>
+      <!-- The board needs a stop; start with the big station, the page has a stop picker. -->
+      <RouterLink :to="`/stop/${HOT_STOP.id}`" :class="{ on: route.path.startsWith('/stop/') }">Board</RouterLink>
       <RouterLink to="/alerts" active-class="on">Notices</RouterLink>
-      <RouterLink to="/projector" active-class="on">Projector</RouterLink>
     </nav>
   </header>
   <RouterView />

@@ -10,7 +10,12 @@ public sealed record StopBoardSnapshot(
     [property: Id(3)] double Longitude,
     [property: Id(4)] int Watchers,
     [property: Id(5)] DateTimeOffset? RefreshedAt,
-    [property: Id(6)] IReadOnlyList<BoardDeparture> Departures);
+    [property: Id(6)] IReadOnlyList<BoardDeparture> Departures)
+{
+    /// <summary>Grain interface version of the build that produced the snapshot, 1 or 2. Added with Id 7, older readers skip it.</summary>
+    [Id(7)]
+    public int GrainVersion { get; init; } = StopsGrainVersion.Current;
+}
 
 [GenerateSerializer, Immutable, Alias("GleisGrain.Stops.Contracts.BoardDeparture")]
 public sealed record BoardDeparture(

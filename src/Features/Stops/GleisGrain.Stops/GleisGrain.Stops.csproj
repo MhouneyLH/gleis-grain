@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Same switch as in the Contracts project: dotnet build -p:GrainVersion=2 -->
+  <PropertyGroup>
+    <DefineConstants Condition="'$(GrainVersion)' == '2'">$(DefineConstants);GRAIN_V2</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.Runtime" />
     <PackageReference Include="Microsoft.Orleans.Sdk" />

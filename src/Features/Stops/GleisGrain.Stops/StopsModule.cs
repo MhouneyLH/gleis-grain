@@ -1,5 +1,6 @@
 using GleisGrain.Common.Options;
 using GleisGrain.Stops.Catalogue;
+using GleisGrain.Stops.Contracts;
 using GleisGrain.Stops.Endpoints;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -16,6 +17,9 @@ public static class StopsModule
 
     /// <summary>Name of the meter the module publishes metrics on.</summary>
     public const string MeterName = StopsMetrics.MeterName;
+
+    /// <summary>The grain interface version of this build (1 by default, 2 with <c>-p:GrainVersion=2</c>).</summary>
+    public const int GrainVersion = StopsGrainVersion.Current;
 
     public static TBuilder AddStopsModule<TBuilder>(this TBuilder builder)
         where TBuilder : IHostApplicationBuilder

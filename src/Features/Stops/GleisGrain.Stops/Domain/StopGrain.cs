@@ -73,6 +73,11 @@ internal sealed class StopGrain(
         return _stop.ToSnapshot();
     }
 
+#if GRAIN_V2
+    // Part of the IStopGrain contract from interface version 2 on.
+    public Task<int> GetGrainVersionAsync() => Task.FromResult(StopsGrainVersion.Current);
+#endif
+
     public async Task<int> WatchAsync(string watcher)
     {
         if (_stop is null)

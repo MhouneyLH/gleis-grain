@@ -260,14 +260,20 @@ protected IGrainTimer RegisterGrainTimer<TState>(
 ---
 
 ## Concurrency and hot spots
+
+- turn-based execution
 - interleave & reentrancy
+- readonly
 - stateless worker
-- readonly 
 - hot grain: Hauptbahnhof -> bad architectural decision or batching
     - sourcegrain -> grain chains block each other, one global grain; show at rate limiter
 
+<p class="small">Two kinds of work: changing state (calls block each other) and reading (reads should not wait behind writes)</p>
+
 Note:
 - Speaker: Lucas
+
+Structure of this block: first how a grain works (turn-based). Part A, changing state: what can go wrong when grains call each other (deadlock) and the three fixes (reentrancy, interleave one method, change the call flow). Part B, reading: reads should not wait in the queue behind writes, so `[ReadOnly]` and then `[StatelessWorker]`. Part C, hot spots: the hot grain Hauptbahnhof and the SourceGrain, each as before and after, then the cheat sheet. Two kinds of work: reading vs changing state.
 
 ---
 
@@ -277,12 +283,28 @@ Note:
 
 <p class="small">One request at a time per grain: no locks, no data races inside a grain</p>
 
-<img class="pengu" src="/images/sad_pengu.gif" alt="Sad penguin waiting in the queue">
+<img class="pengu fragment" src="/images/sad_pengu.gif" alt="Sad penguin waiting in the queue">
 
 Note:
 - Speaker: Lucas | Raffi
 
 Orleans runs the code of a grain in turns: one request at a time, a second request waits in the queue until the first turn is finished. That is why a grain needs no locks. The price: a slow call blocks everybody who waits behind it (next slides: reentrancy, ReadOnly, StatelessWorker). Ask: what happens while the grain awaits another call?
+
+---
+
+## Reading vs changing state
+
+| Reading | Changing state |
+|---|---|
+| `[ReadOnly]` | turn-based execution |
+| `[StatelessWorker]` | `[Reentrant]` |
+| caches | `[AlwaysInterleave]` |
+| | `[OneWay]` |
+
+Note:
+- Speaker: Lucas | Raffi
+
+Two kinds of work. Changing state needs the grain to be careful: turn-based execution protects the state, and the tools on the right (Reentrant, AlwaysInterleave, OneWay) are about calls that block each other. Reading is different: many readers should not queue behind a writer, that is what ReadOnly, StatelessWorker and caches are for. Order of the next slides: Part A changing state (deadlock and the three fixes), Part B reading (ReadOnly, StatelessWorker), Part C hot spots (Hauptbahnhof, SourceGrain).
 
 ---
 
@@ -305,6 +327,8 @@ Orleans runs the code of a grain in turns: one request at a time, a second reque
 
 Note:
 - Speaker: Lucas | Raffi
+
+Part A, changing state: what can go wrong when grains call each other.
 
 Ask the room first: "Who sees the problem?" Give them a moment, then click. Click 1 marks the call from the stop to the trip, click 2 the call back from the trip to the stop, click 3 shows the result. Both grains are turn-based: while StopGrain awaits the trip, it does not accept other requests, so TripGrain's call back into StopGrain waits for a turn that never comes. Orleans reports a timeout after the response timeout (30 s by default). Next slides: the fixes (reentrancy, interleaving, a different call flow). This is an illustration: in the repo the stop reports to the trip with a one-way call (`ReportAsync` is `[OneWay]`), so there is no cycle.
 
@@ -425,15 +449,19 @@ Prefer a design without a cycle. Interleave only when you have to, and then as n
 
 ---
 
-## Cheat sheet: slow grain?
+## ReadOnly: reads interleave
 
-<img class="diagram wide" src="/images/conc_05_cheatsheet.png" alt="Flow chart: grain slow? read-heavy, cycle between grains, one key too hot, must be global, otherwise profile the turn">
+- `[ReadOnly]` on an interface method that only reads
+- Reads may run together, one does not wait for the other
+- A normal (write) method still waits for them, and they for it
+- Price: the method must not change the grain's state
 
+<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">public interface IStopGrain : IGrainWithStringKey</span><span class="l">{</span><span class="l">    [ReadOnly]</span><span class="l">    Task&lt;StopBoardSnapshot?&gt; GetBoardAsync();</span><span class="l"> </span><span class="l">    Task&lt;int&gt; WatchAsync(string watcher);</span><span class="l">}</span></code></pre>
 
 Note:
 - Speaker: Lucas | Raffi
 
-Grain slow? Follow the arrows: read-heavy means StatelessWorker or ReadOnly, a cycle means a reentrancy fix or OneWay, a too hot key means split or batch, and if it must be global keep one grain and add a cache. Otherwise profile the turn and make it shorter.
+Part B, reading: reads should not wait in the queue behind writes. `[ReadOnly]` marks a method that does not change state, so many of them run at the same time (they interleave only with each other). Sketch of the idea, not in the repo as it is: the real `GetBoardAsync` can refresh a stale board, which changes state, so it could not be `[ReadOnly]` without splitting the refresh out.
 
 ---
 
@@ -452,6 +480,22 @@ Methods marked `[ReadOnly]` may interleave with each other, so many reads run to
 
 ## StatelessWorker: many copies
 
+- `[StatelessWorker]` on the grain class
+- Orleans creates several copies per silo, calls are served locally
+- No state of its own that has to stay in sync
+- Good for caches and lookups, copies ask the real grain when needed
+
+<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">[StatelessWorker]</span><span class="l">public class StopBoardCacheGrain : Grain, IStopBoardCacheGrain</span><span class="l">{</span><span class="l">    // one id, but many activations per silo</span><span class="l">    public Task&lt;StopBoardSnapshot?&gt; GetBoardAsync() { ... }</span><span class="l">}</span></code></pre>
+
+Note:
+- Speaker: Lucas | Raffi
+
+`[StatelessWorker]` is the one case where one id has several activations (up to the CPU core count per silo by default, `[StatelessWorker(n)]` limits it). A copy is never the source of truth: it may only hold data it can rebuild. The real `StopBoardCacheGrain` follows in part C.
+
+---
+
+## StatelessWorker: many copies
+
 <img class="diagram" src="/images/conc_07_stateless_worker.png" alt="Diagram: a StatelessWorker has several local copies per silo, before and after">
 
 <p class="small">Several local copies per silo, served by the local silo</p>
@@ -465,27 +509,71 @@ A `[StatelessWorker]` is not one single activation: Orleans creates several loca
 
 ## Hot grain: Hauptbahnhof
 
-<img class="diagram" src="/images/conc_08_hot_grain.png" alt="Diagram: many simulated people pick the same stop, one StopGrain takes every call while other silos idle">
+<img class="diagram" src="/images/conc_12_hot_grain_before_after.png" alt="Before: 100 phones all call one StopGrain and wait in its mailbox. After: stateless board cache copies per silo serve the phones and ask the StopGrain once every 5 seconds">
 
-<p class="small">One stop, one activation, one mailbox: everybody waits there</p>
+<p class="small">Before: one mailbox for everybody. After: cache copies per silo, the stop is asked every few seconds</p>
 
 Note:
 - Speaker: Lucas | Raffi
 
-About 100 simulated people pick the same stop, so one StopGrain on one silo takes every call while the other silos idle. First ask: is the key a bad architectural decision, or can we batch and cache?
+Part C, hot spots. About 100 simulated people pick the same stop, so one StopGrain on one silo takes every call while the other silos idle (one stop, one activation, one mailbox). First ask: is the key a bad architectural decision, or can we cache and batch? Right side: a `[StatelessWorker]` board cache, several copies per silo, each keeps the last snapshot for a few seconds.
+
+---
+
+## Hot grain: Hauptbahnhof
+
+- Problem: one grain takes the reads of about 100 watchers
+- Fix: stateless copies per silo + a short TTL cache
+- Price: boards are a few seconds old
+- Alternatives: split the key, batch the writes
+
+<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">[StatelessWorker]</span><span class="l">public class StopBoardCacheGrain : Grain, IStopBoardCacheGrain</span><span class="l">{</span><span class="l">    public async Task&lt;StopBoardSnapshot?&gt; GetBoardAsync()</span><span class="l">    {</span><span class="l">        if (_snapshot is not null &amp;&amp; now - _cachedAt &lt; options.Value.BoardCacheTtl)</span><span class="l">            return _snapshot;                        // served by this copy</span><span class="l">        var stop = GrainFactory.GetGrain&lt;IStopGrain&gt;(this.GetPrimaryKeyString());</span><span class="l">        _snapshot = await stop.GetBoardAsync();      // only when expired</span><span class="l">        _cachedAt = now;</span><span class="l">        return _snapshot;</span><span class="l">    }</span><span class="l">}</span><span class="l">// switch: "Stops": { "UseBoardCache": true, "BoardCacheTtl": "00:00:05" }</span></code></pre>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Simplified from `StopBoardCacheGrain` (src/Features/Stops). Key = stop id, TTL 5 s by default. Switch it with `Stops:UseBoardCache` (default `false` in appsettings.json): demo it off and on while the simulator runs and watch the stop grain's calls. Watching still goes straight to the stop grain. The price is honest: boards are a few seconds old. Alternatives if the key itself is the problem: split the key (per line or platform), or batch writes (apply once per second). Do not quote throughput numbers, none were measured.
 
 ---
 
 ## SourceGrain: one global gateway
 
-<img class="diagram" src="/images/conc_09_source_grain.png" alt="Diagram: many StopGrains call one SourceGrain which calls the Linz AG server">
+<img class="diagram" src="/images/conc_13_source_grain_before_after.png" alt="Before: every grain calls the Linz AG server directly. After: all grains go through one SourceGrain with a rate limit of 500 ms, a cache per stop of 20 s and a stale fallback">
 
-<p class="small">One grain is right here: one rate limit for the whole cluster</p>
+<p class="small">Before: every grain hits the server. After: one gateway with rate limit, cache and stale fallback</p>
 
 Note:
 - Speaker: Lucas | Raffi
 
-Here one grain is right: a single SourceGrain is the one rate limiter for the whole cluster, with a minimum of 500 ms between calls to the Linz AG server and results cached per stop for 20 s. The price: grain chains block each other, so one slow server call delays every caller. The cache and the stale fallback soften this.
+Before: many grains and reminders call the Linz AG server directly, nobody limits them, so we hammer it. After: everything goes through ONE SourceGrain: a minimum of 500 ms between calls, results cached per stop for 20 s, and a stale answer if the feed fails. Honest price: one global grain is a chokepoint. Grain chains block each other, a slow call delays everybody who waits behind it. The cache and the stale fallback soften this, because most calls never reach the server.
+
+---
+
+## SourceGrain: one global gateway
+
+- Cache first: a fresh answer never reaches the server
+- Rate limit: wait until 500 ms have passed since the last call
+- Then one call to the Linz AG feed
+- Feed fails: serve the stale answer
+
+<pre class="cs single"><code class="no-highlight" data-noescape><span class="l">if (cache.TryGetFresh(key, now, out var fresh))</span><span class="l">    return fresh;                            // per stop, 20 s</span><span class="l">try</span><span class="l">{</span><span class="l">    var wait = _rateLimiter.Reserve(now);    // min 500 ms between calls</span><span class="l">    if (wait &gt; TimeSpan.Zero) await Task.Delay(wait);</span><span class="l">    var value = await fetch();               // the call to Linz AG</span><span class="l">    cache.Set(key, value, now);</span><span class="l">    return value;</span><span class="l">}</span><span class="l">catch (Exception) when (cache.TryGetStale(key, out var stale))</span><span class="l">{</span><span class="l">    return stale;                            // feed failed: old data beats none</span><span class="l">}</span></code></pre>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Simplified from `GetAsync` in `SourceGrain` (src/Features/Ingestion). The grain handles one call at a time, so the rate limiter needs no lock: that is why it is deliberately not reentrant. Cache and counters live in memory on purpose. If the feed fails and there is no stale value, the exception goes to the caller (the slide leaves out the logging and the counters). Linz AG terms of use and rate limits are still unchecked, keep polling polite.
+
+---
+
+## Cheat sheet: slow grain?
+
+<img class="diagram wide" src="/images/conc_05_cheatsheet.png" alt="Flow chart: grain slow? read-heavy, cycle between grains, one key too hot, must be global, otherwise profile the turn">
+
+
+Note:
+- Speaker: Lucas | Raffi
+
+Grain slow? Follow the arrows: read-heavy means StatelessWorker or ReadOnly, a cycle means a reentrancy fix or OneWay, a too hot key means split or batch, and if it must be global keep one grain and add a cache. Otherwise profile the turn and make it shorter.
 
 ---
 

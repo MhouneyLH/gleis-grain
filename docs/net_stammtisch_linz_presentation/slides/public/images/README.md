@@ -7,7 +7,7 @@ Drop files here (PNG, SVG, JPG, WebP). Vite serves this folder as-is, so a file 
 ```
 
 Tips:
-- Prefer SVG for diagrams (sharp on a projector). Excalidraw can export SVG. The Mermaid sources are in `docs/architecture.md` and `docs/net_stammtisch_linz/how-orleans-works.md` of the repo.
+- Prefer SVG for diagrams (sharp on a projector). Excalidraw can export SVG. The Mermaid sources are in `ARCHITECTURE.md` and `docs/net_stammtisch_linz_presentation/how-orleans-works.md` of the repo.
 - Speaker photo: square, at least 800 x 800 px. QR code for the audience page: SVG or PNG, high contrast.
 - Planned file names for the intro and versioning slides:
   - `tram_hbf.jpg`: photo of a Linz tram at Hauptbahnhof

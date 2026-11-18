@@ -23,7 +23,7 @@ Keys: arrows to move, `S` opens the speaker view with notes and timer, `F` fulls
 
 ## Import into Bolt or StackBlitz
 
-Zip this folder without `node_modules` and `dist` and drag it into bolt.new, or push it to GitHub and open it via `https://stackblitz.com/github/<user>/<repo>/tree/<branch>/docs/net_stammtisch_linz/slides`. Bolt and StackBlitz run `npm install && npm run dev` for you.
+Zip this folder without `node_modules` and `dist` and drag it into bolt.new, or push it to GitHub and open it via `https://stackblitz.com/github/<user>/<repo>/tree/<branch>/docs/net_stammtisch_linz_presentation/slides`. Bolt and StackBlitz run `npm install && npm run dev` for you.
 
 ## References on a slide
 

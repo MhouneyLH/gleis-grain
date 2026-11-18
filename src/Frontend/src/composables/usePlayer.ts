@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { api, ApiError, type LeaderboardRow, type LiveEventMap, type Player } from '../api'
+import { generateGuestName } from '../live/guestName'
 import { normalizeLeaderboard } from '../live/leaderboard'
 import { pushToast } from './useToast'
 
@@ -27,7 +28,7 @@ const nickname = ref<string | null>(readStoredNickname())
 const player = ref<Player | null>(null)
 const leaderboard = ref<LeaderboardRow[]>([])
 
-export const NICKNAME_RULES = 'A nickname has 2 to 20 characters.'
+const GUEST_ATTEMPTS = 5
 
 /** The text for a person for any failed call. */
 export function errorText(error: unknown): string {
@@ -36,18 +37,21 @@ export function errorText(error: unknown): string {
 }
 
 export function usePlayer() {
-  /** Registers a new nickname. Throws an Error with a friendly message. */
-  async function register(wanted: string): Promise<void> {
-    const trimmed = wanted.trim()
-    if (trimmed.length < 2 || trimmed.length > 20) throw new Error(NICKNAME_RULES)
-    try {
-      player.value = await api.createPlayer(trimmed)
-      nickname.value = player.value.nickname
-      storeNickname(nickname.value)
-    } catch (error) {
-      if (error instanceof ApiError && error.status === 409) throw new Error('That nickname is taken, pick another.')
-      if (error instanceof ApiError && error.status === 400) throw new Error(NICKNAME_RULES)
-      throw new Error(errorText(error))
+  /**
+   * Makes sure there is a player: keeps the stored nickname or claims a fresh guest name
+   * (a few retries on 409). No prompt; other failures stay silent, the next call tries again.
+   */
+  async function ensureGuest(): Promise<void> {
+    if (nickname.value) return
+    for (let attempt = 0; attempt < GUEST_ATTEMPTS; attempt += 1) {
+      try {
+        player.value = await api.createPlayer(generateGuestName())
+        nickname.value = player.value.nickname
+        storeNickname(nickname.value)
+        return
+      } catch (error) {
+        if (!(error instanceof ApiError && (error.status === 409 || error.status === 400))) return
+      }
     }
   }
 
@@ -61,6 +65,7 @@ export function usePlayer() {
         nickname.value = null
         player.value = null
         storeNickname(null)
+        await ensureGuest()
       }
     }
   }
@@ -84,12 +89,6 @@ export function usePlayer() {
     player.value = await api.placeBet(nickname.value, tripId, guessedDelayMinutes)
   }
 
-  function forget(): void {
-    nickname.value = null
-    player.value = null
-    storeNickname(null)
-  }
-
   function onLeaderboard(payload: LiveEventMap['leaderboard.changed']): void {
     leaderboard.value = normalizeLeaderboard(payload.top, 5)
   }
@@ -109,12 +108,11 @@ export function usePlayer() {
     nickname,
     player,
     leaderboard,
-    register,
+    ensureGuest,
     refreshPlayer,
     refreshLeaderboard,
     watchStop,
     placeBet,
-    forget,
     onLeaderboard,
     onBetResolved,
   }

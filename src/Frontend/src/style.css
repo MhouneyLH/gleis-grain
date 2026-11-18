@@ -207,7 +207,7 @@ input {
 .page {
   max-width: 980px;
   margin: 0 auto;
-  padding: 16px 16px 64px;
+  padding: 56px 16px 64px;
   display: grid;
   gap: 16px;
 }

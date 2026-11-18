@@ -19,14 +19,16 @@ export interface BaseMap {
  * When tiles do not load, the container background (see `--map-bg`) stays visible
  * and the stops are still drawn on top of it.
  */
-export function createBaseMap(element: HTMLElement, options: { zoomControl?: boolean } = {}): BaseMap {
+export function createBaseMap(element: HTMLElement, options: { zoomControl?: boolean; zoomPosition?: L.ControlPosition } = {}): BaseMap {
   const map = L.map(element, {
     center: LINZ_CENTER,
     zoom: 14,
-    zoomControl: options.zoomControl ?? true,
+    zoomControl: false,
     attributionControl: true,
     zoomSnap: 0.5,
   })
+
+  if (options.zoomControl ?? true) L.control.zoom({ position: options.zoomPosition ?? 'bottomright' }).addTo(map)
 
   L.tileLayer(TILE_URL, {
     attribution: ATTRIBUTION,

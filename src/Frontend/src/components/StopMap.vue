@@ -69,8 +69,6 @@ watch(() => [props.selectedId, props.watchedId], restyle)
 .stop-map {
   width: 100%;
   height: 100%;
-  min-height: 280px;
-  border-radius: var(--radius);
   background-image: radial-gradient(circle, #d6dde1 1px, transparent 1px);
   background-size: 22px 22px;
 }

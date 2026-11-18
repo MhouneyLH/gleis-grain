@@ -14,6 +14,8 @@ Not checked yet: terms of use and rate limits. Live calls are the plan, so keep 
 
 In the devcontainer: `dotnet run --project src/AppHost`. The Aspire dashboard on http://localhost:15000 links everything: the app on http://localhost:5080 (three host replicas, one Orleans silo each), the Orleans Dashboard, Scalar, the Vue frontend and pgAdmin. `--launch-profile replay` serves recorded departures instead of asking Linz AG. Setup and what the AppHost starts: [CONTRIBUTING.md](CONTRIBUTING.md#running-the-demo).
 
+The audience cannot reach localhost, so the AppHost has a `simulator` resource that is not started automatically: click start on it in the Aspire dashboard when the audience should join. About 80 virtual people (`Sim-001`...) then join over 40 seconds through the public API, gather at Hauptbahnhof and move between stops. Tune it with `Simulator:People`, `Simulator:RampUpSeconds`, `Simulator:HotStopShare` and `Simulator:Seed`, for example `dotnet run --project src/AppHost -- Simulator:People=200`.
+
 Grain versioning demo: the AppHost starts `gleis-grain-v1` (three silos) and builds a second copy of the host with the grain interface version 2, `gleis-grain-v2` (three silos), which waits for you. Start its replicas in the Aspire dashboard (silos named `v2-...` join the cluster next to the `v1-...` ones), then stop the `gleis-grain-v1` replicas: the stop grains move to the v2 silos while the app keeps running. A reverse proxy named `gleis-grain` keeps http://localhost:5080 stable during the rollout.
 
 ## Bounded contexts
@@ -40,6 +42,7 @@ A modular monolith: one deployable (`src/Host`) that contains all bounded contex
 ```
 src/
   AppHost/            Aspire host, starts Postgres, three Host replicas and the Vite dev server
+  Simulator/          console app that plays the audience through the public HTTP API, started from the Aspire dashboard
   Host/               the one deployable: composition root, calls every module, serves the built frontend
   Common/             options, HTTP, OpenTelemetry and Orleans setup shared by all modules
   Common.Abstractions/ tiny shared base for strongly typed ids, safe to reference from Contracts

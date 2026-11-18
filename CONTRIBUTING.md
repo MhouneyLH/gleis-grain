@@ -28,6 +28,7 @@ The one test project that needs Docker is `test/Infrastructure/GleisGrain.Postgr
 - Each replica is one Orleans silo with its own silo and gateway port, assigned by Aspire. http://localhost:5080 load balances over the running replicas of both builds. The host serves:
   - `/dashboard` is the Orleans Dashboard: silos, grains, activations and request rates. It is on through `Orleans:EnableDashboard` in `src/Host/appsettings.json` and off by default in code, because it exposes internals of the cluster.
   - `/scalar` has the API docs, `/api/...` is the API.
+- **simulator** (`src/Simulator`) plays the audience: virtual people `Sim-001`... join over `Simulator:RampUpSeconds` (40), pick stops (`Simulator:HotStopShare`, 0.4, goes to Hauptbahnhof), move every 20 to 60 seconds and read their board about every 15 seconds. It uses only the public HTTP API of the `gleis-grain` gateway, survives killed silos and is not started automatically: click start in the dashboard. Run it alone against a running host with `dotnet run --project src/Simulator` (`Simulator:BaseUrl`, default http://localhost:5080). Its tests: `dotnet test --project test/Simulator/GleisGrain.Simulator.Tests`.
 - **frontend**, the Vite dev server of the Vue app with hot reload, shown as "Frontend". It proxies `/api` to the host.
 
 Two launch profiles pick where departures come from: `live` (default) asks the Linz AG server, `replay` serves recorded responses, so the demo works offline and the server is never hit: `dotnet run --project src/AppHost --launch-profile replay`. The AppHost also turns the chaos button on (`Cluster:EnableChaos`).
@@ -51,7 +52,7 @@ To see the cluster, open pgAdmin from the dashboard and run `SELECT * FROM orlea
 3. Keep a pull request to one bounded context where you can. A change in `Common` or the build files runs every module's CI, so keep those separate.
 4. Fill in the pull request template. CI must be green and the build free of warnings.
 
-CI only runs the modules a change touches, plus the boundary tests in `test/Modules`. A change to `Common`, the build props or the workflows runs all of them. The frontend job runs when `src/Frontend` changes, the Postgres job when `db/` or `test/Infrastructure` changes.
+CI only runs the modules a change touches, plus the boundary tests in `test/Modules`. A change to `Common`, the build props or the workflows runs all of them. The simulator job runs when `src/Simulator` or `test/Simulator` changes. The frontend job runs when `src/Frontend` changes, the Postgres job when `db/` or `test/Infrastructure` changes.
 
 ## Commit messages
 

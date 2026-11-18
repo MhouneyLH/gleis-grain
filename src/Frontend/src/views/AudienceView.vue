@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { BETTING_ENABLED } from '../config'
 import LeaderboardCard from '../components/LeaderboardCard.vue'
 import StopMap from '../components/StopMap.vue'
 import StopSheet from '../components/StopSheet.vue'
@@ -35,18 +36,20 @@ async function join(): Promise<void> {
 
 onMounted(() => {
   void refreshPlayer()
-  void refreshLeaderboard()
+  if (BETTING_ENABLED) void refreshLeaderboard()
 })
 
-useEventStream(
-  { 'leaderboard.changed': onLeaderboard, 'bet.resolved': onBetResolved },
-  () => {
-    void refreshPlayer()
-    void refreshLeaderboard()
-  },
-)
+if (BETTING_ENABLED) {
+  useEventStream(
+    { 'leaderboard.changed': onLeaderboard, 'bet.resolved': onBetResolved },
+    () => {
+      void refreshPlayer()
+      void refreshLeaderboard()
+    },
+  )
+}
 
-// Bets are resolved by the server; keep the own state fresh in case an event was missed.
+// Keep the own state (watched stop) fresh; with betting on this also picks up resolved bets.
 usePolling(refreshPlayer, 20_000, () => nickname.value !== null)
 </script>
 
@@ -56,7 +59,7 @@ usePolling(refreshPlayer, 20_000, () => nickname.value !== null)
     <section v-if="!nickname" class="card hello">
       <h1 class="page-title">Hop on!</h1>
       <p>
-        Pick a nickname, choose a stop on the map and guess how late the next tram will be. No account, no personal data.
+        Pick a nickname, tap a stop on the map, see its departure board and watch it. No account, no personal data.
       </p>
       <form @submit.prevent="join">
         <label for="nick" class="muted">Your nickname</label>
@@ -84,7 +87,7 @@ usePolling(refreshPlayer, 20_000, () => nickname.value !== null)
           <strong>{{ nickname }}</strong>
           <button class="link" @click="forget">not you?</button>
         </div>
-        <div class="score">
+        <div v-if="BETTING_ENABLED" class="score">
           <span class="num">{{ player?.score ?? 0 }}</span>
           <span class="muted">points</span>
         </div>
@@ -92,7 +95,7 @@ usePolling(refreshPlayer, 20_000, () => nickname.value !== null)
           <span class="muted">Watching</span>
           <strong>{{ watchedName ?? 'no stop yet' }}</strong>
         </p>
-        <p class="line-info">
+        <p v-if="BETTING_ENABLED" class="line-info">
           <span class="muted">Open bet</span>
           <strong v-if="bet">
             line {{ bet.line }} at {{ stopName(bet.stopId) }}, {{ formatTime(bet.plannedAt) }}: {{ delayLabel(bet.guessedDelayMinutes) }}
@@ -106,7 +109,7 @@ usePolling(refreshPlayer, 20_000, () => nickname.value !== null)
         <StopMap :stops="stops" :selected-id="selectedId" :watched-id="player?.watchedStopId ?? null" @select="selectedId = $event" />
       </section>
 
-      <LeaderboardCard :rows="leaderboard" :limit="5" :mine="nickname" />
+      <LeaderboardCard v-if="BETTING_ENABLED" :rows="leaderboard" :limit="5" :mine="nickname" />
 
       <StopSheet v-if="selectedId" :key="selectedId" :stop-id="selectedId" @close="selectedId = null" />
       <div v-if="selectedId" class="sheet-space" aria-hidden="true"></div>

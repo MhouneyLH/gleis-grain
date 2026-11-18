@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { api, type Departure, type StopBoard } from '../api'
+import { BETTING_ENABLED } from '../config'
 import { errorText, usePlayer } from '../composables/usePlayer'
 import { usePolling } from '../composables/usePolling'
 import { pushToast } from '../composables/useToast'
@@ -84,7 +85,10 @@ async function submitBet(): Promise<void> {
     <header>
       <div>
         <h3>{{ board?.name ?? '...' }}</h3>
-        <p v-if="board" class="muted">{{ board.watchers }} {{ board.watchers === 1 ? 'watcher' : 'watchers' }}</p>
+        <p v-if="board" class="muted">
+          {{ board.watchers }} {{ board.watchers === 1 ? 'watcher' : 'watchers' }}
+          <span v-if="board.grainVersion !== undefined && board.grainVersion !== null" class="chip-ver">grain v{{ String(board.grainVersion).replace(/^v/i, '') }}</span>
+        </p>
       </div>
       <button class="close" aria-label="Close" @click="emit('close')">
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -113,7 +117,7 @@ async function submitBet(): Promise<void> {
           </div>
           <span class="delay num" :class="`delay-${delayLevel(dep.delayMinutes)}`">{{ delayLabel(dep.delayMinutes) }}</span>
           <button
-            v-if="openBetTripId !== dep.tripId"
+            v-if="BETTING_ENABLED && openBetTripId !== dep.tripId"
             class="btn btn-small"
             :class="{ 'btn-ghost': betTripId === dep.tripId }"
             :disabled="!player"
@@ -121,10 +125,10 @@ async function submitBet(): Promise<void> {
           >
             Bet
           </button>
-          <span v-else class="mine">Your bet: {{ player?.openBet?.guessedDelayMinutes }} min</span>
+          <span v-else-if="BETTING_ENABLED" class="mine">Your bet: {{ player?.openBet?.guessedDelayMinutes }} min</span>
         </div>
 
-        <div v-if="betTripId === dep.tripId" class="bet">
+        <div v-if="BETTING_ENABLED && betTripId === dep.tripId" class="bet">
           <span class="bet-label">How late will it be?</span>
           <div class="stepper">
             <button aria-label="One minute less" :disabled="guess <= 0" @click="step(-1)">-</button>
@@ -140,6 +144,16 @@ async function submitBet(): Promise<void> {
 </template>
 
 <style scoped>
+.chip-ver {
+  margin-left: 8px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
 .sheet {
   position: fixed;
   left: 0;

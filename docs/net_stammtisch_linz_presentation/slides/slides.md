@@ -62,7 +62,7 @@ Total: 46 min of 45. Over budget by 1 min, trim something.
 
 ---
 
-#![Display at station](/images/station_display.png)
+![Display at station](/images/station_display.png)
 
 Raise your hands if you stood in front of such a station display in Linz.
 
@@ -107,11 +107,6 @@ Raise your hands if you stood in front of such a station display in Linz.
 ## What are actors? ... and why??? I
 
 ![Actor Communication](/images/actors.png)
-
-- Actor A can send Messages to an Inbox of Actor B
-- Actor B consumed one message at a time (purely sequential)
-- Actors should be focused (K.I.S.S, Do one thing, do it well)
-- Actors can additionally hold state
 
 ---
 
@@ -215,38 +210,14 @@ Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, F
 
 ---
 
-## Virtual actors in Orleans<sup class="ref">1</sup>
-
-- A **grain** is an object with an identity and its own state<sup class="ref">2</sup>
-- You never create or destroy it, you just call it
-- Orleans activates it on the first call, forgets it when idle
-- It *always exists logically*, like virtual memory
-
-```csharp
-var stop = grains.GetGrain<IStopGrain>(stopId);
-var board = await stop.GetBoardAsync();
-```
-
-<div class="refs">
-  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/overview/#the-virtual-actor-model">https://dotnet.github.io/orleans/docs/overview/#the-virtual-actor-model</a></div>
-  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-identity/">https://dotnet.github.io/orleans/docs/grains/grain-identity/</a></div>
-</div>
-
-Note:
-- Speaker: Raffi
-
-Careful: the snippet is illustrative, check the real method names in `Endpoints/GetStop.cs` before showing code. Office analogy from how-orleans-works.md: grain = clerk for one stop, silo = building, cluster = all buildings, activation = clerk at the desk. A typo in an id silently gets its own empty grain, so validate ids at the edge.
-
----
-
 ## Grains, Silos, Cluster<sup class="ref">1</sup>
 
-| Orleans    | Office                              |
-|------------|-------------------------------------|
-| Grain      | Clerk for exactly one stop          |
-| Silo       | An office building (a .NET process) |
-| Cluster    | All buildings                       |
-| Activation | Clerk at the desk right now         |
+| Orleans    | EFA                                  |
+|------------|--------------------------------------|
+| Grain      | exactly one stop                     |
+| Silo       | collection of grains                 |
+| Cluster    | collection of silos                  |
+| Activation | materialized running grain in a silo |
 
 <!-- TODO IMAGE: diagram of the cluster with silos and grains (Mermaid source in how-orleans-works.md, "The big picture") -->
 
@@ -268,6 +239,37 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 - Grain Communication
 
 <div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-placement/">https://dotnet.github.io/orleans/docs/grains/grain-placement/</a></div>
+
+Note:
+- Speaker: Raffi
+
+---
+
+## Kubernetes<sup class="ref">1</sup>
+
+- `UseKubernetesHosting()` from `Microsoft.Orleans.Hosting.Kubernetes`
+- Pod labels `orleans/serviceId`, `orleans/clusterId`
+- Downward API env vars, RBAC, probes, long grace period
+- Load test with NBomber on replayed XML
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/deployment/kubernetes/">https://dotnet.github.io/orleans/docs/deployment/kubernetes/</a></div>
+
+Note:
+- Speaker: Raffi
+
+---
+
+## Testing
+
+- Domain classes: plain unit tests, no silo
+- Grains: in-process `TestCluster`<sup class="ref">1</sup>
+- Storage: in-memory in tests
+- Postgres: Testcontainers (skips without Docker)<sup class="ref">2</sup>
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/testing/">https://dotnet.github.io/orleans/docs/grains/testing/</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.testcontainers.org/">https://dotnet.testcontainers.org/</a></div>
+</div>
 
 Note:
 - Speaker: Raffi
@@ -710,31 +712,7 @@ BackwardCompatible means a v1 caller may call a v2 grain, which is why the rollo
 
 ---
 
-## Versioning: how to read the map
-
-- Colour = grain version: **red** v1, **blue** v2
-- Shape = silo: square, circle, triangle
-- Size = watchers
-
-<div class="placeholder">screenshot: map legend, red and blue dots in square, circle and triangle shapes</div>
-<!-- TODO IMAGE: screenshot of the map legend (red v1, blue v2; square, circle, triangle = silo), name: map_legend.png -->
-
-Note:
-- Speaker: Lucas
-
-Built in the frontend (shape = silo slot, colour = grain version, size = watchers); checked on screenshots against a mock API, not yet against the real cluster. Look at it once with the real rollout before the talk.
-
----
-
 ## Demo: Versioning
-
-- Red dots: everything runs v1
-- Start v2 next to v1
-- Stop v1 one by one
-- Dots turn blue, the app keeps answering
-
-<div class="placeholder">screenshot: Aspire dashboard with gleis-grain-v1 and gleis-grain-v2 side by side</div>
-<!-- TODO IMAGE: screenshot of the Aspire dashboard with the gleis-grain-v1-* and gleis-grain-v2-* rows, name: aspire_v1_v2.png -->
 
 Note:
 - Speaker: Lucas | Raffi
@@ -758,191 +736,6 @@ If it fails:
 - Play the pre-recorded video (TODO: record it, label it as recorded).
 - If the dots stay red: the simulator is not running, start it, or open stops yourself on the laptop. Only grains that are activated move, idle ones are activated on v2 when called next.
 - If v2 does not start: skip steps 2 to 3, explain step 4 with the slide and stop at "what would happen".
-
----
-
-<!-- HIIIIIIIIIIIER STARTEN DIE GENERIERTEN SLIDES -->
-
-## What to persist, what to let go
-
-- Persist: what must survive a crash
-- Let go: what the next refresh rebuilds anyway
-- Losing 10 seconds of departures is fine
-- The player's chosen stop must survive, so it is persisted
-
-<!-- TODO IMAGE: two columns "persist" vs "let go" with examples -->
-
-Note:
-- Speaker: Lucas | Raffi
-
-Lessons learned from daily work. In the repo the stop board is refreshed from Linz AG, the player's nickname and chosen stop are state. Write-behind is a talking point, not built (planned).
-
----
-
-## Timers vs reminders<sup class="ref">1</sup>
-
-| | Timer | Reminder |
-|---|---|---|
-| Lives | In memory | Durable (Postgres) |
-| Survives silo crash | No | Yes |
-| Use for | Frequent, fine to lose | Must happen anyway |
-| In gleis-grain | Faster refresh while watched | Refresh every minute (stop refresh reminder) |
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/timers-and-reminders/">https://dotnet.github.io/orleans/docs/grains/timers-and-reminders/</a></div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-Rule of thumb: if it must happen even after a crash, use a reminder. Real code: `RegisterGrainTimer` and `RegisterOrUpdateReminder` and the refresh reminder in `StopGrain`, reminders in `AlertBoardGrain`. Reminder period is an option per context. Exact timer period: check the options before quoting a number.
-
----
-
-## One request at a time<sup class="ref">1</sup>
-
-- Every grain has a mailbox, one message at a time
-- No locks inside the grain
-- The price: a slow call blocks the next ones
-- Deadlock: A waits for B, B waits for A, timeout
-
-<img src="./images/spiderman_deadlock.webp">
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/">https://dotnet.github.io/orleans/docs/grains/request-scheduling/</a></div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-Planned: the Trip <-> Stop deadlock demo is not built, treat it as a whiteboard story. Options: `[ReadOnly]` for queries, `[AlwaysInterleave]` for small independent methods, `AllowCallChainReentrancy()` for a known cycle, `[Reentrant]` only for grains with almost no state. Best fix: break the cycle by design. Reentrancy only changes scheduling inside one activation, it never creates a second one.
-
----
-
-## The hot grain: Hauptbahnhof
-
-- Everybody picks the same stop
-- One activation, one mailbox, one thread
-- Fix: a `[StatelessWorker]` board cache<sup class="ref">1</sup>
-- Many local copies, read from a snapshot
-
-```csharp
-[StatelessWorker, GrainType("stop-board-cache")]
-public class StopBoardCacheGrain : Grain, IStopBoardCacheGrain
-```
-
-<!-- TODO IMAGE: chart, watchers per stop with Hauptbahnhof as the tall bar -->
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/stateless-worker-grains/">https://dotnet.github.io/orleans/docs/grains/stateless-worker-grains/</a></div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-Demo step 4 (F4): everyone picks a stop, Hauptbahnhof gets hot, then show the fix. `StopBoardCacheGrain` is real (src/Features/Stops). `[StatelessWorker]` is the one case where one id has several activations. Do not quote throughput numbers, none were measured.
-
----
-
-## The rate limiter grain
-
-- Many reminders, one Linz AG server
-- All requests go through one `SourceGrain`
-- One shared rate limit, results cached in the grains
-- Non-reentrant on purpose: it counts in order
-
-<!-- TODO IMAGE: arrows from many StopGrains into one SourceGrain, then to the EFA server -->
-
-Note:
-- Speaker: Lucas | Raffi
-
-Module Ingestion: EFA XML client, parser, rate limiting, live or replayed responses (`Ingestion:Mode`). Linz AG terms of use and rate limits are still unchecked (open question), keep polling polite. Never load test the real server.
-
----
-
-## Cluster: membership<sup class="ref">1</sup>
-
-- Silos watch each other and vote a dead silo out
-- Membership lives in the shared `orleans` Postgres database
-- Dead silo: its grains are activated again on another silo
-- Reminders still fire
-
-```sql
-SELECT * FROM orleansmembershiptable;
-```
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/implementation/cluster-management/">https://dotnet.github.io/orleans/docs/implementation/cluster-management/</a></div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-In pgAdmin on the big screen, the audience sees the dead silo flip. Details in how-orleans-works.md (membership, when a silo dies). Postgres is one choice, Redis or Azure Table are other usual ones.
-
----
-
-## Cluster: directory and placement
-
-- Directory: distributed, in memory, split over all silos by hash ranges<sup class="ref">1</sup>
-- Normally one activation per grain
-- Placement: where does a new activation go?<sup class="ref">2</sup>
-- Default since Orleans 9.2: resource optimized (before: random)
-
-<!-- TODO IMAGE: hash ring diagram (Mermaid in how-orleans-works.md, "Who knows where a grain lives?") -->
-
-<div class="refs">
-  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/host/grain-directory/">https://dotnet.github.io/orleans/docs/host/grain-directory/</a></div>
-  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-placement/">https://dotnet.github.io/orleans/docs/grains/grain-placement/</a></div>
-</div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-Placement demo with `[PreferLocalPlacement]` and others was not built, talking point only. Directory is not in Postgres, after a full restart it fills again as calls arrive.
-
----
-
-## Modular monolith, 3 replicas
-
-- One deployable, all bounded contexts as modules
-- API and silo in one process
-- 3 replicas form one cluster of identical silos
-- Modules talk through Contracts projects only
-
-| Stops | Trips | Alerts |
-|---|---|---|
-| Ingestion | Game | Cluster |
-
-<!-- TODO IMAGE: ARCHITECTURE.md diagram exported as SVG (Excalidraw: Insert > Mermaid to Excalidraw) -->
-
-Note:
-- Speaker: Lucas | Raffi
-
-Splitting a module into its own deployable later needs only a small host that calls its `Add...Module` and `Map...Endpoints`. Aspire AppHost starts Postgres, three Host replicas, the Vite dev server and pgAdmin. Splitting into one silo type per module is possible, not done.
-
----
-
-## Kubernetes<sup class="ref">1</sup>
-
-- `UseKubernetesHosting()` from `Microsoft.Orleans.Hosting.Kubernetes`
-- Pod labels `orleans/serviceId`, `orleans/clusterId`
-- Downward API env vars, RBAC, probes, long grace period
-- Load test with NBomber on replayed XML
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/deployment/kubernetes/">https://dotnet.github.io/orleans/docs/deployment/kubernetes/</a></div>
-
-Note:
-- Speaker: Raffi
-
----
-
-## Testing
-
-- Domain classes: plain unit tests, no silo
-- Grains: in-process `TestCluster`<sup class="ref">1</sup>
-- Storage: in-memory in tests
-- Postgres: Testcontainers (skips without Docker)<sup class="ref">2</sup>
-
-<div class="refs">
-  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/testing/">https://dotnet.github.io/orleans/docs/grains/testing/</a></div>
-  <div><sup class="ref">2</sup> <a href="https://dotnet.testcontainers.org/">https://dotnet.testcontainers.org/</a></div>
-</div>
-
-Note:
-- Speaker: Raffi
 
 ---
 

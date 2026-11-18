@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orleans.Configuration;
 using Orleans.Dashboard;
+using Orleans.Versions.Compatibility;
+using Orleans.Versions.Selector;
 
 namespace GleisGrain.Common;
 
@@ -18,6 +20,17 @@ public static class OrleansExtensions
     /// <param name="builder">The host builder to configure.</param>
     /// <param name="storageNames">Grain storage names, one per module; by convention equal to the module's connection string name.</param>
     public static TBuilder AddGleisGrainOrleans<TBuilder>(this TBuilder builder, params string[] storageNames)
+        where TBuilder : IHostApplicationBuilder =>
+        builder.AddGleisGrainOrleans(1, storageNames);
+
+    /// <summary>
+    /// Configures one silo of the shared gleis-grain cluster that carries the given grain interface version
+    /// of its build. The version becomes the prefix of the silo name, see <see cref="SiloNames"/>.
+    /// </summary>
+    /// <param name="builder">The host builder to configure.</param>
+    /// <param name="grainVersion">The grain interface version this build was compiled with, 1 or 2.</param>
+    /// <param name="storageNames">Grain storage names, one per module; by convention equal to the module's connection string name.</param>
+    public static TBuilder AddGleisGrainOrleans<TBuilder>(this TBuilder builder, int grainVersion, params string[] storageNames)
         where TBuilder : IHostApplicationBuilder
     {
         builder.Services.AddValidatedOptions<OrleansOptions>(OrleansOptions.SectionName);
@@ -40,6 +53,17 @@ public static class OrleansExtensions
             {
                 cluster.ClusterId = options.ClusterId;
                 cluster.ServiceId = options.ServiceId;
+            });
+
+            // v<version>-<random>: the frontend reads the grain version of a silo from the name prefix.
+            silo.Configure<SiloOptions>(o => o.SiloName = SiloNames.Create(grainVersion));
+
+            // Rolling upgrade of grain interfaces: a v1 caller may use a v2 grain (BackwardCompatible), and a
+            // new activation goes to a silo with the newest interface version (LatestVersion).
+            silo.Configure<GrainVersioningOptions>(o =>
+            {
+                o.DefaultCompatibilityStrategy = nameof(BackwardCompatible);
+                o.DefaultVersionSelectorStrategy = nameof(LatestVersion);
             });
 
             silo.ConfigureEndpoints(siloPort: options.SiloPort, gatewayPort: options.GatewayPort);

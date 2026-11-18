@@ -225,22 +225,34 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 
 ## Cluster in Action
 
-- placement strategies
-- sequence diagram to show one full call from frontend to grain calls
-    - what happens in orleans middleware -> communication protocol, binary serialization, grain directory 
+![cluster](/images/cluster.png)
+
+- Grain Placement
+- Grain Communication
 
 Note:
 - Speaker: Raffi
 
 ---
 
-## Timers vs reminders
-- persisting
-- eventually consistent behavior of reminders
+## Timers vs. Reminders - The Timer
 
+```csharp
+protected IGrainTimer RegisterGrainTimer<TState>(
+    Func<TState, CancellationToken, Task> callback, // function invoked when the timer ticks
+    TState state,                                   // object to pass to callback
+    GrainTimerCreationOptions options)              // timer creation options
+```
 
-Note:
-- Speaker: Raffi
+- only for current activation
+- standard System.Threading.Timer
+- non persistent
+- high precision (millisecond ticks)
+
+## Timer vs. Reminders - The Reminder
+
+- reminders are persistent across activations
+- less precision (minutes, days, weeks, months)
 
 ---
 

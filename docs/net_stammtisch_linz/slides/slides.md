@@ -516,6 +516,9 @@ Four sentences, then back to discussion.
 
 ## Thanks
 
+### Next Stop: Virtual Actors
+#### Microsoft Orleans on the Linz tram network
+
 <div class="thanks">
   <ul>
     <li>Code + Slides: https://github.com/MhouneyLH/gleis-grain</li>
@@ -526,4 +529,4 @@ Four sentences, then back to discussion.
 </div>
 
 Note:
-- Speaker: Lucas | Raffi
+- Speaker: Lucas

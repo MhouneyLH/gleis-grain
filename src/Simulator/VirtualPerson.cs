@@ -40,6 +40,26 @@ public sealed class VirtualPerson
     /// <summary>The stop the person stands at. Null until the person has joined.</summary>
     public string? StopId { get; private set; }
 
+    /// <summary>The stop the presenter pinned the person to. A pinned person stays there and is not moved by the random movement.</summary>
+    public string? PinnedStopId { get; private set; }
+
+    /// <summary>Pins the person to a stop: it goes there at once (also while it is still waiting to join) and stays.</summary>
+    public void Pin(string stopId, DateTimeOffset now)
+    {
+        PinnedStopId = stopId;
+        if (_notBefore > now)
+        {
+            _notBefore = now;
+        }
+    }
+
+    /// <summary>Back to the random behaviour: the next move comes after the usual interval.</summary>
+    public void Release(DateTimeOffset now)
+    {
+        PinnedStopId = null;
+        _nextMoveAt = now + Between(MinMoveInterval, MaxMoveInterval);
+    }
+
     public PersonAction Due(DateTimeOffset now)
     {
         if (now < _notBefore)
@@ -52,7 +72,7 @@ public sealed class VirtualPerson
             return PersonAction.Join;
         }
 
-        if (now >= _nextMoveAt)
+        if (PinnedStopId is not null ? StopId != PinnedStopId : now >= _nextMoveAt)
         {
             return PersonAction.Move;
         }
@@ -61,7 +81,7 @@ public sealed class VirtualPerson
     }
 
     /// <summary>The stop the person goes to on <see cref="PersonAction.Join"/> or <see cref="PersonAction.Move"/>.</summary>
-    public string ChooseStop() => StopId is null ? _picker.Pick() : _picker.PickOther(StopId);
+    public string ChooseStop() => PinnedStopId ?? (StopId is null ? _picker.Pick() : _picker.PickOther(StopId));
 
     public void Joined(string stopId, DateTimeOffset now)
     {

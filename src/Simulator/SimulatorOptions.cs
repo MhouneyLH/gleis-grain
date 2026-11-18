@@ -15,6 +15,14 @@ public sealed class SimulatorOptions
     [Range(1, 9999)]
     public int People { get; set; } = 80;
 
+    /// <summary>The most virtual people the presenter can create by pinning them to stops.</summary>
+    [Range(1, 9999)]
+    public int MaxPeople { get; set; } = 500;
+
+    /// <summary>The port of the control API (<c>/scenario</c>).</summary>
+    [Range(0, 65535)]
+    public int Port { get; set; } = 5090;
+
     /// <summary>The people join evenly spread over this time.</summary>
     [Range(0, 3600)]
     public int RampUpSeconds { get; set; } = 40;

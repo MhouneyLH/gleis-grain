@@ -91,7 +91,9 @@ Everybody has waited at a stop in Linz. Data comes from the Linz AG EFA server a
 <div class="placeholder">screenshot: projector page, map with stops as dots (silo shapes, size by watchers)</div>
 <!-- TODO IMAGE: screenshot of the projector page `/projector`, map with stops as dots, name: map_projector.png. Map tiles are from OpenStreetMap: keep the attribution "© OpenStreetMap contributors" visible. -->
 
-<p class="small">Map data © OpenStreetMap contributors</p>
+<p class="small">Map data © OpenStreetMap contributors<sup class="ref">1</sup></p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://www.openstreetmap.org/copyright">https://www.openstreetmap.org/copyright</a></div>
 
 Note:
 - Speaker: Lucas
@@ -146,7 +148,7 @@ If it fails: if the simulator does not start, start it again from the dashboard.
 
 ---
 
-## Stop Grain (simplified)
+## Stop Grain (simplified)<sup class="ref">1</sup>
 
 ```csharp
 [GrainType("stop")]
@@ -174,11 +176,13 @@ public class StopGrain(IOptions<StopsOptions> options, ILogger<StopGrain> logger
     }
 ```
 
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-lifecycle/">https://dotnet.github.io/orleans/docs/grains/grain-lifecycle/</a></div>
+
 ---
 
-## Virtual actors in Orleans
+## Virtual actors in Orleans<sup class="ref">1</sup>
 
-- A **grain** is an object with an identity and its own state
+- A **grain** is an object with an identity and its own state<sup class="ref">2</sup>
 - You never create or destroy it, you just call it
 - Orleans activates it on the first call, forgets it when idle
 - It *always exists logically*, like virtual memory
@@ -187,6 +191,11 @@ public class StopGrain(IOptions<StopsOptions> options, ILogger<StopGrain> logger
 var stop = grains.GetGrain<IStopGrain>(stopId);
 var board = await stop.GetBoardAsync();
 ```
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/overview/#the-virtual-actor-model">https://dotnet.github.io/orleans/docs/overview/#the-virtual-actor-model</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-identity/">https://dotnet.github.io/orleans/docs/grains/grain-identity/</a></div>
+</div>
 
 Note:
 - Speaker: Raffi
@@ -208,7 +217,7 @@ Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, F
 
 ---
 
-## Grains, Silos, Cluster
+## Grains, Silos, Cluster<sup class="ref">1</sup>
 
 | Orleans    | Office                              |
 |------------|-------------------------------------|
@@ -218,6 +227,8 @@ Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, F
 | Activation | Clerk at the desk right now         |
 
 <!-- TODO IMAGE: diagram of the cluster with silos and grains (Mermaid source in how-orleans-works.md, "The big picture") -->
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/overview/#silos-and-clusters">https://dotnet.github.io/orleans/docs/overview/#silos-and-clusters</a></div>
 
 Note:
 - Speaker: Lucas
@@ -230,15 +241,17 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 
 ![cluster](/images/cluster.png)
 
-- Grain Placement
+- Grain Placement<sup class="ref">1</sup>
 - Grain Communication
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-placement/">https://dotnet.github.io/orleans/docs/grains/grain-placement/</a></div>
 
 Note:
 - Speaker: Raffi
 
 ---
 
-## Timers vs. Reminders - The Timer
+## Timers vs. Reminders - The Timer<sup class="ref">1</sup>
 
 ```csharp
 protected IGrainTimer RegisterGrainTimer<TState>(
@@ -252,10 +265,15 @@ protected IGrainTimer RegisterGrainTimer<TState>(
 - non persistent
 - high precision (millisecond ticks)
 
-## Timer vs. Reminders - The Reminder
+## Timer vs. Reminders - The Reminder<sup class="ref">2</sup>
 
 - reminders are persistent across activations
 - less precision (minutes, days, weeks, months)
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/timers/">https://dotnet.github.io/orleans/docs/grains/timers/</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/reminders/">https://dotnet.github.io/orleans/docs/grains/reminders/</a></div>
+</div>
 
 ---
 

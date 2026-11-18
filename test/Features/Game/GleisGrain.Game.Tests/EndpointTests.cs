@@ -5,7 +5,6 @@ using System.Text.Json;
 using GleisGrain.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace GleisGrain.Game.Tests;
@@ -44,44 +43,21 @@ public class EndpointTests
     }
 
     [Fact]
-    public async Task PlaceBet_ThenGetPlayer_ShowTheOpenBetInTheDocumentedShape()
+    public async Task GetPlayer_AfterClaim_ShowsThePlayerInTheDocumentedShape()
     {
         await using var app = await StartAsync();
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
-        var grains = app.Services.GetRequiredService<IGrainFactory>();
         var nickname = "Max" + Guid.NewGuid().ToString("N")[..6];
-        var tripId = "60501720:1:" + Guid.NewGuid().ToString("N")[..8];
-        await GameCluster.SetTripAsync(grains, tripId);
         await client.PostAsJsonAsync("/api/game/players", new { nickname }, TestContext.Current.CancellationToken);
 
-        var placed = await client.PostAsJsonAsync($"/api/game/players/{nickname}/bet", new { tripId, guessedDelayMinutes = 2 }, TestContext.Current.CancellationToken);
         var fetched = await client.GetAsync($"/api/game/players/{nickname.ToLowerInvariant()}", TestContext.Current.CancellationToken);
 
-        Assert.Equal(HttpStatusCode.Created, placed.StatusCode);
         Assert.Equal(HttpStatusCode.OK, fetched.StatusCode);
         using var player = JsonDocument.Parse(await fetched.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.Equal(nickname, player.RootElement.GetProperty("nickname").GetString());
-        Assert.Equal(0, player.RootElement.GetProperty("score").GetInt32());
         Assert.Equal(JsonValueKind.Null, player.RootElement.GetProperty("watchedStopId").ValueKind);
-        var bet = player.RootElement.GetProperty("openBet");
-        Assert.Equal(tripId, bet.GetProperty("tripId").GetString());
-        Assert.Equal("60501720", bet.GetProperty("stopId").GetString());
-        Assert.Equal(2, bet.GetProperty("guessedDelayMinutes").GetInt32());
-    }
-
-    [Fact]
-    public async Task PlaceBet_GuessOutsideZeroToFifteen_Answers400WithTheErrorCode()
-    {
-        await using var app = await StartAsync();
-        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
-        var nickname = "Max" + Guid.NewGuid().ToString("N")[..6];
-        await client.PostAsJsonAsync("/api/game/players", new { nickname }, TestContext.Current.CancellationToken);
-
-        var response = await client.PostAsJsonAsync($"/api/game/players/{nickname}/bet", new { tripId = "any", guessedDelayMinutes = 16 }, TestContext.Current.CancellationToken);
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
-        Assert.Equal("game.bet.invalid_guess", problem.RootElement.GetProperty("code").GetString());
+        Assert.False(player.RootElement.TryGetProperty("score", out _));
+        Assert.False(player.RootElement.TryGetProperty("openBet", out _));
     }
 
     [Fact]

@@ -1,4 +1,3 @@
-using GleisGrain.Common.Options;
 using GleisGrain.Game.Endpoints;
 
 namespace GleisGrain.Game;
@@ -18,7 +17,6 @@ public static class GameModule
     public static TBuilder AddGameModule<TBuilder>(this TBuilder builder)
         where TBuilder : IHostApplicationBuilder
     {
-        builder.Services.AddValidatedOptions<GameOptions>(GameOptions.SectionName);
         builder.Services.AddSingleton<GameMetrics>();
 
         return builder;
@@ -30,8 +28,6 @@ public static class GameModule
         ClaimPlayer.Map(api);
         GetPlayer.Map(api);
         WatchStop.Map(api);
-        PlaceBet.Map(api);
-        GetLeaderboard.Map(api);
 
         return routes;
     }

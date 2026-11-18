@@ -10,7 +10,6 @@ using GleisGrain.Ingestion;
 using GleisGrain.Stops;
 using GleisGrain.Stops.Contracts;
 using GleisGrain.Trips;
-using GleisGrain.Trips.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +19,7 @@ namespace GleisGrain.Modules.Tests;
 
 /// <summary>
 /// Composes all six modules into one silo the way the host does, with in-memory storage, replayed Linz AG data and an
-/// in-memory metric exporter, and drives one round through every module: a board, notices, a player with a bet.
+/// in-memory metric exporter, and drives one round through every module: a board, notices, a player who watches a stop.
 /// </summary>
 public sealed class ModuleCompositionTests : IAsyncLifetime
 {
@@ -79,7 +78,7 @@ public sealed class ModuleCompositionTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task APlayerWatchesAStopAndBetsOnADeparture_AcrossAllModules()
+    public async Task APlayerWatchesAStop_AcrossAllModules()
     {
         var grains = _host!.Services.GetRequiredService<IGrainFactory>();
         var board = await grains.GetGrain<IStopGrain>(Hauptbahnhof).GetBoardAsync();
@@ -88,13 +87,9 @@ public sealed class ModuleCompositionTests : IAsyncLifetime
         var player = grains.GetGrain<IPlayerGrain>(Nickname.From("Max").Key);
         Assert.True(await player.ClaimAsync(Nickname.From("Max")));
         Assert.Equal(WatchStopOutcome.Watching, await player.WatchStopAsync(StopId.From(Hauptbahnhof)));
-        var departure = board.Departures[0];
 
-        var outcome = await PlaceBetWhenTheTripIsKnownAsync(grains, player, departure.TripId);
-
-        Assert.Equal(PlaceBetOutcome.Placed, outcome);
         var snapshot = await player.GetAsync();
-        Assert.Equal(departure.TripId, snapshot?.OpenBet?.TripId);
+
         Assert.Equal(StopId.From(Hauptbahnhof), snapshot?.WatchedStop);
         Assert.Equal(1, (await grains.GetGrain<IStopGrain>(Hauptbahnhof).GetBoardAsync())?.Watchers);
     }
@@ -123,19 +118,6 @@ public sealed class ModuleCompositionTests : IAsyncLifetime
         }
 
         Assert.All(_meterNames, name => Assert.Contains(name, exportedMeters));
-    }
-
-    // The stop reports its trips with fire-and-forget calls, so the trip can be a moment behind the board.
-    private static async Task<PlaceBetOutcome> PlaceBetWhenTheTripIsKnownAsync(IGrainFactory grains, IPlayerGrain player, TripId tripId)
-    {
-        PlaceBetOutcome outcome = PlaceBetOutcome.UnknownTrip;
-        await WaitUntilAsync(async () =>
-        {
-            outcome = await player.PlaceBetAsync(tripId, 2);
-            return outcome != PlaceBetOutcome.UnknownTrip;
-        });
-
-        return outcome;
     }
 
     private static async Task WaitUntilAsync(Func<bool> condition) =>

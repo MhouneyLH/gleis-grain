@@ -18,20 +18,3 @@ public sealed record StopWatchersChanged(string StopId, int Watchers) : ILivePay
 {
     public static string EventType => "stop.watchers";
 }
-
-public sealed record BetPlaced(string Nickname, string StopId, string Line) : ILivePayload
-{
-    public static string EventType => "bet.placed";
-}
-
-public sealed record BetResolved(string Nickname, string TripId, int ActualDelayMinutes, int Points) : ILivePayload
-{
-    public static string EventType => "bet.resolved";
-}
-
-public sealed record LeaderboardRow(string Nickname, int Score);
-
-public sealed record LeaderboardChanged(IReadOnlyList<LeaderboardRow> Top) : ILivePayload
-{
-    public static string EventType => "leaderboard.changed";
-}

@@ -40,7 +40,7 @@ flowchart LR
             trips[Trips<br/>TripGrain]
             alerts[Alerts<br/>AlertBoardGrain]
             ingestion[Ingestion<br/>SourceGrain<br/>rate limiter, cache, XML parser]
-            game[Game<br/>PlayerGrain<br/>LeaderboardGrain]
+            game[Game<br/>PlayerGrain]
             cluster[Cluster<br/>event hub grain<br/>silos, stats, chaos]
         end
         common[Common: HTTP, Orleans, OpenTelemetry]
@@ -51,10 +51,8 @@ flowchart LR
     stops -- "via Contracts: reminder 1 min,<br/>timer while watched" --> ingestion
     alerts -- "via Contracts: reminder" --> ingestion
     stops -- "OneWay reports" --> trips
-    game -- "via Contracts" --> trips
     game -- "via Contracts" --> stops
     stops -- "publish events" --> cluster
-    game -- "publish events" --> cluster
     cluster -- "observer per silo,<br/>SSE to the browser" --> browser
     ingestion -- "departure monitor,<br/>notices" --> efa
     ingestion -- "Mode=Replay" --> replay

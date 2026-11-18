@@ -9,8 +9,6 @@
     <ProjectReference Include="../../../Common/GleisGrain.Common.csproj" />
     <ProjectReference Include="../GleisGrain.Game.Contracts/GleisGrain.Game.Contracts.csproj" />
     <ProjectReference Include="../../Stops/GleisGrain.Stops.Contracts/GleisGrain.Stops.Contracts.csproj" />
-    <ProjectReference Include="../../Trips/GleisGrain.Trips.Contracts/GleisGrain.Trips.Contracts.csproj" />
-    <ProjectReference Include="../../Cluster/GleisGrain.Cluster.Contracts/GleisGrain.Cluster.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,4 @@
-using GleisGrain.Cluster.Contracts;
 using GleisGrain.Stops.Contracts;
-using GleisGrain.Trips.Contracts;
 
 namespace GleisGrain.Game.Tests;
 
@@ -47,53 +45,4 @@ public sealed class FakeStopGrain : Grain, IStopGrain, IFakeStop
 
         return Task.FromResult(_watchers.Count);
     }
-}
-
-[Alias("GleisGrain.Game.Tests.IFakeTrip")]
-public interface IFakeTrip : IGrainWithStringKey
-{
-    /// <summary>Sets what the trip answers, or makes it unknown with null.</summary>
-    [Alias("SetAsync")]
-    Task SetAsync(TripSnapshot? snapshot);
-}
-
-public sealed class FakeTripGrain : Grain, ITripGrain, IFakeTrip
-{
-    private TripSnapshot? _snapshot;
-
-    public Task SetAsync(TripSnapshot? snapshot)
-    {
-        _snapshot = snapshot;
-
-        return Task.CompletedTask;
-    }
-
-    public Task ReportAsync(TripReport report) => Task.CompletedTask;
-
-    public Task<TripSnapshot?> GetAsync() => Task.FromResult(_snapshot);
-}
-
-[Alias("GleisGrain.Game.Tests.IFakeEventLog")]
-public interface IFakeEventLog : IGrainWithStringKey
-{
-    [Alias("GetEventsAsync")]
-    Task<IReadOnlyList<LiveEvent>> GetEventsAsync();
-}
-
-public sealed class FakeClusterEventsGrain : Grain, IClusterEventsGrain, IFakeEventLog
-{
-    private readonly List<LiveEvent> _events = [];
-
-    public Task PublishAsync(LiveEvent liveEvent)
-    {
-        _events.Add(liveEvent);
-
-        return Task.CompletedTask;
-    }
-
-    public Task<IReadOnlyList<LiveEvent>> GetEventsAsync() => Task.FromResult<IReadOnlyList<LiveEvent>>([.. _events]);
-
-    public Task SubscribeAsync(ILiveEventObserver observer) => Task.CompletedTask;
-
-    public Task UnsubscribeAsync(ILiveEventObserver observer) => Task.CompletedTask;
 }

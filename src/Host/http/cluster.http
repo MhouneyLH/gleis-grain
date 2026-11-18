@@ -12,7 +12,7 @@ Accept: application/json
 GET {{baseUrl}}/api/cluster/stats
 Accept: application/json
 
-### The live event stream (server-sent events). Stays open; stop activation, watchers, bets, leaderboard.
+### The live event stream (server-sent events). Stays open; stop activation and watchers.
 GET {{baseUrl}}/api/cluster/events
 Accept: text/event-stream
 

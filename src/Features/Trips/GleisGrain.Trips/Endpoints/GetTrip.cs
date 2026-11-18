@@ -43,7 +43,7 @@ internal sealed class GetTrip
         routes.MapGet("/{id}", Handle)
             .WithName("GetTrip")
             .WithSummary("Gets a trip by id.")
-            .WithDescription("Part of the Trips context: the delay facts bets are resolved against.")
+            .WithDescription("Part of the Trips context: the delay facts of a departure.")
             .ProducesProblem(StatusCodes.Status404NotFound);
 
     private static async Task<Ok<GetTripResponse>> Handle(

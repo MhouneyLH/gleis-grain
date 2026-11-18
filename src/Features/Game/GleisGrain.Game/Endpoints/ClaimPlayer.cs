@@ -24,7 +24,7 @@ internal sealed class ClaimPlayer
         routes.MapPost("/players", Handle)
             .WithName("ClaimPlayer")
             .WithSummary("Claims a nickname and creates the player.")
-            .WithDescription("Part of the Game context: players, bets and the leaderboard. The first claim of a nickname wins, case does not matter.")
+            .WithDescription("Part of the Game context: the players. The first claim of a nickname wins, case does not matter.")
             .ProducesProblem(StatusCodes.Status409Conflict);
 
     private static async Task<CreatedAtRoute<PlayerResponse>> Handle([AsParameters] ClaimPlayerRequest request, IGrainFactory grains)

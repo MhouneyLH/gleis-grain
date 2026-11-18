@@ -21,7 +21,7 @@ internal sealed class GetPlayer
         routes.MapGet("/players/{nickname}", Handle)
             .WithName(RouteName)
             .WithSummary("Gets a player.")
-            .WithDescription("Part of the Game context: players, bets and the leaderboard.")
+            .WithDescription("Part of the Game context: the players.")
             .ProducesProblem(StatusCodes.Status404NotFound);
 
     private static async Task<Ok<PlayerResponse>> Handle([AsParameters] GetPlayerRequest request, IGrainFactory grains)

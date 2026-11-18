@@ -1,8 +1,6 @@
 using System.Collections.Concurrent;
-using GleisGrain.Cluster.Contracts;
 using GleisGrain.Game.Contracts;
 using GleisGrain.Stops.Contracts;
-using GleisGrain.Trips.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Orleans.Serialization;
 using Orleans.Storage;
@@ -13,8 +11,6 @@ namespace GleisGrain.Game.Tests;
 /// <summary>The game wired into one test silo: in-memory state and reminders, fake grains of the other modules.</summary>
 public sealed class GameCluster : IAsyncLifetime
 {
-    private static readonly DateTimeOffset _plannedAt = new(2026, 11, 17, 10, 5, 0, TimeSpan.Zero);
-
     private TestCluster? _cluster;
 
     public IGrainFactory Grains => _cluster?.GrainFactory ?? throw new InvalidOperationException("The cluster is not started.");
@@ -53,36 +49,7 @@ public sealed class GameCluster : IAsyncLifetime
         grains.GetGrain<IFakeStop>(stopId).SetBoardAsync(
             new StopBoardSnapshot(StopId.From(stopId), "Stop " + stopId, 48.3, 14.3, 0, null, []));
 
-    /// <summary>Makes a trip known to the fake trip grain.</summary>
-    public static Task SetTripAsync(IGrainFactory grains, string tripId, bool hasDeparted = false, int delayMinutes = 0) =>
-        grains.GetGrain<IFakeTrip>(tripId).SetAsync(
-            new TripSnapshot(TripId.From(tripId), "60501720", "1", "Universität", _plannedAt, delayMinutes, hasDeparted));
-
     public static string NewId() => Guid.NewGuid().ToString("N");
-
-    /// <summary>Waits until the condition holds. For one-way calls, whose effect arrives a moment after the call.</summary>
-    public static async Task<T> EventuallyAsync<T>(Func<Task<T>> read, Func<T, bool> done)
-    {
-        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        using var linked = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token, TestContext.Current.CancellationToken);
-
-        while (true)
-        {
-            var value = await read();
-            if (done(value) || linked.IsCancellationRequested)
-            {
-                return value;
-            }
-
-            await Task.Delay(TimeSpan.FromMilliseconds(20), CancellationToken.None);
-        }
-    }
-
-    public static Task<IReadOnlyList<LiveEvent>> EventsAsync(IGrainFactory grains, string type, string containing, int count = 1) =>
-        EventuallyAsync(
-            async () => (IReadOnlyList<LiveEvent>)[.. (await grains.GetGrain<IFakeEventLog>(ClusterEventKeys.Hub).GetEventsAsync())
-                .Where(e => e.Type == type && e.Json.Contains(containing, StringComparison.Ordinal))],
-            events => events.Count >= count);
 }
 
 public class InMemorySilo : ISiloConfigurator
@@ -96,7 +63,6 @@ public class InMemorySilo : ISiloConfigurator
 
     internal static void AddGame(IServiceCollection services)
     {
-        services.AddOptions<GameOptions>();
         services.AddSingleton<GameMetrics>();
     }
 }

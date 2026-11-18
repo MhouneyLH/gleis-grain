@@ -8,7 +8,7 @@ namespace GleisGrain.Ingestion.Feeds;
 /// The first recorded departure of a stop leaves a minute after the loop starts, the others keep their gaps,
 /// and the loop starts again once the last one has left. The board is a pure function of the time, so every silo
 /// and every restart shows the same departures with the same trip ids, and a departure really does leave when its
-/// time has come, which is what the bets are resolved against.
+/// time has come.
 /// </summary>
 internal sealed class ReplayFeed(TimeProvider timeProvider, ILogger<ReplayFeed> logger) : IEfaFeed
 {

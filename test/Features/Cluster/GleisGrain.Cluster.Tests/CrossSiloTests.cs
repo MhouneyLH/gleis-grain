@@ -32,7 +32,7 @@ public sealed class CrossSiloTests : IAsyncLifetime
 
         using var browserOnSiloA = broadcasters[0].Subscribe();
         using var browserOnSiloB = broadcasters[1].Subscribe();
-        var liveEvent = LiveEvent.Of(new BetPlaced("Max", "8f3a1c", "1"));
+        var liveEvent = LiveEvent.Of(new StopWatchersChanged("8f3a1c", 1));
         var hub = _cluster.GrainFactory.GetGrain<IClusterEventsGrain>(ClusterEventKeys.Hub);
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(30));

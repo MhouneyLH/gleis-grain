@@ -1,44 +1,30 @@
 using GleisGrain.Game.Contracts;
-using GleisGrain.Trips.Contracts;
+using GleisGrain.Stops.Contracts;
 
 namespace GleisGrain.Game.Tests;
 
-/// <summary>A bet is state in storage, not in memory: it has to survive the silo that took it.</summary>
+/// <summary>A player is state in storage, not in memory: it has to survive the silo that took it.</summary>
 public class RestartTests
 {
     [Fact]
-    public async Task OpenBetAndScore_AfterASiloRestart_AreStillThere()
+    public async Task WatchedStop_AfterASiloRestart_IsStillThere()
     {
         var nickname = Nickname.From("Rex" + GameCluster.NewId()[..6]);
-        var scoredTrip = TripId.From("t" + GameCluster.NewId());
-        var openTrip = TripId.From("t" + GameCluster.NewId());
+        var stop = StopId.From("s" + GameCluster.NewId());
 
         await using (var first = await GameCluster.StartAsync<SharedStorageSilo>())
         {
+            await GameCluster.KnownStopAsync(first.GrainFactory, stop.Value);
             var player = first.GrainFactory.GetGrain<IPlayerGrain>(nickname.Key);
             await player.ClaimAsync(nickname);
-            await GameCluster.SetTripAsync(first.GrainFactory, scoredTrip.Value);
-            await player.PlaceBetAsync(scoredTrip, 2);
-            await GameCluster.SetTripAsync(first.GrainFactory, scoredTrip.Value, hasDeparted: true, delayMinutes: 2);
-            await player.ResolveBetAsync();
-            await GameCluster.SetTripAsync(first.GrainFactory, openTrip.Value);
-            await player.PlaceBetAsync(openTrip, 6);
+            await player.WatchStopAsync(stop);
             await first.StopAllSilosAsync(TestContext.Current.CancellationToken);
         }
 
         await using var second = await GameCluster.StartAsync<SharedStorageSilo>();
-        var restarted = second.GrainFactory.GetGrain<IPlayerGrain>(nickname.Key);
-        var snapshot = await restarted.GetAsync();
+        var snapshot = await second.GrainFactory.GetGrain<IPlayerGrain>(nickname.Key).GetAsync();
 
-        Assert.Equal(3, snapshot?.Score);
-        Assert.Equal(openTrip, snapshot?.OpenBet?.TripId);
-        Assert.Equal(6, snapshot?.OpenBet?.GuessedDelayMinutes);
-
-        await GameCluster.SetTripAsync(second.GrainFactory, openTrip.Value, hasDeparted: true, delayMinutes: 6);
-        var resolution = await restarted.ResolveBetAsync();
-
-        Assert.Equal(3, resolution?.Points);
-        Assert.Equal(6, (await restarted.GetAsync())?.Score);
+        Assert.Equal(new PlayerSnapshot(nickname, stop), snapshot);
     }
 
     [Fact]

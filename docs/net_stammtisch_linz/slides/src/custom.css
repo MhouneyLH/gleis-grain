@@ -76,3 +76,12 @@
 .reveal img.diagram { display: block; margin: 0 auto; max-height: 470px; width: auto; max-width: 100%; }
 /* A small mascot in the bottom right corner of a slide; fixed inside the scaled slide area, above the slide number. */
 .reveal img.pengu { position: fixed; right: 30px; bottom: 62px; width: 140px; height: auto; max-height: none; margin: 0; }
+
+/* Two code blocks side by side; hl-box fragments draw a red rectangle over the line when clicked. */
+.reveal .codepair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1em; text-align: left; }
+.reveal .codepair > div { min-width: 0; }
+.reveal .codepair pre { width: 100%; margin: 0; font-size: 0.46em; background: #111b33; border-left: 5px solid var(--accent); border-radius: 6px; }
+.reveal .codepair pre code { max-height: none; overflow: visible; padding: 0.6em 0.8em; background: transparent; line-height: 1.7; }
+.reveal .codepair .codetitle { margin: 0 0 0.3em; font-size: 0.7em; color: var(--accent); font-weight: 700; }
+.reveal .fragment.hl-box { opacity: 1; visibility: inherit; outline: 3px solid transparent; outline-offset: 3px; border-radius: 4px; transition: outline-color 0.3s, background 0.3s; }
+.reveal .fragment.hl-box.visible { outline-color: #ff4d6d; background: rgba(255, 77, 109, 0.18); }

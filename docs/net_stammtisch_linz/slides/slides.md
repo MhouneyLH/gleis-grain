@@ -265,6 +265,38 @@ Orleans runs the code of a grain in turns: one request at a time, a second reque
 
 ---
 
+## Do you see the problem?
+
+<div class="codepair">
+<div>
+<p class="codetitle">StopGrain</p>
+<pre><code class="no-highlight" data-noescape>public async Task&lt;Board&gt; GetBoardAsync()
+{
+    var trip = GrainFactory.GetGrain&lt;ITripGrain&gt;(tripId);
+    <span class="fragment custom hl-box" data-fragment-index="1">var delay = await trip.GetDelayAsync();</span>
+    return Build(delay);
+}</code></pre>
+</div>
+<div>
+<p class="codetitle">TripGrain</p>
+<pre><code class="no-highlight" data-noescape>public async Task&lt;int&gt; GetDelayAsync()
+{
+    var stop = GrainFactory.GetGrain&lt;IStopGrain&gt;(stopId);
+    <span class="fragment custom hl-box" data-fragment-index="2">var board = await stop.GetBoardAsync();</span>
+    return Estimate(board);
+}</code></pre>
+</div>
+</div>
+
+<p class="fragment" data-fragment-index="3">Stop waits for Trip, Trip waits for Stop: neither turn ever ends. Deadlock, until the call times out.</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Ask the room first: "Who sees the problem?" Give them a moment, then click. Click 1 marks the call from the stop to the trip, click 2 the call back from the trip to the stop, click 3 shows the result. Both grains are turn-based: while StopGrain awaits the trip, it does not accept other requests, so TripGrain's call back into StopGrain waits for a turn that never comes. Orleans reports a timeout after the response timeout (30 s by default). Next slides: the fixes (reentrancy, interleaving, a different call flow). This is an illustration: in the repo the stop reports to the trip with a one-way call (`ReportAsync` is `[OneWay]`), so there is no cycle.
+
+---
+
 ## Versioning: serialization
 
 - `[GenerateSerializer]` on every state and contract

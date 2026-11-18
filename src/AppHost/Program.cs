@@ -145,4 +145,18 @@ builder.AddViteApp("frontend", "../Frontend")
     .WaitFor(gateway)
     .WithUrlForEndpoint("http", url => url.DisplayText = "Frontend");
 
+// The audience simulator: virtual people that use the public API like phones would, so the map is alive although the
+// audience cannot reach localhost. It waits for the presenter to start it in the Aspire dashboard. It needs no
+// reference to the project of the Host, only the url of the gateway. Options: Simulator:People, RampUpSeconds,
+// HotStopShare and Seed in the AppHost configuration (for example dotnet run --project src/AppHost -- Simulator:People=200).
+builder.AddProject<Projects.GleisGrain_Simulator>("simulator")
+    .WithReference(gateway)
+    .WithEnvironment("Simulator__BaseUrl", gateway.GetEndpoint("http"))
+    .WithEnvironment("Simulator__People", builder.Configuration["Simulator:People"] ?? "80")
+    .WithEnvironment("Simulator__RampUpSeconds", builder.Configuration["Simulator:RampUpSeconds"] ?? "40")
+    .WithEnvironment("Simulator__HotStopShare", builder.Configuration["Simulator:HotStopShare"] ?? "0.4")
+    .WithEnvironment("Simulator__Seed", builder.Configuration["Simulator:Seed"] ?? string.Empty)
+    .WaitFor(gateway)
+    .WithExplicitStart();
+
 await builder.Build().RunAsync();

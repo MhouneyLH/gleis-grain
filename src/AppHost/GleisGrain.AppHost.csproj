@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../Host/GleisGrain.Host.csproj" />
+    <ProjectReference Include="../Simulator/GleisGrain.Simulator.csproj" />
   </ItemGroup>
 
   <!--

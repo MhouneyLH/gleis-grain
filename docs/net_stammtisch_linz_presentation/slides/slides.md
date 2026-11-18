@@ -234,9 +234,7 @@ Vertical slide, can be skipped. Location transparency: you never say which silo.
 
 ![cluster](/images/cluster.png)
 
-- Grain Activation
-- Grain Placement<sup class="ref">1</sup>
-- Grain Communication
+- Grain Activation, Grain Placement<sup class="ref">1</sup>, Grain Communication
 
 <div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-placement/">https://dotnet.github.io/orleans/docs/grains/grain-placement/</a></div>
 

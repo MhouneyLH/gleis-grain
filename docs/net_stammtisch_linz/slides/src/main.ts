@@ -63,5 +63,13 @@ const highlightLines = () => {
     line.innerHTML = highlightPlugin.hljs.highlight(line.textContent ?? "", { language: "csharp" }).value;
   });
 };
+// Tall code blocks get a class, so CSS can make them smaller instead of letting them scroll or overflow.
+const markTallCode = () => {
+  document.querySelectorAll("pre code").forEach((code) => {
+    const lines = (code.textContent ?? "").trim().split("\n").length;
+    if (lines >= 15) code.closest("pre")?.classList.add("tall");
+  });
+};
+reveal.on("ready", markTallCode);
 reveal.on("ready", highlightLines);
 reveal.initialize();

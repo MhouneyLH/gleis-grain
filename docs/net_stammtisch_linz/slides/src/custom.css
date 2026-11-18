@@ -17,9 +17,9 @@
 .reveal ul, .reveal ol { display: block; margin-left: 1.9em; }
 .reveal li { margin: 0.35em 0; }
 .reveal code { color: var(--accent); }
-.reveal pre { width: 100%; font-size: 0.55em; box-shadow: none; background: #111b33; border-left: 5px solid var(--accent); border-radius: 6px; }
+.reveal pre { width: 100%; font-size: 0.48em; box-shadow: none; background: #111b33; border-left: 5px solid var(--accent); border-radius: 6px; }
 .reveal pre code { background: transparent; }
-.reveal pre code { max-height: 480px; }
+.reveal pre code { max-height: none; overflow: visible; padding: 0.5em 0.8em; line-height: 1.4; }
 .reveal blockquote { width: 100%; border-left: 6px solid var(--accent); background: transparent; box-shadow: none; padding-left: 0.8em; }
 .reveal table { font-size: 0.75em; }
 .reveal th, .reveal td { padding: 0.3em 0.6em; }
@@ -92,7 +92,7 @@
 .reveal .memerow { display: flex; align-items: center; justify-content: center; gap: 1.2em; margin-top: 0.6em; }
 .reveal .memerow img { width: 360px; height: auto; max-height: none; margin: 0; border-radius: 6px; }
 .reveal .memerow p { font-size: 0.7em; max-width: 520px; margin: 0; text-align: left; }
-.reveal pre.cs.single { width: 100%; font-size: 0.42em; margin: 0.4em 0 0; background: #111b33; border-left: 5px solid var(--accent); border-radius: 6px; text-align: left; }
+.reveal pre.cs.single { width: 100%; font-size: 0.4em; margin: 0.4em 0 0; background: #111b33; border-left: 5px solid var(--accent); border-radius: 6px; text-align: left; }
 .reveal pre.cs.single code { max-height: none; overflow: visible; padding: 0.6em 0.9em; background: transparent; }
 .reveal pre.cs .l { display: block; line-height: 1.5; }
 .reveal section ul:has(+ pre.cs.single) { font-size: 0.8em; }
@@ -101,3 +101,7 @@
 .reveal ol { list-style-position: outside; }
 .reveal ol li::marker { color: var(--purple); font-weight: 700; }
 .reveal ol li { padding-left: 0.2em; margin: 0.45em 0; }
+/* Tall code (15 lines or more): smaller text, tighter lines, so it fits above the references without scrolling. */
+.reveal pre.tall { font-size: 0.4em; }
+.reveal pre.tall code { line-height: 1.2; padding: 0.4em 0.8em; }
+.reveal pre.cs.single.tall { font-size: 0.36em; }

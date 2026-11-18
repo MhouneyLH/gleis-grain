@@ -279,14 +279,8 @@ protected IGrainTimer RegisterGrainTimer<TState>(
 
 ## Concurrency and hot spots
 
-- turn-based execution
-- interleave & reentrancy
-- readonly
-- stateless worker
-- hot grain: Hauptbahnhof -> bad architectural decision or batching
-    - sourcegrain -> grain chains block each other, one global grain; show at rate limiter
-
-<p class="small">Two kinds of work: changing state (calls block each other) and reading (reads should not wait behind writes)</p>
+- Reading: asking a grain, state stays as it is
+- Writing: changing state, grains calling grains
 
 Note:
 - Speaker: Lucas

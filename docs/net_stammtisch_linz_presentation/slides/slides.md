@@ -22,7 +22,7 @@ Note:
     <p>Cloud Native, OpenTelemetry, .NET</p>
   </div>
   <div class="speaker">
-    <img src="/images/raffi.jpg" alt="Raffael Rehberger">
+    <img src="/images/raffi.png" alt="Raffael Rehberger">
     <h3>Raffael Rehberger</h3>
     <p>Team Lead, Cloud Architect</p>
     <p>Orleans is part of daily work</p>

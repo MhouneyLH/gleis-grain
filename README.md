@@ -17,15 +17,21 @@ In the devcontainer: `dotnet run --project src/AppHost`, or `--launch-profile re
 
 Details and troubleshooting: [CONTRIBUTING.md](CONTRIBUTING.md#running-the-demo).
 
+## What you see
+
+- **Projector page** (`/projector`): a full-screen map of Linz. Every dot is a stop and a grain: it is lit while the grain is active, its **shape** is the silo that hosts it, its **colour** the grain version (red v1, blue v2) and its size the number of watchers. Floating panels show silos, stats, events, the chaos button and the simulation controls; `H` hides them.
+- **Audience page** (`/`): pick a stop on the map and see its live departure board. A guest name is created automatically, nobody has to sign in.
+- **Departure board and notices** for every stop and line.
+
 ## Bounded contexts
 
 | Context   | Aggregate | What it owns                                                               |
 |-----------|-----------|----------------------------------------------------------------------------|
-| Stops     | Stop      | The curated stops, a stop's departure board, who watches it                 |
+| Stops     | Stop      | 25 curated stops, a stop's departure board, who watches it (a cached read grain relieves the hot stop) |
 | Trips     | Trip      | A trip with its delay state                                                |
-| Alerts    | Alert     | Service notices and disruptions                                            |
+| Alerts    | AlertBoard | The current service notices, filterable by line or stop                    |
 | Ingestion | Source    | The EFA XML client, parsing, rate limiting, live or replayed responses     |
-| Game      | Player    | Nicknames, the chosen stop, delay bets and the leaderboard                 |
+| Game      | Player    | Nicknames, the chosen stop, delay bets and the leaderboard (bets are hidden in the frontend) |
 | Cluster   | Hub       | Silo overview, stats, the chaos button, the live event stream (SSE)        |
 
 They call each other only through their Contracts projects. Live updates reach the browser through server-sent events on `GET /api/cluster/events`; see [docs/api.md](docs/api.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
@@ -45,6 +51,14 @@ db/                  Orleans SQL schema
 test/                mirrors src
 docs/                API, requirements and the talk (slides, diagrams)
 ```
+
+## The talk
+
+The slides (reveal.js, speaker notes, diagram sources) are in [docs/net_stammtisch_linz_presentation](docs/net_stammtisch_linz_presentation). Run them with `npm install && npm run dev` in its `slides` folder.
+
+## Tests
+
+`dotnet test --solution gleis-grain.slnx` (unit, in-memory Orleans cluster and one Postgres Testcontainers test that needs Docker), `npm test` in `src/Frontend`. CI runs only the parts a change touches.
 
 ## More
 

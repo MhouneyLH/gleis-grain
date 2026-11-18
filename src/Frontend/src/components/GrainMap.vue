@@ -3,10 +3,11 @@ import L from 'leaflet'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Stop } from '../api'
 import type { GrainView, StopDot } from '../live/grainView'
-import { NO_SILO_COLOR } from '../live/siloColors'
+import { shapeSvg } from '../live/siloShapes'
+import { NO_SILO_COLOR, type SiloInfo } from '../live/siloSlots'
 import { createBaseMap, fitToStops, type BaseMap } from '../map/baseMap'
 
-const props = defineProps<{ stops: Stop[]; view: GrainView; colorOf: (silo: string) => string }>()
+const props = defineProps<{ stops: Stop[]; view: GrainView; infoOf: (silo: string) => SiloInfo; layoutKey: number }>()
 
 const element = ref<HTMLDivElement | null>(null)
 
@@ -25,7 +26,8 @@ function sizeOf(dot: StopDot | undefined): number {
 
 function iconFor(stop: Stop, dot: StopDot | undefined, flashing: boolean): L.DivIcon {
   const size = sizeOf(dot)
-  const color = dot?.active && dot.silo ? props.colorOf(dot.silo) : NO_SILO_COLOR
+  const info = dot?.active && dot.silo ? props.infoOf(dot.silo) : null
+  const color = info?.color ?? NO_SILO_COLOR
   const state = dot?.active ? 'on' : 'off'
   const flash = flashing && dot?.flashKind ? dot.flashKind : ''
   const badge = dot && dot.watchers > 0 ? `<b class="gd-badge">${dot.watchers}</b>` : ''
@@ -35,7 +37,7 @@ function iconFor(stop: Stop, dot: StopDot | undefined, flashing: boolean): L.Div
     iconAnchor: [size / 2, size / 2],
     html:
       `<div class="gd ${state} ${flash}" style="--c:${color}">` +
-      `<i class="gd-ring"></i><i class="gd-core"></i>${badge}` +
+      `<i class="gd-ring"></i>${shapeSvg(info?.shape ?? 'circle', color, size, 'gd-core')}${badge}` +
       `<span class="gd-name">${escapeHtml(stop.name)}</span></div>`,
   })
 }
@@ -45,7 +47,8 @@ function render(): void {
   if (!map) return
   for (const stop of props.stops) {
     const dot = props.view.dots[stop.id]
-    const signature = `${dot?.active ?? false}|${dot?.silo ?? ''}|${dot?.watchers ?? 0}|${dot?.flashSeq ?? 0}`
+    const info = dot?.active && dot.silo ? props.infoOf(dot.silo) : null
+    const signature = `${dot?.active ?? false}|${info?.version ?? ''}|${info?.shape ?? ''}|${dot?.watchers ?? 0}|${dot?.flashSeq ?? 0}`
     const known = markers.get(stop.id)
     if (known && known.signature === signature) continue
 
@@ -86,6 +89,7 @@ onMounted(() => {
 onBeforeUnmount(() => base?.destroy())
 
 watch(() => props.stops, render)
+watch(() => props.layoutKey, render)
 watch(() => props.view.dots, render, { deep: true })
 </script>
 
@@ -134,20 +138,26 @@ watch(() => props.view.dots, render, { deep: true })
 }
 
 .gd-core {
-  inset: 14%;
-  background: var(--c);
-  border: 3px solid rgb(255 255 255 / 0.92);
-  transition: background 0.4s ease, box-shadow 0.4s ease;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transition: filter 0.4s ease;
 }
 
 .gd.on .gd-core {
-  box-shadow: 0 0 22px 5px var(--c);
+  filter: drop-shadow(0 0 7px var(--c)) drop-shadow(0 1px 2px rgb(0 0 0 / 0.7));
+}
+
+.gd.off .gd-core rect,
+.gd.off .gd-core circle {
+  stroke: #6b7686;
 }
 
 .gd.off .gd-core {
-  inset: 12%;
-  background: #353e4d;
-  border: 2px solid #55617a;
+  transform: scale(0.8);
+  opacity: 0.9;
 }
 
 .gd-ring {
@@ -161,6 +171,7 @@ watch(() => props.view.dots, render, { deep: true })
   animation: gd-ring 1.1s ease-out 3;
 }
 
+.gd.woke .gd-core,
 .gd.moved .gd-core {
   animation: gd-blink 0.45s ease-in-out 5;
 }
@@ -209,7 +220,7 @@ watch(() => props.view.dots, render, { deep: true })
 
 @keyframes gd-blink {
   50% {
-    background: #fff;
+    filter: brightness(2.2) drop-shadow(0 0 12px #fff);
     transform: scale(1.25);
   }
 }

@@ -23,6 +23,8 @@ export interface Departure {
 
 export interface StopBoard extends Stop {
   watchers: number
+  /** Version of the grain that answered; optional, absent in older hosts. */
+  grainVersion?: number | string
   refreshedAt: string
   departures: Departure[]
 }

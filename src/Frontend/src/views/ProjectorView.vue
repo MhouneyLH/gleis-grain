@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { BETTING_ENABLED } from '../config'
 import { api, type ClusterStats, type LiveEventMap, type LiveEventType, type Silo } from '../api'
 import ChaosButton from '../components/ChaosButton.vue'
 import GrainMap from '../components/GrainMap.vue'
@@ -15,14 +16,19 @@ import { useStops } from '../composables/useStops'
 import { activeCount, applyActivations, watcherBars } from '../live/grainView'
 import { normalizeLeaderboard } from '../live/leaderboard'
 import { applyLiveEvent, createLiveState } from '../live/liveState'
-import { SiloColors } from '../live/siloColors'
+import { shapeSvg } from '../live/siloShapes'
+import { SHAPES, SiloSlots, versionColor } from '../live/siloSlots'
 import { pushTicker, tickerEntry } from '../live/ticker'
 
 const route = useRoute()
 const { stops, error: stopsError, stopName } = useStops()
 
-const colors = new SiloColors()
-const colorOf = (silo: string) => colors.colorFor(silo)
+const slots = new SiloSlots()
+// Slots are assigned lazily too (an activation can name a silo the list does not know yet), so ask the class.
+const layoutKey = ref(0)
+const infoOf = (silo: string) => slots.infoOf(silo)
+const colorOf = (silo: string) => slots.infoOf(silo).color
+const slotNumbers = [1, 2, 3]
 
 const live = reactive(createLiveState())
 const silos = ref<Silo[]>([])
@@ -44,7 +50,6 @@ const hostedBySilo = computed(() => {
   }
   return counts
 })
-const liveSilos = computed(() => silos.value.filter((silo) => silo.status.toLowerCase() !== 'dead'))
 
 async function loadActivations(first: boolean): Promise<void> {
   try {
@@ -57,8 +62,7 @@ async function loadActivations(first: boolean): Promise<void> {
 async function loadSilos(): Promise<void> {
   try {
     const list = await api.silos()
-    // Assign colours in name order so a fresh projector page picks the same colours most of the time.
-    for (const silo of [...list].sort((a, b) => a.name.localeCompare(b.name))) colors.colorFor(silo.name)
+    if (slots.update(list)) layoutKey.value += 1
     silos.value = list
   } catch {
     // Keep the last known list.
@@ -89,21 +93,25 @@ const handlers: LiveHandlers = {
   'stop.activated': (p) => apply('stop.activated', p),
   'stop.deactivated': (p) => apply('stop.deactivated', p),
   'stop.watchers': (p) => apply('stop.watchers', p),
-  'bet.placed': (p) => apply('bet.placed', p),
-  'bet.resolved': (p) => apply('bet.resolved', p),
-  'leaderboard.changed': (p) => apply('leaderboard.changed', p),
+  ...(BETTING_ENABLED
+    ? {
+        'bet.placed': (p) => apply('bet.placed', p),
+        'bet.resolved': (p) => apply('bet.resolved', p),
+        'leaderboard.changed': (p) => apply('leaderboard.changed', p),
+      }
+    : {}),
 }
 
 // After a reconnect (for example because the silo behind the stream died) load the state again.
 const { connected } = useEventStream(handlers, () => {
-  void loadActivations(false)
-  void loadSilos()
-  void loadLeaderboard()
+  // Silos first, so the slots are ranked by name before activations ask for them.
+  void loadSilos().then(() => loadActivations(false))
+  if (BETTING_ENABLED) void loadLeaderboard()
 })
 
 onMounted(() => {
-  void loadActivations(true)
-  void loadLeaderboard()
+  void loadSilos().then(() => loadActivations(true))
+  if (BETTING_ENABLED) void loadLeaderboard()
 })
 usePolling(loadSilos, 3000)
 usePolling(loadStats, 5000)
@@ -117,7 +125,7 @@ function onChaos(text: string): void {
 <template>
   <div class="projector theme-dark">
     <section class="stage">
-      <GrainMap :stops="stops" :view="live.grain" :color-of="colorOf" />
+      <GrainMap :stops="stops" :view="live.grain" :info-of="infoOf" :layout-key="layoutKey" />
 
       <div class="join">
         <span>Join on your phone</span>
@@ -129,9 +137,20 @@ function onChaos(text: string): void {
           <i></i>{{ connected ? 'live' : 'reconnecting...' }}
         </span>
         <span class="chip lit num">{{ lit }} / {{ stops.length }} grains active</span>
-        <span v-for="silo in liveSilos" :key="silo.name" class="chip">
-          <i :style="{ background: colorOf(silo.name) }"></i>{{ silo.name }}
-        </span>
+      </div>
+
+      <div class="key" aria-label="Legend">
+        <div class="key-row">
+          <span class="key-title">Silo</span>
+          <span v-for="(shape, index) in SHAPES" :key="shape" class="key-item">
+            <span v-html="shapeSvg(shape, '#9aa5b8', 34)"></span>{{ slotNumbers[index] }}
+          </span>
+        </div>
+        <div class="key-row">
+          <span class="key-title">Version</span>
+          <span class="key-item"><i :style="{ background: versionColor(1) }"></i>v1</span>
+          <span class="key-item"><i :style="{ background: versionColor(2) }"></i>v2</span>
+        </div>
       </div>
 
       <div class="chaos-slot"><ChaosButton @message="onChaos" /></div>
@@ -140,8 +159,8 @@ function onChaos(text: string): void {
     </section>
 
     <aside class="panel">
-      <LeaderboardCard :rows="live.leaderboard" :limit="5" big />
-      <SiloList :silos="silos" :color-of="colorOf" :hosted="hostedBySilo" />
+      <LeaderboardCard v-if="BETTING_ENABLED" :rows="live.leaderboard" :limit="5" big />
+      <SiloList :silos="silos" :info-of="infoOf" :hosted="hostedBySilo" />
       <WatcherBars :bars="bars" :color-of="colorOf" />
       <StatsPanel :stats="stats" />
       <TickerList :entries="live.ticker" />
@@ -275,6 +294,50 @@ function onChaos(text: string): void {
 
 .panel :deep(h2) {
   font-size: 0.8em;
+}
+
+.key {
+  position: absolute;
+  z-index: 900;
+  right: 16px;
+  bottom: 60px;
+  display: grid;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 16px;
+  background: rgb(13 17 23 / 0.9);
+  border: 2px solid var(--hairline);
+}
+
+.key-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.key-title {
+  min-width: 4.5em;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 0.9em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.7em;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.key-item i {
+  width: 1em;
+  height: 1em;
+  border-radius: 4px;
+  border: 2.5px solid #fff;
 }
 
 @media (max-width: 900px) {

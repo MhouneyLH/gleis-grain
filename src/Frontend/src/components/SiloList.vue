@@ -1,22 +1,28 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Silo } from '../api'
+import { shapeSvg } from '../live/siloShapes'
+import { isDeadStatus, type SiloInfo } from '../live/siloSlots'
 
-const props = defineProps<{ silos: Silo[]; colorOf: (silo: string) => string; hosted: Record<string, number> }>()
+const props = defineProps<{ silos: Silo[]; infoOf: (silo: string) => SiloInfo; hosted: Record<string, number> }>()
 
-const isDead = (silo: Silo) => silo.status.toLowerCase() === 'dead'
-const sorted = computed(() => [...props.silos].sort((a, b) => a.name.localeCompare(b.name)))
+const sorted = computed(() =>
+  props.silos
+    .map((silo) => ({ silo, info: props.infoOf(silo.name), dead: isDeadStatus(silo.status) }))
+    .sort((a, b) => a.info.version - b.info.version || a.silo.name.localeCompare(b.silo.name)),
+)
 </script>
 
 <template>
   <section class="card">
     <h2>Silos</h2>
     <ul v-if="sorted.length > 0">
-      <li v-for="silo in sorted" :key="silo.name" :class="{ dead: isDead(silo) }">
-        <i class="swatch" :style="{ background: isDead(silo) ? 'transparent' : colorOf(silo.name) }"></i>
-        <span class="name">{{ silo.name }}</span>
-        <span v-if="!isDead(silo)" class="hosted num">{{ hosted[silo.name] ?? 0 }} stops</span>
-        <span class="status">{{ silo.status }}</span>
+      <li v-for="row in sorted" :key="row.silo.name" :class="{ dead: row.dead }">
+        <span class="icon" v-html="shapeSvg(row.info.shape, row.dead ? 'transparent' : row.info.color, 22)"></span>
+        <span class="ver" :style="row.dead ? undefined : { background: row.info.color }">v{{ row.info.version }}</span>
+        <span class="name">{{ row.silo.name }}</span>
+        <span v-if="!row.dead" class="hosted num">{{ hosted[row.silo.name] ?? 0 }} stops</span>
+        <span class="status">{{ row.silo.status }}</span>
       </li>
     </ul>
     <p v-else class="muted">No silo information yet.</p>
@@ -34,17 +40,23 @@ ul {
 
 li {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto auto 1fr auto auto;
   align-items: center;
   gap: 10px;
   font-weight: 800;
 }
 
-.swatch {
-  width: 1em;
-  height: 1em;
-  border-radius: 50%;
-  border: 2px solid transparent;
+.icon {
+  display: inline-flex;
+}
+
+.ver {
+  min-width: 2.2em;
+  padding: 0 8px;
+  border-radius: 8px;
+  color: #0d1117;
+  text-align: center;
+  font-weight: 900;
 }
 
 .name {
@@ -76,8 +88,11 @@ li.dead .name {
   text-decoration: line-through;
 }
 
-li.dead .swatch {
-  border-color: var(--red);
+li.dead .ver {
+  background: none;
+  color: var(--red);
+  border: 1px solid var(--red);
+  text-decoration: line-through;
 }
 
 li.dead .status {

@@ -613,7 +613,7 @@ Grain slow? Follow the arrows: read-heavy means StatelessWorker or ReadOnly, a c
 
 ---
 
-## Versioning: serialization
+## Versioning: serialization<sup class="ref">1</sup>
 
 - `[GenerateSerializer]` on every state and contract
 - Stable `[Id(n)]` per field, add new ids only
@@ -629,6 +629,8 @@ internal sealed class StopState
 }
 ```
 
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/host/configuration-guide/serialization/#versioning-rules">https://dotnet.github.io/orleans/docs/host/configuration-guide/serialization/#versioning-rules</a></div>
+
 Note:
 - Speaker: Lucas
 
@@ -639,9 +641,14 @@ This is in the repo on state, snapshots, ids and grain interfaces. Snippet short
 ## Versioning: rolling updates
 
 - `SchemaVersion` field exists, migration in `OnActivateAsync` is still missing
-- `[Version(2)]` on grain interfaces
+- `[Version(2)]` on grain interfaces<sup class="ref">1</sup>
 - Compatibility strategy and version selector
-- v1 and v2 silos coexist during a rolling update
+- v1 and v2 silos coexist during a rolling update<sup class="ref">2</sup>
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-versioning/grain-versioning/">https://dotnet.github.io/orleans/docs/grains/grain-versioning/grain-versioning/</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-versioning/deploying-new-versions-of-grains/">https://dotnet.github.io/orleans/docs/grains/grain-versioning/deploying-new-versions-of-grains/</a></div>
+</div>
 
 Note:
 - Speaker: Lucas
@@ -650,11 +657,13 @@ In the repo: `IStopGrain` has `[Version(1)]` in the v1 build and `[Version(2)]` 
 
 ---
 
-## Versioning: rolling updates
+## Versioning: rolling updates<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/ver_10_rolling_update.png" alt="Three stages: only v1 silos, v2 silos join the same cluster, v1 silos stopped; red is v1, blue is v2, the shape is the silo">
 
 <p class="small">Start the v2 replicas, then stop the v1 replicas: one cluster the whole time</p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-versioning/deploying-new-versions-of-grains/#rolling-upgrade">https://dotnet.github.io/orleans/docs/grains/grain-versioning/deploying-new-versions-of-grains/#rolling-upgrade</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -663,11 +672,13 @@ Read it top to bottom. First only v1 silos run, then three v2 silos join the sam
 
 ---
 
-## Versioning: compatibility
+## Versioning: compatibility<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/ver_11_version_compatibility.png" alt="A v1 caller can call a v2 grain (BackwardCompatible), a new activation goes to a v2 silo (LatestVersion), v2 only adds methods and fields with new ids">
 
 <p class="small">v2 only adds, so v1 callers keep working while the rollout runs</p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-versioning/version-selector-strategy/">https://dotnet.github.io/orleans/docs/grains/grain-versioning/version-selector-strategy/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi

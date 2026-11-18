@@ -35,7 +35,7 @@ Two launch profiles pick where departures come from: `live` (default) asks the L
 
 ### Grain versioning demo
 
-`IStopGrain` carries `[Version(1)]`, or `[Version(2)]` when built with `-p:GrainVersion=2` (compile constant `GRAIN_V2` in the Stops projects). The AppHost builds the v2 host into `artifacts/v2` after every AppHost build (skip with `-p:SkipGrainV2Build=true`), so it does not touch the bin and obj folders of the normal build. To build it by hand:
+`IStopGrain` carries `[Version(1)]`, or `[Version(2)]` when built with `-p:GrainVersion=2` (compile constant `GRAIN_V2` in the Stops projects). The AppHost builds the v2 host into `artifacts/v2` after every AppHost build (skip with `-p:SkipGrainV2Build=true`), so it does not touch the bin and obj folders of the normal build. The replicas never build: Aspire starts them with `dotnet run --no-build`, so build first (`dotnet run --project src/AppHost` does). To build it by hand:
 
 ```
 dotnet build src/Host -p:GrainVersion=2 --artifacts-path artifacts/v2

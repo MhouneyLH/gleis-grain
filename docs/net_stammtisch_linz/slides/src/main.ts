@@ -41,6 +41,54 @@ const showRefs = (slide?: Element) => {
   refs.innerHTML = source ? source.innerHTML : "";
 };
 
+// Numbers the references across the whole deck by first appearance. A slide keeps writing its own 1, 2 in the text and in
+// its refs block; here each URL gets one deck-wide number (the same URL keeps the same number) in the text and the block.
+const numberReferences = (): Map<string, number> => {
+  const numbers = new Map<string, number>();
+  const slides = Array.from(document.querySelectorAll<HTMLElement>(".slides section")).filter((section) => !section.querySelector("section"));
+  for (const slide of slides) {
+    const block = slide.querySelector<HTMLElement>(".refs");
+    if (!block) continue;
+    const entries = block.querySelector(":scope > div") ? Array.from(block.querySelectorAll<HTMLElement>(":scope > div")) : [block];
+    const localToGlobal = new Map<string, number>();
+    for (const entry of entries) {
+      const url = entry.querySelector("a")?.getAttribute("href");
+      const marker = entry.querySelector("sup.ref");
+      if (!url || !marker) continue;
+      if (!numbers.has(url)) numbers.set(url, numbers.size + 1);
+      const global = numbers.get(url) ?? 0;
+      localToGlobal.set(marker.textContent ?? "", global);
+      marker.textContent = String(global);
+    }
+    slide.querySelectorAll<HTMLElement>("sup.ref").forEach((marker) => {
+      const global = block.contains(marker) ? undefined : localToGlobal.get(marker.textContent ?? "");
+      if (global !== undefined) marker.textContent = String(global);
+    });
+  }
+  return numbers;
+};
+
+// The closing slides list all references. They are placeholders in slides.md (div.allrefs with data-part); unused ones are removed.
+const fillReferenceSlides = (numbers: Map<string, number>) => {
+  const perSlide = 14;
+  const containers = Array.from(document.querySelectorAll<HTMLElement>(".allrefs"));
+  const entries = Array.from(numbers.entries());
+  const parts = Math.max(1, Math.ceil(entries.length / perSlide));
+  containers.forEach((container, index) => {
+    const slide = container.closest("section");
+    if (index >= parts) {
+      slide?.remove();
+      return;
+    }
+    container.innerHTML = entries
+      .slice(index * perSlide, (index + 1) * perSlide)
+      .map(([url, n]) => `<div><sup class="ref">${n}</sup> <a href="${url}">${url}</a></div>`)
+      .join("");
+    const heading = slide?.querySelector("h2");
+    if (heading) heading.textContent = parts > 1 ? `References (${index + 1}/${parts})` : "References";
+  });
+};
+
 type Hljs = { highlight: (code: string, options: { language: string }) => { value: string } };
 const highlightPlugin = (Highlight as unknown as () => { hljs: Hljs })();
 
@@ -55,7 +103,11 @@ const reveal = new Reveal({
   plugins: [Markdown, Notes, highlightPlugin as unknown as typeof Markdown],
 });
 
-reveal.on("ready", (event) => showRefs((event as unknown as { currentSlide: Element }).currentSlide));
+reveal.on("ready", (event) => {
+  fillReferenceSlides(numberReferences());
+  reveal.sync();
+  showRefs((event as unknown as { currentSlide: Element }).currentSlide);
+});
 reveal.on("slidechanged", (event) => showRefs((event as unknown as { currentSlide: Element }).currentSlide));
 // Line by line highlighting, so a line can carry a fragment (a rectangle on click) and still get syntax colours.
 const highlightLines = () => {

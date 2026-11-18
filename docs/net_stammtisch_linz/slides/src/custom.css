@@ -105,3 +105,8 @@
 .reveal pre.tall { font-size: 0.4em; }
 .reveal pre.tall code { line-height: 1.2; padding: 0.4em 0.8em; }
 .reveal pre.cs.single.tall { font-size: 0.36em; }
+
+/* The collected references at the end: one URL per line with its deck-wide number. */
+.reveal .allrefs { font-size: 0.5em; text-align: left; }
+.reveal .allrefs > div { margin: 0.45em 0; word-break: break-all; }
+.reveal .allrefs sup.ref { font-size: 0.85em; margin-right: 0.5em; }

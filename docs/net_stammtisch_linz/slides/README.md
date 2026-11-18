@@ -35,7 +35,7 @@ Write a green superscript number in the text and one `refs` block at the end of 
 <div class="refs"><sup class="ref">1</sup> <a href="https://example.com/page">https://example.com/page</a></div>
 ```
 
-The link text is the URL itself, no title. For several sources put one `<div>` per source inside the `refs` block, numbered 1, 2, 3.
+The link text is the URL itself, no title. For several sources put one `<div>` per source inside the `refs` block, numbered 1, 2, 3 per slide. At start `src/main.ts` renumbers all references across the deck by first appearance (the same URL keeps its number) and fills the closing "References" slides with the complete list. Keep the three placeholder slides at the end of `slides.md`; unused ones are removed.
 
 ## Export to PDF
 

@@ -944,3 +944,21 @@ Note:
 
 Note:
 - Speaker: Lucas
+
+---
+
+## References (1/3)
+
+<div class="allrefs" data-part="1"></div>
+
+---
+
+## References (2/3)
+
+<div class="allrefs" data-part="2"></div>
+
+---
+
+## References (3/3)
+
+<div class="allrefs" data-part="3"></div>

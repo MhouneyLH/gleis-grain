@@ -40,26 +40,11 @@ export interface Alert {
   firstSeenAt: string
 }
 
-// ---- Game -----------------------------------------------------------------
-
-export interface OpenBet {
-  tripId: string
-  stopId: string
-  line: string
-  plannedAt: string
-  guessedDelayMinutes: number
-}
+// ---- Game (guest name and watched stop) -----------------------------------------------------------------
 
 export interface Player {
   nickname: string
-  score: number
   watchedStopId: string | null
-  openBet: OpenBet | null
-}
-
-export interface LeaderboardRow {
-  nickname: string
-  score: number
 }
 
 // ---- Cluster --------------------------------------------------------------
@@ -102,9 +87,6 @@ export interface LiveEventMap {
   'stop.activated': { stopId: string; silo: string }
   'stop.deactivated': { stopId: string }
   'stop.watchers': { stopId: string; watchers: number }
-  'bet.placed': { nickname: string; stopId: string; line: string }
-  'bet.resolved': { nickname: string; tripId: string; actualDelayMinutes: number; points: number }
-  'leaderboard.changed': { top: LeaderboardRow[] }
 }
 
 export type LiveEventType = keyof LiveEventMap
@@ -113,9 +95,6 @@ export const liveEventTypes: readonly LiveEventType[] = [
   'stop.activated',
   'stop.deactivated',
   'stop.watchers',
-  'bet.placed',
-  'bet.resolved',
-  'leaderboard.changed',
 ]
 
 export const EVENTS_URL = '/api/cluster/events'
@@ -140,10 +119,6 @@ export const api = {
   player: (nickname: string) => request<Player>('GET', `/api/game/players/${enc(nickname)}`),
   watchStop: (nickname: string, stopId: string) =>
     request<void>('PUT', `/api/game/players/${enc(nickname)}/stop`, { body: { stopId } }),
-  placeBet: (nickname: string, tripId: string, guessedDelayMinutes: number) =>
-    request<Player>('POST', `/api/game/players/${enc(nickname)}/bet`, { body: { tripId, guessedDelayMinutes } }),
-  leaderboard: () => request<LeaderboardRow[]>('GET', '/api/game/leaderboard'),
-
   silos: () => request<Silo[]>('GET', '/api/cluster/silos'),
   activations: () => request<Activation[]>('GET', '/api/cluster/activations'),
   stats: () => request<ClusterStats>('GET', '/api/cluster/stats'),

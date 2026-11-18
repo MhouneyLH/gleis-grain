@@ -64,16 +64,22 @@ usePolling(load, 5000, () => props.open)
 </script>
 
 <template>
-  <div class="sim">
+  <div class="sim panel-stack">
     <p v-if="down" class="hint" role="status">{{ SIM_HINT }}</p>
     <template v-else>
-      <p v-if="view" class="totals num">
-        <span><b>{{ view.people }}</b> people</span>
-        <span><b>{{ view.joined }}</b> joined</span>
-      </p>
+      <div v-if="view" class="stat-row">
+        <div>
+          <strong class="num">{{ view.people }}</strong>
+          <span>people</span>
+        </div>
+        <div>
+          <strong class="num">{{ view.joined }}</strong>
+          <span>joined</span>
+        </div>
+      </div>
       <p v-else class="muted">Loading the scenario...</p>
 
-      <ul v-if="view && view.rows.length > 0" class="groups">
+      <ul v-if="view && view.rows.length > 0" class="groups panel-list">
         <li v-for="row in view.rows" :key="row.stopId" :class="{ sel: row.stopId === selectedId }">
           <span class="gname">{{ row.name }}</span>
           <span class="gpeople num">{{ row.people }}</span>
@@ -81,7 +87,7 @@ usePolling(load, 5000, () => props.open)
       </ul>
       <p v-else-if="view" class="muted">Nobody pinned. The crowd spreads out by itself.</p>
 
-      <p class="selected" :class="{ none: !selectedName }">
+      <p class="selected" :class="{ muted: !selectedName }">
         <template v-if="selectedName">Selected: <b>{{ selectedName }}</b></template>
         <template v-else>Click a stop on the map to select it</template>
       </p>
@@ -89,8 +95,7 @@ usePolling(load, 5000, () => props.open)
         <button
           v-for="n in PRESETS"
           :key="n"
-          class="preset"
-          :class="{ release: n === 0 }"
+          class="btn btn-small btn-ghost"
           :disabled="busy || !selectedId"
           @click="pin(n)"
         >
@@ -98,21 +103,15 @@ usePolling(load, 5000, () => props.open)
         </button>
       </div>
       <div class="wide">
-        <button class="act hot" :disabled="busy" @click="hot">Hot station: {{ HOT_STOP.name }} {{ HOT_STOP.people }}</button>
-        <button class="act" :disabled="busy" @click="releaseAll">Release all</button>
+        <button class="btn btn-small" :disabled="busy" @click="hot">Hot station: {{ HOT_STOP.name }} {{ HOT_STOP.people }}</button>
+        <button class="btn btn-small btn-ghost" :disabled="busy" @click="releaseAll">Release all</button>
       </div>
-      <p v-if="error" class="err" role="alert">{{ error }}</p>
+      <p v-if="error" class="error-text" role="alert">{{ error }}</p>
     </template>
   </div>
 </template>
 
 <style scoped>
-.sim {
-  display: grid;
-  gap: 0.6em;
-  font-weight: 700;
-}
-
 .hint {
   padding: 0.7em 0.9em;
   border-radius: 12px;
@@ -122,24 +121,7 @@ usePolling(load, 5000, () => props.open)
   line-height: 1.3;
 }
 
-.totals {
-  display: flex;
-  gap: 1.2em;
-  color: var(--muted);
-}
-
-.totals b {
-  color: var(--ink);
-  font-size: 1.5em;
-  font-weight: 900;
-}
-
 .groups {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 4px;
   max-height: 9em;
   overflow-y: auto;
 }
@@ -148,27 +130,18 @@ usePolling(load, 5000, () => props.open)
   display: flex;
   justify-content: space-between;
   gap: 1em;
-  padding: 0.25em 0.6em;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 0.07);
-  font-size: 1.1em;
 }
 
 .groups li.sel {
-  outline: 2px solid var(--amber);
+  color: var(--amber);
 }
 
 .gpeople {
-  color: var(--amber);
   font-weight: 900;
 }
 
 .selected {
-  font-size: 1.05em;
-}
-
-.selected.none {
-  color: var(--muted);
+  font-weight: 800;
 }
 
 .selected b {
@@ -181,44 +154,12 @@ usePolling(load, 5000, () => props.open)
   gap: 6px;
 }
 
-button.preset,
-button.act {
-  min-height: 2.6em;
-  border: 2px solid rgb(255 255 255 / 0.25);
-  border-radius: 12px;
-  background: rgb(255 255 255 / 0.08);
-  color: var(--ink);
-  font-weight: 900;
-  font-size: 1.1em;
-  cursor: pointer;
-}
-
-button.preset:hover:not(:disabled),
-button.act:hover:not(:disabled) {
-  background: rgb(255 255 255 / 0.18);
-}
-
-button:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-button.release {
-  font-size: 0.95em;
+.presets .btn {
+  padding: 0 6px;
 }
 
 .wide {
   display: grid;
   gap: 6px;
-}
-
-button.hot {
-  border-color: var(--amber);
-  color: var(--amber);
-}
-
-.err {
-  color: var(--red);
-  font-weight: 800;
 }
 </style>

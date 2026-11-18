@@ -1,8 +1,6 @@
 import { ref } from 'vue'
-import { api, ApiError, type LeaderboardRow, type LiveEventMap, type Player } from '../api'
+import { api, ApiError, type Player } from '../api'
 import { generateGuestName } from '../live/guestName'
-import { normalizeLeaderboard } from '../live/leaderboard'
-import { pushToast } from './useToast'
 
 const STORAGE_KEY = 'gleis-grain.nickname'
 
@@ -23,10 +21,9 @@ function storeNickname(nickname: string | null): void {
   }
 }
 
-// One player per browser, shared by all components of the audience page.
+// One player per browser, shared by all components of the map page.
 const nickname = ref<string | null>(readStoredNickname())
 const player = ref<Player | null>(null)
-const leaderboard = ref<LeaderboardRow[]>([])
 
 const GUEST_ATTEMPTS = 5
 
@@ -70,50 +67,17 @@ export function usePlayer() {
     }
   }
 
-  async function refreshLeaderboard(): Promise<void> {
-    try {
-      leaderboard.value = normalizeLeaderboard(await api.leaderboard(), 5)
-    } catch {
-      // Keep the old list.
-    }
-  }
-
   async function watchStop(stopId: string): Promise<void> {
     if (!nickname.value) return
     await api.watchStop(nickname.value, stopId)
     await refreshPlayer()
   }
 
-  async function placeBet(tripId: string, guessedDelayMinutes: number): Promise<void> {
-    if (!nickname.value) return
-    player.value = await api.placeBet(nickname.value, tripId, guessedDelayMinutes)
-  }
-
-  function onLeaderboard(payload: LiveEventMap['leaderboard.changed']): void {
-    leaderboard.value = normalizeLeaderboard(payload.top, 5)
-  }
-
-  function onBetResolved(payload: LiveEventMap['bet.resolved']): void {
-    if (!nickname.value || payload.nickname.toLowerCase() !== nickname.value.toLowerCase()) return
-    const delay = `The tram was ${payload.actualDelayMinutes === 0 ? 'on time' : `${payload.actualDelayMinutes} min late`}.`
-    if (payload.points > 0) {
-      pushToast('good', `+${payload.points} ${payload.points === 1 ? 'point' : 'points'}!`, delay)
-    } else {
-      pushToast('info', 'No points this time', delay)
-    }
-    void refreshPlayer()
-  }
-
   return {
     nickname,
     player,
-    leaderboard,
     ensureGuest,
     refreshPlayer,
-    refreshLeaderboard,
     watchStop,
-    placeBet,
-    onLeaderboard,
-    onBetResolved,
   }
 }

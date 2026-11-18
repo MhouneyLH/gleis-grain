@@ -5,7 +5,7 @@ const collapsed = defineModel<boolean>('collapsed', { default: false })
 </script>
 
 <template>
-  <section class="fp" :class="{ collapsed }">
+  <section class="fp panel-surface" :class="{ collapsed }">
     <button class="head" type="button" :aria-expanded="!collapsed" @click="collapsed = !collapsed">
       <span class="title">{{ title }}</span>
       <slot name="meta"></slot>
@@ -20,13 +20,8 @@ const collapsed = defineModel<boolean>('collapsed', { default: false })
 </template>
 
 <style scoped>
+
 .fp {
-  pointer-events: auto;
-  border-radius: 16px;
-  background: rgb(13 17 23 / 0.78);
-  border: 1.5px solid rgb(255 255 255 / 0.14);
-  box-shadow: 0 8px 28px rgb(0 0 0 / 0.45);
-  backdrop-filter: blur(6px);
   overflow: hidden;
 }
 

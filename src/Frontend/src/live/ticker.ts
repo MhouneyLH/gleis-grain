@@ -41,18 +41,6 @@ export function describeEvent<T extends LiveEventType>(
       const p = payload as LiveEventMap['stop.watchers']
       return `${stopName(p.stopId)}: ${plural(p.watchers, 'watcher', 'watchers')}`
     }
-    case 'bet.placed': {
-      const p = payload as LiveEventMap['bet.placed']
-      return `${p.nickname} bet on line ${p.line} at ${stopName(p.stopId)}`
-    }
-    case 'bet.resolved': {
-      const p = payload as LiveEventMap['bet.resolved']
-      return `${p.nickname} scored ${plural(p.points, 'point', 'points')} (delay was ${p.actualDelayMinutes} min)`
-    }
-    case 'leaderboard.changed': {
-      const top = (payload as LiveEventMap['leaderboard.changed']).top[0]
-      return top ? `Leaderboard: ${top.nickname} leads with ${top.score}` : 'Leaderboard changed'
-    }
     default:
       return String(type)
   }

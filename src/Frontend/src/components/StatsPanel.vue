@@ -20,7 +20,7 @@ const grains = computed(() =>
   <section class="card">
     <h2>Stats</h2>
     <template v-if="stats">
-      <div class="numbers">
+      <div class="stat-row">
         <div>
           <strong class="num calls">{{ calls }}</strong>
           <span>calls to Linz AG</span>
@@ -47,28 +47,6 @@ const grains = computed(() =>
 </template>
 
 <style scoped>
-.numbers {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.numbers div {
-  display: grid;
-  line-height: 1.1;
-}
-
-.numbers strong {
-  font-size: 2.2em;
-  font-weight: 900;
-}
-
-.numbers span {
-  color: var(--muted);
-  font-weight: 700;
-  font-size: 0.85em;
-}
-
 .calls {
   color: var(--red);
 }
@@ -108,13 +86,13 @@ const grains = computed(() =>
   border-top: 1px dashed var(--hairline);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px 18px;
+  gap: 6px 18px;
 }
 
 .grains li {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-weight: 700;
+  font-weight: 800;
 }
 </style>

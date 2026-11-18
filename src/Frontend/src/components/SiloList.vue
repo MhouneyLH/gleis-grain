@@ -16,7 +16,7 @@ const sorted = computed(() =>
 <template>
   <section class="card">
     <h2>Silos</h2>
-    <ul v-if="sorted.length > 0">
+    <ul v-if="sorted.length > 0" class="panel-list">
       <li v-for="row in sorted" :key="row.silo.name" :class="{ dead: row.dead }">
         <span class="icon" v-html="shapeSvg(row.info.shape, row.dead ? 'transparent' : row.info.color, 22)"></span>
         <span class="ver" :style="row.dead ? undefined : { background: row.info.color }">v{{ row.info.version }}</span>
@@ -30,20 +30,11 @@ const sorted = computed(() =>
 </template>
 
 <style scoped>
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 6px;
-}
-
 li {
   display: grid;
   grid-template-columns: auto auto 1fr auto auto;
   align-items: center;
   gap: 10px;
-  font-weight: 800;
 }
 
 .icon {

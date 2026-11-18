@@ -67,8 +67,6 @@ describe('grain view', () => {
     expect(view.dots['a']).toMatchObject({ active: true, silo: 's1', watchers: 4 })
     applyGrainEvent(view, 'stop.deactivated', { stopId: 'a' })
     expect(view.dots['a']?.active).toBe(false)
-    applyGrainEvent(view, 'bet.placed', { nickname: 'n', stopId: 'a', line: '1' })
-    expect(view.dots['a']?.watchers).toBe(4)
   })
 
   it('never lets the watcher count go below zero', () => {

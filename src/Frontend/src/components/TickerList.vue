@@ -9,7 +9,7 @@ const clock = new Intl.DateTimeFormat('de-AT', { hour: '2-digit', minute: '2-dig
 <template>
   <section class="card">
     <h2>Live ticker</h2>
-    <ul v-if="entries.length > 0">
+    <ul v-if="entries.length > 0" class="panel-list">
       <TransitionGroup name="tick">
         <li v-for="entry in entries" :key="entry.id" :class="entry.kind.replace('.', '-')">
           <time class="num muted">{{ clock.format(entry.at) }}</time>
@@ -22,22 +22,12 @@ const clock = new Intl.DateTimeFormat('de-AT', { hour: '2-digit', minute: '2-dig
 </template>
 
 <style scoped>
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 4px;
-}
-
 li {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 10px;
   padding: 3px 0 3px 10px;
   border-left: 4px solid var(--hairline);
-  font-weight: 700;
-  font-size: 0.92em;
 }
 
 time {
@@ -50,12 +40,6 @@ li.stop-activated {
 
 li.stop-deactivated {
   border-color: #6b7686;
-}
-
-li.bet-resolved,
-li.bet-placed,
-li.leaderboard-changed {
-  border-color: var(--amber);
 }
 
 li.chaos {

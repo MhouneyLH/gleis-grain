@@ -1,4 +1,4 @@
-/* gleis-grain: tram red and cream for the phone pages, a dark theme for the projector. */
+/* gleis-grain: tram red and cream for the phone pages, a dark theme for the overview. */
 
 :root {
   --red: #d6232f;
@@ -249,4 +249,62 @@ input {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ---- floating panels on the overview: one surface, one label style, one number style ---- */
+
+.panel-surface {
+  pointer-events: auto;
+  border-radius: 16px;
+  background: rgb(13 17 23 / 0.78);
+  border: 1.5px solid rgb(255 255 255 / 0.14);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(6px);
+}
+
+/* Small uppercase caption, like the panel titles. */
+.label-caps {
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+/* Content blocks inside a panel are 10px apart, list rows 6px. */
+.panel-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font-weight: 800;
+}
+
+/* Big number with a small caption below, two per row. */
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-row > div {
+  display: grid;
+  line-height: 1.1;
+}
+
+.stat-row strong {
+  font-size: 2.2em;
+  font-weight: 900;
+}
+
+.stat-row span {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.85em;
 }

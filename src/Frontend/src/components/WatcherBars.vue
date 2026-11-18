@@ -7,9 +7,12 @@ defineProps<{ bars: WatcherBar[]; colorOf: (silo: string) => string }>()
 <template>
   <section class="card">
     <h2>Watchers per stop</h2>
-    <ul v-if="bars.length > 0">
+    <ul v-if="bars.length > 0" class="panel-list">
       <li v-for="bar in bars" :key="bar.stopId">
-        <span class="label">{{ bar.name }}</span>
+        <span class="label" :title="bar.silo ? `${bar.name} (${bar.silo})` : bar.name">
+          <span class="stop">{{ bar.name }}</span>
+          <span v-if="bar.silo" class="silo">({{ bar.silo }})</span>
+        </span>
         <span class="track">
           <span class="fill" :style="{ width: `${Math.max(bar.share * 100, 4)}%`, background: bar.silo ? colorOf(bar.silo) : '#6b7686' }"></span>
         </span>
@@ -21,26 +24,31 @@ defineProps<{ bars: WatcherBar[]; colorOf: (silo: string) => string }>()
 </template>
 
 <style scoped>
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 6px;
-}
-
 li {
   display: grid;
-  grid-template-columns: minmax(6em, 34%) 1fr 2.2em;
+  grid-template-columns: minmax(9em, 50%) 1fr 2.2em;
   align-items: center;
   gap: 10px;
-  font-weight: 800;
 }
 
 .label {
+  display: flex;
+  gap: 0.4em;
+  min-width: 0;
+}
+
+/* A long stop name is cut with an ellipsis, the silo name stays whole. */
+.stop {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.silo {
+  flex: none;
+  color: var(--muted);
+  font-size: 0.85em;
+  line-height: 1.6;
 }
 
 .track {

@@ -30,12 +30,12 @@ async function kill(): Promise<void> {
 </script>
 
 <template>
-  <section class="card chaos">
-    <button v-if="!confirming" class="btn big" :disabled="busy" @click="confirming = true">Chaos: kill a silo</button>
+  <section class="panel-surface chaos">
+    <button v-if="!confirming" class="btn" :disabled="busy" @click="confirming = true">Chaos: kill a silo</button>
     <div v-else class="confirm" role="alertdialog" aria-label="Confirm chaos">
       <p>Really kill one silo? The replica that gets the request exits immediately.</p>
       <div class="buttons">
-        <button class="btn big" :disabled="busy" @click="kill">Yes, kill it</button>
+        <button class="btn" :disabled="busy" @click="kill">Yes, kill it</button>
         <button class="btn btn-ghost" :disabled="busy" @click="confirming = false">Cancel</button>
       </div>
     </div>
@@ -45,19 +45,12 @@ async function kill(): Promise<void> {
 
 <style scoped>
 .chaos {
-  border: 2px dashed var(--red);
+  padding: 0.7em 0.9em;
+  border-color: var(--red);
 }
 
-.chaos {
-  width: 20em;
-  padding: 0.6em;
-  background: rgb(13 17 23 / 0.9);
-}
-
-.big {
+.btn {
   width: 100%;
-  min-height: 52px;
-  font-size: 1.05em;
 }
 
 .confirm {
@@ -66,7 +59,7 @@ async function kill(): Promise<void> {
 }
 
 .confirm p {
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .buttons {

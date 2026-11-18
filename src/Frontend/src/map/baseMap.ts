@@ -53,7 +53,12 @@ export function createBaseMap(element: HTMLElement, options: { zoomControl?: boo
   }
 }
 
-export function fitToStops(map: L.Map, points: L.LatLngTuple[], padding: L.PointTuple = [30, 30]): void {
+export function fitToStops(
+  map: L.Map,
+  points: L.LatLngTuple[],
+  padding: L.PointTuple = [30, 30],
+  options: L.FitBoundsOptions = {},
+): void {
   if (points.length === 0) return
-  map.fitBounds(L.latLngBounds(points), { padding })
+  map.fitBounds(L.latLngBounds(points), { padding, ...options })
 }

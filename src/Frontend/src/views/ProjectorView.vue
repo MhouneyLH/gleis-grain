@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { BETTING_ENABLED } from '../config'
-import { api, type ClusterStats, type LiveEventMap, type LiveEventType, type Silo } from '../api'
+import { api, type ClusterStats, type Scenario, type LiveEventMap, type LiveEventType, type Silo } from '../api'
 import ChaosButton from '../components/ChaosButton.vue'
+import FloatingPanel from '../components/FloatingPanel.vue'
+import SimulationPanel from '../components/SimulationPanel.vue'
 import GrainMap from '../components/GrainMap.vue'
 import LeaderboardCard from '../components/LeaderboardCard.vue'
 import SiloList from '../components/SiloList.vue'
@@ -18,6 +20,7 @@ import { normalizeLeaderboard } from '../live/leaderboard'
 import { applyLiveEvent, createLiveState } from '../live/liveState'
 import { shapeSvg } from '../live/siloShapes'
 import { SHAPES, SiloSlots, versionColor } from '../live/siloSlots'
+import { pinnedCounts, toggleSelection } from '../live/simulation'
 import { pushTicker, tickerEntry } from '../live/ticker'
 
 const route = useRoute()
@@ -116,6 +119,28 @@ onMounted(() => {
 usePolling(loadSilos, 3000)
 usePolling(loadStats, 5000)
 
+// Floating panels: each collapses on its own, H hides or shows all of them.
+const panelsHidden = ref(false)
+const collapsed = reactive({ legend: false, sim: false, silos: false, watchers: false, stats: true, ticker: false })
+const selectedId = ref<string | null>(null)
+const scenario = ref<Scenario | null>(null)
+const pinned = computed(() => pinnedCounts(scenario.value))
+const simOpen = computed(() => !panelsHidden.value && !collapsed.sim)
+
+function onSelect(id: string): void {
+  if (simOpen.value) selectedId.value = toggleSelection(selectedId.value, id)
+}
+
+function onKey(event: KeyboardEvent): void {
+  if (event.key.toLowerCase() !== 'h' || event.ctrlKey || event.metaKey || event.altKey) return
+  const target = event.target as HTMLElement | null
+  if (target && /^(input|textarea|select)$/i.test(target.tagName)) return
+  panelsHidden.value = !panelsHidden.value
+}
+
+onMounted(() => window.addEventListener('keydown', onKey))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
+
 function onChaos(text: string): void {
   live.ticker = pushTicker(live.ticker, tickerEntry('chaos', text))
   void loadSilos()
@@ -124,78 +149,135 @@ function onChaos(text: string): void {
 
 <template>
   <div class="projector theme-dark">
-    <section class="stage">
-      <GrainMap :stops="stops" :view="live.grain" :info-of="infoOf" :layout-key="layoutKey" />
+    <GrainMap
+      class="full-map"
+      :stops="stops"
+      :view="live.grain"
+      :info-of="infoOf"
+      :layout-key="layoutKey"
+      :selected-id="simOpen ? selectedId : null"
+      :pinned="pinned"
+      @select="onSelect"
+    />
 
+    <button class="toggle-all" type="button" :aria-pressed="panelsHidden" @click="panelsHidden = !panelsHidden">
+      {{ panelsHidden ? 'Show panels' : 'Hide panels' }} <kbd>H</kbd>
+    </button>
+
+    <p v-if="stopsError" class="map-error">{{ stopsError }}</p>
+
+    <div v-show="!panelsHidden" class="col left">
       <div class="join">
         <span>Join on your phone</span>
         <strong>{{ joinAddress }}</strong>
       </div>
 
-      <div class="legend">
-        <span class="conn" :class="{ off: !connected }">
-          <i></i>{{ connected ? 'live' : 'reconnecting...' }}
-        </span>
-        <span class="chip lit num">{{ lit }} / {{ stops.length }} grains active</span>
-      </div>
-
-      <div class="key" aria-label="Legend">
-        <div class="key-row">
-          <span class="key-title">Silo</span>
-          <span v-for="(shape, index) in SHAPES" :key="shape" class="key-item">
-            <span v-html="shapeSvg(shape, '#9aa5b8', 34)"></span>{{ slotNumbers[index] }}
-          </span>
+      <FloatingPanel v-model:collapsed="collapsed.legend" title="Legend">
+        <div class="key" aria-label="Legend">
+          <div class="key-row">
+            <span class="conn" :class="{ off: !connected }"><i></i>{{ connected ? 'live' : 'reconnecting...' }}</span>
+            <span class="lit num">{{ lit }} / {{ stops.length }} grains active</span>
+          </div>
+          <div class="key-row">
+            <span class="key-title">Silo</span>
+            <span v-for="(shape, index) in SHAPES" :key="shape" class="key-item">
+              <span v-html="shapeSvg(shape, '#9aa5b8', 34)"></span>{{ slotNumbers[index] }}
+            </span>
+          </div>
+          <div class="key-row">
+            <span class="key-title">Version</span>
+            <span class="key-item"><i :style="{ background: versionColor(1) }"></i>v1</span>
+            <span class="key-item"><i :style="{ background: versionColor(2) }"></i>v2</span>
+          </div>
         </div>
-        <div class="key-row">
-          <span class="key-title">Version</span>
-          <span class="key-item"><i :style="{ background: versionColor(1) }"></i>v1</span>
-          <span class="key-item"><i :style="{ background: versionColor(2) }"></i>v2</span>
-        </div>
-      </div>
+      </FloatingPanel>
 
-      <div class="chaos-slot"><ChaosButton @message="onChaos" /></div>
+      <FloatingPanel v-model:collapsed="collapsed.sim" title="Simulation">
+        <SimulationPanel :selected-id="selectedId" :stop-name="stopName" :open="simOpen" @scenario="scenario = $event" />
+      </FloatingPanel>
+    </div>
 
-      <p v-if="stopsError" class="map-error">{{ stopsError }}</p>
-    </section>
-
-    <aside class="panel">
+    <div v-show="!panelsHidden" class="col right">
+      <ChaosButton @message="onChaos" />
       <LeaderboardCard v-if="BETTING_ENABLED" :rows="live.leaderboard" :limit="5" big />
-      <SiloList :silos="silos" :info-of="infoOf" :hosted="hostedBySilo" />
-      <WatcherBars :bars="bars" :color-of="colorOf" />
-      <StatsPanel :stats="stats" />
-      <TickerList :entries="live.ticker" />
-    </aside>
+      <FloatingPanel v-model:collapsed="collapsed.silos" title="Silos">
+        <SiloList :silos="silos" :info-of="infoOf" :hosted="hostedBySilo" />
+      </FloatingPanel>
+      <FloatingPanel v-model:collapsed="collapsed.watchers" title="Watchers per stop">
+        <WatcherBars :bars="bars" :color-of="colorOf" />
+      </FloatingPanel>
+      <FloatingPanel v-model:collapsed="collapsed.stats" title="Stats">
+        <StatsPanel :stats="stats" />
+      </FloatingPanel>
+      <FloatingPanel v-model:collapsed="collapsed.ticker" title="Live ticker">
+        <TickerList :entries="live.ticker" />
+      </FloatingPanel>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .projector {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(380px, 32vw, 640px);
-  height: 100dvh;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   background: var(--cream);
   color: var(--ink);
   font-size: clamp(14px, 0.75vw + 4px, 22px);
 }
 
-.stage {
-  position: relative;
-  min-width: 0;
+.full-map {
+  position: absolute;
+  inset: 0;
 }
 
-.join {
+/* Two columns of floating panels at the sides; the map centre stays free. */
+.col {
   position: absolute;
   z-index: 900;
   top: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  pointer-events: none;
+}
+
+.col::-webkit-scrollbar {
+  display: none;
+}
+
+.col > * {
+  flex: none;
+}
+
+.col.left {
   left: 16px;
+  width: min(23em, 30vw);
+}
+
+.col.right {
+  right: 16px;
+  width: min(25em, 32vw);
+}
+
+.col.right :deep(.chaos) {
+  width: 100%;
+  pointer-events: auto;
+}
+
+.join {
+  pointer-events: auto;
   display: grid;
   gap: 2px;
   padding: 10px 22px 12px;
   border-radius: 18px;
-  background: rgb(13 17 23 / 0.86);
+  background: rgb(13 17 23 / 0.8);
   border: 2px solid var(--red);
   box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
 }
 
 .join span {
@@ -207,46 +289,46 @@ function onChaos(text: string): void {
 }
 
 .join strong {
-  font-size: 2.4em;
+  font-size: 2.1em;
   font-weight: 900;
   line-height: 1.1;
   color: var(--amber);
+  overflow-wrap: anywhere;
 }
 
-.chaos-slot {
+.toggle-all {
   position: absolute;
-  z-index: 900;
-  top: 16px;
-  right: 16px;
+  z-index: 950;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  padding: 4px 14px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 999px;
+  background: rgb(13 17 23 / 0.6);
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 800;
+  cursor: pointer;
+  opacity: 0.7;
 }
 
-.legend {
-  position: absolute;
-  z-index: 900;
-  left: 16px;
-  bottom: 16px;
-  right: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  pointer-events: none;
+.toggle-all:hover {
+  opacity: 1;
 }
 
-.chip,
+kbd {
+  padding: 0 6px;
+  border-radius: 4px;
+  border: 1px solid var(--muted);
+  font: inherit;
+}
+
 .conn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgb(13 17 23 / 0.86);
   font-weight: 800;
-}
-
-.chip i {
-  width: 0.9em;
-  height: 0.9em;
-  border-radius: 50%;
 }
 
 .conn i {
@@ -266,11 +348,16 @@ function onChaos(text: string): void {
   box-shadow: 0 0 10px var(--amber);
 }
 
+.lit {
+  font-weight: 800;
+}
+
 .map-error {
   position: absolute;
   z-index: 900;
-  bottom: 70px;
-  left: 16px;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
   padding: 8px 14px;
   border-radius: 12px;
   background: var(--red-soft);
@@ -278,41 +365,16 @@ function onChaos(text: string): void {
   font-weight: 800;
 }
 
-.panel {
-  display: grid;
-  align-content: start;
-  gap: 12px;
-  padding: 14px;
-  overflow-y: auto;
-  background: #090c12;
-  border-left: 2px solid var(--hairline);
-}
-
-.panel :deep(.card) {
-  padding: 0.85em 1em;
-}
-
-.panel :deep(h2) {
-  font-size: 0.8em;
-}
-
 .key {
-  position: absolute;
-  z-index: 900;
-  right: 16px;
-  bottom: 60px;
   display: grid;
-  gap: 6px;
-  padding: 10px 18px;
-  border-radius: 16px;
-  background: rgb(13 17 23 / 0.9);
-  border: 2px solid var(--hairline);
+  gap: 8px;
 }
 
 .key-row {
   display: flex;
   align-items: center;
-  gap: 18px;
+  flex-wrap: wrap;
+  gap: 6px 18px;
 }
 
 .key-title {
@@ -341,9 +403,10 @@ function onChaos(text: string): void {
 }
 
 @media (max-width: 900px) {
-  .projector {
-    grid-template-columns: 1fr;
-    grid-template-rows: 55dvh 1fr;
+  .col.left,
+  .col.right {
+    width: calc(50vw - 24px);
+    font-size: 12px;
   }
 }
 </style>

@@ -7,7 +7,17 @@ import { shapeSvg } from '../live/siloShapes'
 import { NO_SILO_COLOR, type SiloInfo } from '../live/siloSlots'
 import { createBaseMap, fitToStops, type BaseMap } from '../map/baseMap'
 
-const props = defineProps<{ stops: Stop[]; view: GrainView; infoOf: (silo: string) => SiloInfo; layoutKey: number }>()
+const props = defineProps<{
+  stops: Stop[]
+  view: GrainView
+  infoOf: (silo: string) => SiloInfo
+  layoutKey: number
+  /** The stop selected for the simulator (highlight ring), if any. */
+  selectedId?: string | null
+  /** Virtual people pinned per stop id (small badge). */
+  pinned?: Record<string, number>
+}>()
+const emit = defineEmits<{ select: [stopId: string] }>()
 
 const element = ref<HTMLDivElement | null>(null)
 
@@ -31,13 +41,16 @@ function iconFor(stop: Stop, dot: StopDot | undefined, flashing: boolean): L.Div
   const state = dot?.active ? 'on' : 'off'
   const flash = flashing && dot?.flashKind ? dot.flashKind : ''
   const badge = dot && dot.watchers > 0 ? `<b class="gd-badge">${dot.watchers}</b>` : ''
+  const pinned = props.pinned?.[stop.id] ?? 0
+  const pin = pinned > 0 ? `<b class="gd-pin">${pinned}</b>` : ''
+  const sel = props.selectedId === stop.id ? '<i class="gd-sel"></i>' : ''
   return L.divIcon({
     className: 'gd-icon',
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
     html:
       `<div class="gd ${state} ${flash}" style="--c:${color}">` +
-      `<i class="gd-ring"></i>${shapeSvg(info?.shape ?? 'circle', color, size, 'gd-core')}${badge}` +
+      `<i class="gd-hit"></i><i class="gd-ring"></i>${sel}${shapeSvg(info?.shape ?? 'circle', color, size, 'gd-core')}${badge}${pin}` +
       `<span class="gd-name">${escapeHtml(stop.name)}</span></div>`,
   })
 }
@@ -48,7 +61,7 @@ function render(): void {
   for (const stop of props.stops) {
     const dot = props.view.dots[stop.id]
     const info = dot?.active && dot.silo ? props.infoOf(dot.silo) : null
-    const signature = `${dot?.active ?? false}|${info?.version ?? ''}|${info?.shape ?? ''}|${dot?.watchers ?? 0}|${dot?.flashSeq ?? 0}`
+    const signature = `${dot?.active ?? false}|${info?.version ?? ''}|${info?.shape ?? ''}|${dot?.watchers ?? 0}|${dot?.flashSeq ?? 0}|${props.pinned?.[stop.id] ?? 0}|${props.selectedId === stop.id}`
     const known = markers.get(stop.id)
     if (known && known.signature === signature) continue
 
@@ -66,17 +79,22 @@ function render(): void {
       const marker = L.marker([stop.latitude, stop.longitude], {
         icon,
         zIndexOffset,
-        interactive: false,
+        interactive: true,
         keyboard: false,
-      }).addTo(map)
+      })
+        .on('click', () => emit('select', stop.id))
+        .addTo(map)
       markers.set(stop.id, { marker, signature, flashSeq: dot?.flashSeq ?? 0 })
     }
   }
   if (!fitted && props.stops.length > 0) {
+    const wide = window.innerWidth > 900
     fitToStops(
       map,
       props.stops.map((stop) => [stop.latitude, stop.longitude] as L.LatLngTuple),
       [70, 70],
+      // Keep the stops out of the floating panels on the left and right.
+      wide ? { paddingTopLeft: [window.innerWidth * 0.24, 70], paddingBottomRight: [window.innerWidth * 0.26, 70] } : undefined,
     )
     fitted = true
   }
@@ -91,6 +109,7 @@ onBeforeUnmount(() => base?.destroy())
 watch(() => props.stops, render)
 watch(() => props.layoutKey, render)
 watch(() => props.view.dots, render, { deep: true })
+watch(() => [props.selectedId, props.pinned], render, { deep: true })
 </script>
 
 <template>
@@ -158,6 +177,42 @@ watch(() => props.view.dots, render, { deep: true })
 .gd.off .gd-core {
   transform: scale(0.8);
   opacity: 0.9;
+}
+
+.gd-hit {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.gd-sel {
+  position: absolute;
+  inset: -10px;
+  border: 5px solid #ffc83d;
+  box-shadow: 0 0 0 2px #0d1117, 0 0 18px #ffc83d;
+  animation: gd-sel 1.2s ease-in-out infinite alternate;
+}
+
+.gd-pin {
+  position: absolute;
+  left: -14px;
+  bottom: -12px;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 13px;
+  background: #ffc83d;
+  color: #0d1117;
+  font: 900 15px/26px ui-rounded, 'SF Pro Rounded', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+  text-align: center;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.5);
+}
+
+@keyframes gd-sel {
+  to {
+    box-shadow: 0 0 0 2px #0d1117, 0 0 6px #ffc83d;
+  }
 }
 
 .gd-ring {

@@ -20,13 +20,12 @@ var hostProject = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../Ho
 // of its cluster id. The service id stays, so grain state and reminders survive the restart.
 var clusterId = $"gleis-grain-{DateTime.UtcNow:yyyyMMddHHmmss}";
 
-// The data volume keeps the password of its first start, so a new random password on every run
-// would lock everyone out. persist: true keeps the generated value in the AppHost user secrets.
-var postgresPassword = builder.AddParameter(
-    "postgres-password",
-    new GenerateParameterDefault { MinLength = 24, Special = false },
-    secret: true,
-    persist: true);
+// A fixed password for local development. The data volume keeps the password of its first start, and a random
+// password is stored per OS user (AppHost user secrets), so the dev container and the host would each generate their
+// own and lock each other out ("password authentication failed").
+// Local demo only, do not reuse it for anything real.
+// After changing this value reset the volume once: docker volume rm gleis-grain-postgres
+var postgresPassword = builder.AddParameter("postgres-password", "gleis-grain-dev", secret: true);
 
 var postgres = builder.AddPostgres("postgres", password: postgresPassword)
     .WithImageTag(PostgresTag)

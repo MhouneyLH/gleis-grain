@@ -15,22 +15,18 @@ Note:
 
 <div class="speakers">
   <div class="speaker">
-    <img src="/img/lucas.jpg" alt="Raffi">
+    <img src="/images/lucas.jpg" alt="Lucas Hünniger">
     <h3>Lucas Hünniger</h3>
-    <ul>
-      <li>Backend Engineer by day, Hobby Platform Engineer by night</li>
-      <li>Orleans is part of daily work</li>
-      <li>Cloud Native, OpenTelemetry, .NET</li>
-    </ul>
+    <p>Backend Engineer by day, Hobby Platform Engineer by night</p>
+    <p>Orleans is part of daily work</p>
+    <p>Cloud Native, OpenTelemetry, .NET</p>
   </div>
   <div class="speaker">
-    <img src="/img/raffi.jpg" alt="Raffi">
+    <img src="/images/raffi.jpg" alt="Raffael Rehberger">
     <h3>Raffael Rehberger</h3>
-    <ul>
-      <li>TODO: role in one line</li>
-      <li>TODO: link to the topic</li>
-      <li>TODO: interests</li>
-    </ul>
+    <p>TODO: role in one line</p>
+    <p>TODO: link to the topic</p>
+    <p>TODO: interests</p>
   </div>
 </div>
 

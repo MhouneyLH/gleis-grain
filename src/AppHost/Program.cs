@@ -9,6 +9,9 @@ const string PgAdminTag = "9.18";
 // The Host runs as several replicas, each one an Orleans silo of the same cluster.
 const int HostReplicas = 3;
 
+// The control API of the simulator (GET /scenario ...). Fixed, so simulator.http and the frontend find it.
+const int SimulatorPort = 5090;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 // The host project by path, so the same project can run as two resources. v2 is a second build of it.
@@ -137,26 +140,32 @@ foreach (var hostBuild in hostBuilds)
 // Only v1 is awaited: v2 is started by hand, and the gateway must not wait for it.
 gateway.WaitFor(hostBuilds[0]);
 
+// The audience simulator: virtual people that use the public API like phones would, so the map is alive although the
+// audience cannot reach localhost. It waits for the presenter to start it in the Aspire dashboard. It needs no
+// reference to the project of the Host, only the url of the gateway. Options: Simulator:People, RampUpSeconds,
+// HotStopShare, MaxPeople and Seed in the AppHost configuration (for example dotnet run --project src/AppHost -- Simulator:People=200).
+var simulator = builder.AddProject<Projects.GleisGrain_Simulator>("simulator")
+    // The control API on a fixed port: the frontend (through its dev proxy) and src/Simulator/http/simulator.http call it.
+    // Not proxied by Aspire, the simulator binds this port itself.
+    .WithHttpEndpoint(port: SimulatorPort, targetPort: SimulatorPort, name: "http", isProxied: false)
+    .WithEnvironment("Simulator__Port", SimulatorPort.ToString(System.Globalization.CultureInfo.InvariantCulture))
+    .WithReference(gateway)
+    .WithEnvironment("Simulator__BaseUrl", gateway.GetEndpoint("http"))
+    .WithEnvironment("Simulator__People", builder.Configuration["Simulator:People"] ?? "80")
+    .WithEnvironment("Simulator__RampUpSeconds", builder.Configuration["Simulator:RampUpSeconds"] ?? "40")
+    .WithEnvironment("Simulator__MaxPeople", builder.Configuration["Simulator:MaxPeople"] ?? "500")
+    .WithEnvironment("Simulator__HotStopShare", builder.Configuration["Simulator:HotStopShare"] ?? "0.4")
+    .WithEnvironment("Simulator__Seed", builder.Configuration["Simulator:Seed"] ?? string.Empty)
+    .WaitFor(gateway)
+    .WithExplicitStart();
+
 // The Vue dev server. It reads the Host url from GLEIS_GRAIN_HTTP and proxies /api to it. Aspire writes
 // the variable like this for JavaScript apps: npm starts the script through sh, which drops variable
 // names with a hyphen such as services__gleis-grain__http__0.
 builder.AddViteApp("frontend", "../Frontend")
     .WithReference(gateway)
     .WaitFor(gateway)
+    .WithReference(simulator)
     .WithUrlForEndpoint("http", url => url.DisplayText = "Frontend");
-
-// The audience simulator: virtual people that use the public API like phones would, so the map is alive although the
-// audience cannot reach localhost. It waits for the presenter to start it in the Aspire dashboard. It needs no
-// reference to the project of the Host, only the url of the gateway. Options: Simulator:People, RampUpSeconds,
-// HotStopShare and Seed in the AppHost configuration (for example dotnet run --project src/AppHost -- Simulator:People=200).
-builder.AddProject<Projects.GleisGrain_Simulator>("simulator")
-    .WithReference(gateway)
-    .WithEnvironment("Simulator__BaseUrl", gateway.GetEndpoint("http"))
-    .WithEnvironment("Simulator__People", builder.Configuration["Simulator:People"] ?? "80")
-    .WithEnvironment("Simulator__RampUpSeconds", builder.Configuration["Simulator:RampUpSeconds"] ?? "40")
-    .WithEnvironment("Simulator__HotStopShare", builder.Configuration["Simulator:HotStopShare"] ?? "0.4")
-    .WithEnvironment("Simulator__Seed", builder.Configuration["Simulator:Seed"] ?? string.Empty)
-    .WaitFor(gateway)
-    .WithExplicitStart();
 
 await builder.Build().RunAsync();

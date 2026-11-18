@@ -180,6 +180,44 @@ public class StopGrain(IOptions<StopsOptions> options, ILogger<StopGrain> logger
 
 ---
 
+## A grain with persistent state<sup class="ref">1</sup>
+
+- `IPersistentState<StopState>`, named storage, Postgres behind it
+- State is a blob, one generic table<sup class="ref">2</sup>
+- Domain class `Stop`: plain C#, no Orleans
+- Grain: thin wrapper, load, call, save
+
+```csharp
+public sealed class StopGrain(
+    [PersistentState("stop", StopsOptions.StorageName)]
+    IPersistentState<StopState> state, ...) : Grain, IStopGrain
+```
+
+<div class="refs">
+  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/">https://dotnet.github.io/orleans/docs/grains/grain-persistence/</a></div>
+  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/relational-storage/">https://dotnet.github.io/orleans/docs/grains/grain-persistence/relational-storage/</a></div>
+</div>
+
+Note:
+- Speaker: Lucas | Raffi
+
+In the repo: `StopGrain` with `StopState` (src/Features/Stops). The domain class can be unit tested without a silo. Restart a silo in the demo: the state is still there (demo step 2). Write-behind (do not persist every refresh) and `[OneWay]` are talking points only, not implemented.
+
+---
+
+## Grain persistence<sup class="ref">1</sup>
+
+<img class="persistence" src="/images/persistance_overview.png" alt="Overview of grain persistence">
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider">https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider</a></div>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, Firestore, ADO.NET, Redis, Memory for tests). We use ADO.NET with Postgres, one database per module. State is read when the grain activates and written when the grain asks for it.
+
+---
+
 ## Virtual actors in Orleans<sup class="ref">1</sup>
 
 - A **grain** is an object with an identity and its own state<sup class="ref">2</sup>
@@ -201,19 +239,6 @@ Note:
 - Speaker: Raffi
 
 Careful: the snippet is illustrative, check the real method names in `Endpoints/GetStop.cs` before showing code. Office analogy from how-orleans-works.md: grain = clerk for one stop, silo = building, cluster = all buildings, activation = clerk at the desk. A typo in an id silently gets its own empty grain, so validate ids at the edge.
-
----
-
-## Grain persistence<sup class="ref">1</sup>
-
-<img class="persistence" src="/images/persistance_overview.png" alt="Overview of grain persistence">
-
-<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider">https://dotnet.github.io/orleans/docs/grains/grain-persistence/#choose-a-provider</a></div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-Orleans ships storage providers for many backends (Azure, Cosmos DB, DynamoDB, Firestore, ADO.NET, Redis, Memory for tests). We use ADO.NET with Postgres, one database per module. State is read when the grain activates and written when the grain asks for it.
 
 ---
 
@@ -739,31 +764,6 @@ If it fails:
 ---
 
 <!-- HIIIIIIIIIIIER STARTEN DIE GENERIERTEN SLIDES -->
-
-## A grain with persistent state<sup class="ref">1</sup>
-
-- `IPersistentState<StopState>`, named storage, Postgres behind it
-- State is a blob, one generic table<sup class="ref">2</sup>
-- Domain class `Stop`: plain C#, no Orleans
-- Grain: thin wrapper, load, call, save
-
-```csharp
-public sealed class StopGrain(
-    [PersistentState("stop", StopsOptions.StorageName)]
-    IPersistentState<StopState> state, ...) : Grain, IStopGrain
-```
-
-<div class="refs">
-  <div><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/">https://dotnet.github.io/orleans/docs/grains/grain-persistence/</a></div>
-  <div><sup class="ref">2</sup> <a href="https://dotnet.github.io/orleans/docs/grains/grain-persistence/relational-storage/">https://dotnet.github.io/orleans/docs/grains/grain-persistence/relational-storage/</a></div>
-</div>
-
-Note:
-- Speaker: Lucas | Raffi
-
-In the repo: `StopGrain` with `StopState` (src/Features/Stops). The domain class can be unit tested without a silo. Restart a silo in the demo: the state is still there (demo step 2). Write-behind (do not persist every refresh) and `[OneWay]` are talking points only, not implemented.
-
----
 
 ## What to persist, what to let go
 

@@ -295,13 +295,15 @@ Structure of this block: first how a grain works (turn-based). Part A, changing 
 
 ---
 
-## Concurrency: turn-based execution
+## Concurrency: turn-based execution<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/concurreny_turn_based.png" alt="Three callers send requests to one grain, the grain answers them one at a time">
 
 <p class="small">One request at a time per grain: no locks, no data races inside a grain</p>
 
 <img class="pengu fragment" src="/images/sad_pengu.gif" alt="Sad penguin waiting in the queue">
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/">https://dotnet.github.io/orleans/docs/grains/request-scheduling/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -365,7 +367,7 @@ A awaits B, B calls back into A, but A is still busy waiting for B, so the call 
 
 ---
 
-## Fix 1: reentrancy
+## Fix 1: reentrancy<sup class="ref">1</sup>
 
 - `[Reentrant]` on the grain class
 - While a call awaits, the grain accepts other requests
@@ -374,6 +376,8 @@ A awaits B, B calls back into A, but A is still busy waiting for B, so the call 
 
 <pre class="cs single"><code class="no-highlight" data-noescape><span class="l">[Reentrant]</span><span class="l">public sealed class StopGrain : Grain, IStopGrain</span><span class="l">{</span><span class="l">    public async Task&lt;Board&gt; GetBoardAsync()</span><span class="l">    {</span><span class="l">        var delay = await trip.GetDelayAsync();</span><span class="l">        // while we wait here, other requests may run</span><span class="l">        return Build(delay);</span><span class="l">    }</span><span class="l">}</span></code></pre>
 
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/#reentrant-grains">https://dotnet.github.io/orleans/docs/grains/request-scheduling/#reentrant-grains</a></div>
+
 Note:
 - Speaker: Lucas | Raffi
 
@@ -381,11 +385,13 @@ Fix for the deadlock: the stop awaits the trip, the trip calls back into the sto
 
 ---
 
-## Fix 1: reentrancy
+## Fix 1: reentrancy<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/conc_02_fix_reentrant.png" alt="Sequence diagram: with Reentrant the StopGrain accepts the call back from TripGrain while it waits">
 
 <p class="small">With [Reentrant] the call back is accepted while the stop waits</p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/#reentrant-grains">https://dotnet.github.io/orleans/docs/grains/request-scheduling/#reentrant-grains</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -394,7 +400,7 @@ With `[Reentrant]` the grain takes the call back while it waits for the trip. It
 
 ---
 
-## Fix 2: interleave one method
+## Fix 2: interleave one method<sup class="ref">1</sup>
 
 - `[AlwaysInterleave]` on an interface method
 - Only this method may run while another request is waiting
@@ -403,6 +409,8 @@ With `[Reentrant]` the grain takes the call back while it waits for the trip. It
 
 <pre class="cs single"><code class="no-highlight" data-noescape><span class="l">public interface IStopGrain : IGrainWithStringKey</span><span class="l">{</span><span class="l">    [AlwaysInterleave]</span><span class="l">    Task&lt;Board&gt; GetBoardAsync();</span><span class="l"> </span><span class="l">    Task&lt;int&gt; WatchAsync(string watcher);</span><span class="l">}</span></code></pre>
 
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/#method-level-interleaving">https://dotnet.github.io/orleans/docs/grains/request-scheduling/#method-level-interleaving</a></div>
+
 Note:
 - Speaker: Lucas | Raffi
 
@@ -410,11 +418,13 @@ Smaller hammer than [Reentrant]: only the marked method interleaves with other r
 
 ---
 
-## Fix 2: interleave one method
+## Fix 2: interleave one method<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/conc_03_fix_always_interleave.png" alt="Diagram: only the AlwaysInterleave method GetBoardAsync passes the queue, other requests keep waiting">
 
 <p class="small">Only the marked method passes the queue, the rest stays turn-based</p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/#method-level-interleaving">https://dotnet.github.io/orleans/docs/grains/request-scheduling/#method-level-interleaving</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -423,7 +433,7 @@ Smaller hammer: only the method marked `[AlwaysInterleave]` may run while anothe
 
 ---
 
-## Fix 3: change the call flow
+## Fix 3: change the call flow<sup class="ref">1</sup>
 
 - Do not call back: pass the data instead of asking for it
 - `[OneWay]`: the caller does not wait for the answer
@@ -432,6 +442,8 @@ Smaller hammer: only the method marked `[AlwaysInterleave]` may run while anothe
 
 <pre class="cs single"><code class="no-highlight" data-noescape><span class="l">// Stops reports what it sees, it does not wait for an answer</span><span class="l">GrainFactory.GetGrain&lt;ITripGrain&gt;(departure.TripId.Value)</span><span class="l">    .ReportAsync(report)</span><span class="l">    .Ignore();</span><span class="l"> </span><span class="l">public interface ITripGrain : IGrainWithStringKey</span><span class="l">{</span><span class="l">    [OneWay]</span><span class="l">    Task ReportAsync(TripReport report);</span><span class="l">}</span></code></pre>
 
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/oneway/">https://dotnet.github.io/orleans/docs/grains/oneway/</a></div>
+
 Note:
 - Speaker: Lucas | Raffi
 
@@ -439,11 +451,13 @@ The best fix is a design without a cycle. In the repo, a stop reports every depa
 
 ---
 
-## Fix 3: change the call flow
+## Fix 3: change the call flow<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/conc_04_fix_oneway.png" alt="Diagram: Stop sends the report one-way to Trip, nothing comes back">
 
 <p class="small">Best fix: no cycle. Stop reports to Trip and does not wait</p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/oneway/">https://dotnet.github.io/orleans/docs/grains/oneway/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -483,11 +497,13 @@ Part B, reading: reads should not wait in the queue behind writes. `[ReadOnly]` 
 
 ---
 
-## ReadOnly: reads interleave
+## ReadOnly: reads interleave<sup class="ref">1</sup>
 
 <img class="diagram" src="/images/conc_06_readonly.png" alt="Diagram: ReadOnly methods run together while a write method waits">
 
 <p class="small">Reads run together, a write waits for them and they wait for it</p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/request-scheduling/">https://dotnet.github.io/orleans/docs/grains/request-scheduling/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
@@ -496,7 +512,7 @@ Methods marked `[ReadOnly]` may interleave with each other, so many reads run to
 
 ---
 
-## StatelessWorker: many copies
+## StatelessWorker: many copies<sup class="ref">1</sup>
 
 - `[StatelessWorker]` on the grain class
 - Orleans creates several copies per silo, calls are served locally
@@ -517,6 +533,8 @@ Note:
 <img class="diagram" src="/images/conc_07_stateless_worker.png" alt="Diagram: a StatelessWorker has several local copies per silo, before and after">
 
 <p class="small">Several local copies per silo, served by the local silo</p>
+
+<div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/stateless-worker-grains/">https://dotnet.github.io/orleans/docs/grains/stateless-worker-grains/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi

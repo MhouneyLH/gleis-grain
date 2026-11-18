@@ -498,13 +498,36 @@ This is in the repo on state, snapshots, ids and grain interfaces. Snippet short
 - Compatibility strategy and version selector
 - v1 and v2 silos coexist during a rolling update
 
-<div class="placeholder">timeline of a rolling update with v1 and v2 silos</div>
-<!-- TODO IMAGE: timeline of a rolling update with v1 and v2 silos, name: rolling_update.svg -->
-
 Note:
 - Speaker: Lucas
 
 In the repo: `IStopGrain` has `[Version(1)]` in the v1 build and `[Version(2)]` in the v2 build (`-p:GrainVersion=2`), v2 only adds (a `GrainVersion` field on the board and one method). The cluster uses the BackwardCompatible strategy and the LatestVersion selector. Still PLANNED, NOT BUILT: the `SchemaVersion` migration in `OnActivateAsync` (the field exists, no migration code). Discussion question: how do you roll out a breaking state change safely?
+
+---
+
+## Versioning: rolling updates
+
+<img class="diagram" src="/images/ver_10_rolling_update.png" alt="Three stages: only v1 silos, v2 silos join the same cluster, v1 silos stopped; red is v1, blue is v2, the shape is the silo">
+
+<p class="small">Start the v2 replicas, then stop the v1 replicas: one cluster the whole time</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+Read it top to bottom. First only v1 silos run, then three v2 silos join the same cluster, and during that time both versions are in one cluster (BackwardCompatible strategy, LatestVersion selector). Then we stop the v1 silos. Grains that lived on a stopped silo are activated again on a v2 silo at their next call.
+
+---
+
+## Versioning: compatibility
+
+<img class="diagram" src="/images/ver_11_version_compatibility.png" alt="A v1 caller can call a v2 grain (BackwardCompatible), a new activation goes to a v2 silo (LatestVersion), v2 only adds methods and fields with new ids">
+
+<p class="small">v2 only adds, so v1 callers keep working while the rollout runs</p>
+
+Note:
+- Speaker: Lucas | Raffi
+
+BackwardCompatible means a v1 caller may call a v2 grain, which is why the rollout can run under load. LatestVersion means a new activation is placed on a v2 silo. This only holds if v2 just adds: a new method, a new field with a new `[Id]`. Never reuse or retype an id.
 
 ---
 

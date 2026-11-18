@@ -46,7 +46,7 @@ Note:
 - Versioning
 - Kubernetes
 - Testing
-- Take this home
+- Take this home & try it out
 
 Note:
 - Speaker: Lucas
@@ -852,23 +852,7 @@ Splitting a module into its own deployable later needs only a small host that ca
 
 ---
 
-## Live updates: observers and SSE
-
-- Grains publish events to one hub grain
-- Every silo subscribes one grain observer
-- Subscriptions expire unless renewed
-- Each replica pushes events to browsers as SSE
-
-<!-- TODO IMAGE: diagram grain -> hub -> observer per silo -> SSE -> browser -->
-
-Note:
-- Speaker: Lucas | Raffi
-
-`GET /api/cluster/events`. An event raised on any silo reaches a browser connected to any replica. A dead silo drops out by itself because its subscription expires. Deliberately not Orleans streams.
-
----
-
-## Kubernetes and load test
+## Kubernetes
 
 - `UseKubernetesHosting()` from `Microsoft.Orleans.Hosting.Kubernetes`
 - Pod labels `orleans/serviceId`, `orleans/clusterId`
@@ -876,9 +860,7 @@ Note:
 - Load test with NBomber on replayed XML
 
 Note:
-- Speaker: Lucas | Raffi
-
-PLANNED, NOT BUILT: no Kubernetes manifests and no load test exist in the repo. Talk about it only, no results, do not invent numbers. If a pre-recorded load test is made later, label it as recorded. First block to cut if time is short.
+- Speaker: Raffi
 
 ---
 
@@ -889,86 +871,21 @@ PLANNED, NOT BUILT: no Kubernetes manifests and no load test exist in the repo. 
 - Storage: in-memory in tests
 - Postgres: Testcontainers (skips without Docker)
 
-```bash
-dotnet test --solution gleis-grain.slnx
-```
-
 Note:
-- Speaker: Lucas | Raffi
-
-Tests mirror `src`, plus module boundary tests. Recorded XML responses make tests and CI independent from Linz AG.
+- Speaker: Raffi
 
 ---
 
-## Observability
-
-- OpenTelemetry: Orleans meter and activity sources exported
-- Aspire dashboard: resources, logs, traces, metrics
-- Orleans Dashboard: silos, grains, activations
-
-<!-- TODO IMAGE: Aspire dashboard screenshot with a trace -->
-
-Note:
-- Speaker: Lucas | Raffi
-
-Show the Aspire dashboard (http://localhost:15000) in the demo. A distributed trace Stop -> Ingestion needs those calls instrumented, verify what the dashboard shows before promising it.
-
----
-
-## Lessons learned
-
-- Persist what must survive, let go of the rest
-- Keep domain code free of Orleans, the grain stays thin
-- One id, one actor: validate ids at the edge
-- Break call cycles by design before reaching for `[Reentrant]`
-- Think about versioning before the first deployment
-
-Note:
-- Speaker: Lucas | Raffi
-
-Tie back to daily Orleans work. Keep these personal and honest, only claim what you have seen in production.
-
----
-
-## Discussion
-
-- Where would grains hurt you? When is a cache and a cron job better?
-- One cluster for all contexts or one per context?
-- Reminders or a scheduler such as Quartz or Hangfire?
-- Grain state is a blob. Accept it or project into read models (CQRS)?
-- How do you roll out a breaking state change safely?
-
-Note:
-- Speaker: Lucas | Raffi
-
-Ask two or three, let the room choose. More questions if there is time: is polling a third party API from many grains polite, and where does the rate limit live? Where would an LLM agent per grain make sense, and where is it a gimmick?
-
----
-
-## Free play
-
-- Questions?
-- Try the simulator controls
-- Phone play is optional
-
-Note:
-- Speaker: Lucas | Raffi
-
-Keep it short. There is no free play with real phones, we only use localhost. Either let people try the simulator controls or take questions. Real phone play is optional and only possible if the venue network allows it. The stats panel shows cache hits versus calls to Linz AG, active grains, hottest stops.
-
----
-
-## Takeaways
+## Take this home & try it out
 
 - A virtual actor is an identity, memory and activations come and go
 - Timers for the cheap, reminders for the important
 - Hot grains need a design, not just more silos
 - Persist less, version early
+- Keep domain code free of Orleans, the grain stays thin
 
 Note:
-- Speaker: Lucas | Raffi
-
-Four sentences, then back to discussion.
+- Speaker: Lucas
 
 ---
 

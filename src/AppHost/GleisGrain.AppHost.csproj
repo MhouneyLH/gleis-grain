@@ -10,10 +10,19 @@
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.JavaScript" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+    <PackageReference Include="Aspire.Hosting.Yarp" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../Host/GleisGrain.Host.csproj" />
   </ItemGroup>
+
+  <!--
+    The grain versioning demo needs a second build of the Host with the grain interface version 2. It goes to its
+    own artifacts folder, so it cannot clobber the bin and obj folders of the v1 build. Skip it with -p:SkipGrainV2Build=true.
+  -->
+  <Target Name="BuildHostGrainV2" AfterTargets="Build" Condition="'$(SkipGrainV2Build)' != 'true'">
+    <Exec Command="dotnet build &quot;$(MSBuildThisFileDirectory)../Host/GleisGrain.Host.csproj&quot; -nodeReuse:false -p:GrainVersion=2 --artifacts-path &quot;$(MSBuildThisFileDirectory)../../artifacts/v2&quot;" />
+  </Target>
 
 </Project>

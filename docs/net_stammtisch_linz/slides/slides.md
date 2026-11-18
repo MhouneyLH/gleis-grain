@@ -318,7 +318,7 @@ Fix for the deadlock: the stop awaits the trip, the trip calls back into the sto
 
 ---
 
-## Fix 1: reentrancy, the picture
+## Fix 1: reentrancy
 
 <img class="diagram" src="/images/conc_02_fix_reentrant.png" alt="Sequence diagram: with Reentrant the StopGrain accepts the call back from TripGrain while it waits">
 
@@ -347,7 +347,7 @@ Smaller hammer than [Reentrant]: only the marked method interleaves with other r
 
 ---
 
-## Fix 2: interleave one method, the picture
+## Fix 2: interleave one method
 
 <img class="diagram" src="/images/conc_03_fix_always_interleave.png" alt="Diagram: only the AlwaysInterleave method GetBoardAsync passes the queue, other requests keep waiting">
 
@@ -376,7 +376,7 @@ The best fix is a design without a cycle. In the repo, a stop reports every depa
 
 ---
 
-## Fix 3: change the call flow, the picture
+## Fix 3: change the call flow
 
 <img class="diagram" src="/images/conc_04_fix_oneway.png" alt="Diagram: Stop sends the report one-way to Trip, nothing comes back">
 

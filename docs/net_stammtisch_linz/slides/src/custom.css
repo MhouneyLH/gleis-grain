@@ -5,8 +5,8 @@
   --r-heading-font: "Segoe UI", system-ui, -apple-system, sans-serif;
   --r-main-font-size: 38px;
   --r-heading-color: #b58cff;
-  --r-link-color: #c9a9ff;
-  --r-link-color-hover: #e0ccff;
+  --r-link-color: #4cc9f0;
+  --r-link-color-hover: #a5e6fa;
   --accent: #06d6a0;
   --purple: #b58cff;
 }
@@ -59,3 +59,4 @@
 .reveal .thanks img.qr { width: 300px; height: 300px; max-height: none; object-fit: contain; background: #fff; padding: 12px; border-radius: 10px; }
 .reveal h4 { text-transform: none; letter-spacing: 0; }
 .reveal h3 + h4 { margin-top: 0; font-size: 0.8em; color: var(--accent); font-weight: 400; }
+.reveal section a { text-decoration: underline; text-underline-offset: 0.15em; }

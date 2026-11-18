@@ -514,16 +514,14 @@ Four sentences, then back to discussion.
 
 ---
 
-## Thanks
-
-### Next Stop: Virtual Actors
-#### Microsoft Orleans on the Linz tram network
+## Next Stop: Virtual Actors
+## Microsoft Orleans on the Linz tram network
 
 <div class="thanks">
   <ul>
-    <li>Code + Slides: https://github.com/MhouneyLH/gleis-grain</li>
-    <li>Meetup: https://www.meetup.com/net-stammtisch-linz/events/317130107/</li>
-    <li>Orleans docs: https://dotnet.github.io/orleans/docs/</li>
+    <li>Code + Slides: <a href="https://github.com/MhouneyLH/gleis-grain">https://github.com/MhouneyLH/gleis-grain</a></li>
+    <li>Meetup: <a href="https://www.meetup.com/net-stammtisch-linz/events/317130107/">https://www.meetup.com/net-stammtisch-linz/events/317130107/</a></li>
+    <li>Orleans docs: <a href="https://dotnet.github.io/orleans/docs/">https://dotnet.github.io/orleans/docs/</a></li>
   </ul>
   <img class="qr" src="/images/repo_qr_code.png" alt="QR code to the repository">
 </div>

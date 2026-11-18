@@ -103,7 +103,7 @@ Shape = silo is the design for the demo, colour = grain version belongs to the v
 ## Project Intro: what you will see
 
 - The map on the projector
-- Your phone picks a stop
+- 80 simulated people pick stops
 - We break the cluster
 - A rolling version update
 
@@ -117,25 +117,26 @@ Note:
 
 ## Demo 1: live map
 
-- Scan the QR code, type a nickname
-- Tap a stop
-- Watch the dot light up
+- Start the audience simulator
+- About 80 simulated people join
+- Watch the dots light up and grow
 
-<div class="placeholder">QR CODE + URL of the audience page (/), same as the Free play slide</div>
-<!-- TODO IMAGE: QR code for the audience page, name: qr.svg (also used on the Free play slide) -->
+<div class="placeholder">screenshot: projector map with simulated watchers, Hauptbahnhof is the big dot</div>
+<!-- TODO IMAGE: screenshot of the projector page `/projector` with simulated watchers, Hauptbahnhof hot, name: map_simulated.png -->
 
 Note:
 - Speaker: Lucas | Raffi
 
-About 2 min. What to do (steps marked PLAN depend on the frontend being finished):
+About 2 min. We only use localhost, so the audience cannot join from their phones. An audience simulator (resource `simulator` in the Aspire dashboard, not started automatically) acts like about 80 people through the public API. Be honest: say they are simulated people. What to do (steps marked PLAN depend on the frontend being finished):
 1. Before the talk: `dotnet run --project src/AppHost`. If the Wi-Fi is bad: `dotnet run --project src/AppHost --launch-profile replay` (recorded departures, no Linz AG calls).
-2. Open the Aspire dashboard http://localhost:15000 and the frontend link from there. Say: "Three replicas, one Orleans silo each, one cluster."
+2. Open the Aspire dashboard http://localhost:15000. Say: "Three replicas, one Orleans silo each, one cluster."
 3. Open the projector page `/projector` and make it full screen on the beamer. Say: "Every dot is a stop, every stop is a grain."
-4. Show the QR code or URL for the audience page `/`. Say: "Scan, pick a nickname, tap a stop."
-5. Audience types a nickname and taps a stop. Dots light up and shrink or grow with the number of watchers. Say: "Nobody created these actors, the first call activated them."
-6. Point at the silo shapes. Say: "The shape tells you which silo hosts the grain." (PLAN: shape = silo is not built yet, confirm.)
+4. In the Aspire dashboard click start on `simulator`. Say: "Now 80 people join, simulated ones, they come in over about 40 seconds."
+5. Dots light up and grow with the number of watchers. About 40 percent watch Hauptbahnhof, the rest spread over the 25 stops, and they move around and read boards. Say: "Nobody created these actors, the first call activated them."
+6. Point at Hauptbahnhof. Say: "One stop gets hot, we come back to this."
+7. Point at the silo shapes and the watcher bars. Say: "The shape tells you which silo hosts the grain." (PLAN: shape = silo is not built yet, confirm.)
 
-If it fails: restart with `--launch-profile replay`; if the app itself is down, play the pre-recorded video (TODO: record it, keep it local on the laptop) and keep talking.
+If it fails: if the simulator does not start, start it again from the dashboard. Restart with `--launch-profile replay`; if the app itself is down, play the pre-recorded video (TODO: record it, keep it local on the laptop) and keep talking.
 
 ---
 
@@ -464,14 +465,14 @@ A `[StatelessWorker]` is not one single activation: Orleans creates several loca
 
 ## Hot grain: Hauptbahnhof
 
-<img class="diagram" src="/images/conc_08_hot_grain.png" alt="Diagram: many phones pick the same stop, one StopGrain takes every call while other silos idle">
+<img class="diagram" src="/images/conc_08_hot_grain.png" alt="Diagram: many simulated people pick the same stop, one StopGrain takes every call while other silos idle">
 
 <p class="small">One stop, one activation, one mailbox: everybody waits there</p>
 
 Note:
 - Speaker: Lucas | Raffi
 
-About 100 phones pick the same stop, so one StopGrain on one silo takes every call while the other silos idle. First ask: is the key a bad architectural decision, or can we batch and cache?
+About 100 simulated people pick the same stop, so one StopGrain on one silo takes every call while the other silos idle. First ask: is the key a bad architectural decision, or can we batch and cache?
 
 ---
 
@@ -585,19 +586,19 @@ Built and run end to end in a headless AppHost (v1 and v2 silos in one cluster, 
 Before the talk (not on stage):
 - Start with `dotnet run --project src/AppHost --launch-profile replay`. The Aspire dashboard shows 3 rows `gleis-grain-v1-*` (running) and 3 rows `gleis-grain-v2-*` (NotStarted). The app and the frontend use one stable address, the `gleis-grain` gateway on http://localhost:5080, during the whole rollout.
 - v2 is built automatically into `artifacts/v2` with every AppHost build (by hand: `dotnet build src/Host -p:GrainVersion=2 --artifacts-path artifacts/v2`).
-- Ask the audience to keep several stops open, so many grains are active (otherwise nothing to see).
+- Click start on `simulator` beforehand, so many stop grains are active (otherwise nothing to see).
 
 On stage:
 1. (0:30) Projector page: all dots red, three shapes. Say: "Everything runs version 1, three silos."
 2. (0:30) Aspire dashboard http://localhost:15000: click start on each of the three `gleis-grain-v2-*` rows (one click per replica, so it comes up gradually). Say: "Now the new version comes up next to the old one, nobody is switched off."
 3. (0:45) Show the silo list: 6 active silos, v1 and v2 side by side (silo panel on the projector page, or `/api/cluster/silos`, or the Orleans Dashboard at /dashboard). Most grains already turn blue as soon as v2 callers arrive. Say: "One cluster, two versions."
 4. (1:15) Explain Orleans interface versioning: `[Version(2)]` on the interface, BackwardCompatible strategy, LatestVersion selector. Say: "New activations go to v2, v1 callers still work, the cluster does not care."
-5. (1:30) Click stop on the three `gleis-grain-v1-*` rows one by one. The v1 silos go Dead (an abrupt kill, not a graceful shutdown, so one or two requests may hang for a moment). Watch grains move to other silos and dots turn blue, while the app keeps answering (tap a stop on the phone to prove it). Say: "A rolling update without a maintenance window."
+5. (1:30) Click stop on the three `gleis-grain-v1-*` rows one by one. The v1 silos go Dead (an abrupt kill, not a graceful shutdown, so one or two requests may hang for a moment). Watch grains move to other silos and dots turn blue, while the app keeps answering (open a stop on the projector page or laptop to prove it, the simulator keeps going). Say: "A rolling update without a maintenance window."
 6. (0:30) Take-away: "Interface versions plus a compatible state format make deployments boring. Think about it before the first deployment." Back to Take this home.
 
 If it fails:
 - Play the pre-recorded video (TODO: record it, label it as recorded).
-- If the dots stay red because nobody watches: open some stops yourself on the phone or laptop. Only grains that are activated move, idle ones are activated on v2 when called next.
+- If the dots stay red: the simulator is not running, start it, or open stops yourself on the laptop. Only grains that are activated move, idle ones are activated on v2 when called next.
 - If v2 does not start: skip steps 2 to 3, explain step 4 with the slide and stop at "what would happen".
 
 ---
@@ -670,12 +671,12 @@ Rule of thumb: if it must happen even after a crash, use a reminder. Real code: 
 - Exact guess: 3 points, off by one: 1 point
 - A reminder resolves the bet
 
-<div class="placeholder">TODO IMAGE: phone screenshot of the bet screen</div>
+<div class="placeholder">TODO IMAGE: screenshot of the bet screen</div>
 
 Note:
 - Speaker: Lucas | Raffi
 
-Demo step 3 (F1, F5). Audience action: bet on a delay. Show the timer while someone watches, the reminder otherwise. Bets survive a silo restart because the state is persisted and the reminder is durable. Live leaderboard by nickname.
+Demo step 3 (F1, F5). Betting is not part of the talk, skip this slide. Show the timer while someone watches, the reminder otherwise. Bets survive a silo restart because the state is persisted and the reminder is durable. 
 
 ---
 
@@ -804,7 +805,7 @@ Note:
 
 ## Demo 3: break the cluster
 
-- Vote to kill a silo
+- Kill a silo
 - Map dots change colour, membership flips
 - Grains come back on the other silos
 - Bets still resolve
@@ -814,7 +815,7 @@ Note:
 Note:
 - Speaker: Lucas | Raffi
 
-Demo step 5 (F6, F7). Audience action: vote to kill a silo. The chaos button kills the replica that receives the request, only when `Cluster:EnableChaos` is true (the AppHost sets it for the demo). Needs the 3 replicas. Rehearse it, and keep a screen recording as a backup.
+Demo step 5 (F6, F7). Action: the presenter kills a silo, the simulated people keep going. The chaos button kills the replica that receives the request, only when `Cluster:EnableChaos` is true (the AppHost sets it for the demo). Needs the 3 replicas. Rehearse it, and keep a screen recording as a backup.
 
 
 
@@ -899,17 +900,14 @@ Ask two or three, let the room choose. More questions if there is time: is polli
 
 ## Free play
 
-- Join with your phone
-- Pick a stop
-- Bet on a delay
-- Climb the leaderboard
-
-<div class="placeholder">QR CODE / URL placeholder: public/images/qr.svg and https://TODO-audience-url</div>
+- Questions?
+- Try the simulator controls
+- Phone play is optional
 
 Note:
 - Speaker: Lucas | Raffi
 
-Demo step 7 (F4, F5, F9). Nicknames only, 2 to 20 characters, unique ignoring case. Scale target is about 100 phones, one stop each. The stats panel shows cache hits versus calls to Linz AG, active grains, hottest stops.
+Keep it short. There is no free play with real phones, we only use localhost. Either let people try the simulator controls or take questions. Real phone play is optional and only possible if the venue network allows it. The stats panel shows cache hits versus calls to Linz AG, active grains, hottest stops.
 
 ---
 

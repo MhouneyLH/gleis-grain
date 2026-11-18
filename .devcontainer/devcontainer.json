@@ -24,7 +24,9 @@
         "ms-dotnettools.csharp",
         "ms-azuretools.vscode-docker",
         "editorconfig.editorconfig",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        // Runs the .http files in src/Host/http and src/Simulator/http.
+        "humao.rest-client"
       ],
       "settings": {
         "dotnet.defaultSolution": "gleis-grain.slnx",

@@ -34,6 +34,23 @@ Release the crowd: `DELETE :5090/scenario/pinned`, or pin 0.
 4. Dashboard: stop the three `gleis-grain-v1-*` replicas one by one (abrupt kill, a request may hang briefly).
 5. Dots turn blue, the app keeps answering. Say: "A rolling update without a maintenance window."
 
+### What differs between v1 and v2 (for questions)
+
+Only the `IStopGrain` interface version. The build switch is `-p:GrainVersion=2` (compile constant `GRAIN_V2`).
+
+| What | v1 | v2 | Code |
+|---|---|---|---|
+| Interface version | `[Version(1)]` | `[Version(2)]` | [IStopGrain.cs L8-12](../../src/Features/Stops/GleisGrain.Stops.Contracts/IStopGrain.cs#L8-L12) |
+| New method | none | `GetGrainVersionAsync()` | [IStopGrain.cs L27-31](../../src/Features/Stops/GleisGrain.Stops.Contracts/IStopGrain.cs#L27-L31), implemented in [StopGrain.cs L76-79](../../src/Features/Stops/GleisGrain.Stops/Domain/StopGrain.cs#L76-L79) |
+| Version constant | `Current = 1` | `Current = 2` | [StopsGrainVersion.cs L9-13](../../src/Features/Stops/GleisGrain.Stops.Contracts/StopsGrainVersion.cs#L9-L13) |
+| Field on the board | `grainVersion: 1` | `grainVersion: 2` | [StopBoardSnapshot.cs L15-17](../../src/Features/Stops/GleisGrain.Stops.Contracts/StopBoardSnapshot.cs#L15-L17) (new `[Id(7)]`, in both builds) |
+| Where the switch is set | | | [Stops.Contracts.csproj](../../src/Features/Stops/GleisGrain.Stops.Contracts/GleisGrain.Stops.Contracts.csproj), [AppHost.csproj L26](../../src/AppHost/GleisGrain.AppHost.csproj#L26), [AppHost Program.cs L62](../../src/AppHost/Program.cs#L62) |
+
+Same in both builds: silo name `v<version>-<random>` and the BackwardCompatible strategy with the LatestVersion selector ([OrleansExtensions.cs L58-69](../../src/Common/OrleansExtensions.cs#L58-L69)).
+
+- **State migrated?** No. `StopState` is identical in both builds, there is no `SchemaVersion` migration (planned, not built). The only data change is the additive `[Id(7)]` field.
+- **Grain migrated?** No live migration. A stopped v1 silo takes its activations with it; the next call creates a new activation on a v2 silo, which reads the same state from Postgres. That re-activation is the red-to-blue change on the map.
+
 ## Fallbacks
 
 | Problem | Fix |

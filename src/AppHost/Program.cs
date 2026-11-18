@@ -14,9 +14,9 @@ const int SimulatorPort = 5090;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-// The host project by path, so the same project can run as two resources. v2 is a second build of it.
-var hostProject = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../Host/GleisGrain.Host.csproj"));
-
+// The v2 build is the same project built a second time, so it cannot use the generated Projects.GleisGrain_Host
+// metadata. Its own metadata (see HostV2Project below) needs the path of the project.
+HostV2Project.Path = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../Host/GleisGrain.Host.csproj"));
 
 // Every AppHost start is a new Orleans cluster. Stopping the AppHost kills the silos before they can mark
 // themselves dead, and a new silo refuses to join while the membership table lists unreachable active silos
@@ -55,10 +55,10 @@ var orleans = postgres.AddDatabase("orleans");
 // stop grains move to the v2 silos.
 var hostBuilds = new[]
 {
-    AddHost("gleis-grain-v1", version: 1, builder.AddProject("gleis-grain-v1", hostProject, ExcludeLaunchProfile)),
-    AddHost("gleis-grain-v2", version: 2, builder.AddProject("gleis-grain-v2", hostProject, ExcludeLaunchProfile)
+    AddHost("gleis-grain-v1", version: 1, builder.AddProject<Projects.GleisGrain_Host>("gleis-grain-v1", ExcludeLaunchProfile)),
+    AddHost("gleis-grain-v2", version: 2, builder.AddProject<HostV2Project>("gleis-grain-v2", ExcludeLaunchProfile)
         // The v2 build lives in its own artifacts folder (see GleisGrain.AppHost.csproj), so it never clobbers
-        // the v1 output. MSBuild reads both properties from the environment when "dotnet run" evaluates the project.
+        // the v1 output. MSBuild reads both properties from the environment when "dotnet run --no-build" looks up the output.
         .WithEnvironment("GrainVersion", "2")
         .WithEnvironment("ArtifactsPath", Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../artifacts/v2")))
         .WithExplicitStart()),
@@ -169,3 +169,18 @@ builder.AddViteApp("frontend", "../Frontend")
     .WithUrlForEndpoint("http", url => url.DisplayText = "Frontend");
 
 await builder.Build().RunAsync();
+
+// The replicas must never build: concurrent builds of one project race for the files in obj and bin and some replicas
+// die with MSB3026. Aspire starts a project with "dotnet run --no-build" when its metadata says SuppressBuild. The
+// generated Projects.GleisGrain_Host does that for v1 (the AppHost build builds it). v2 is built once by the
+// BuildHostGrainV2 target of the AppHost project, so its metadata suppresses the build too.
+file sealed class HostV2Project : IProjectMetadata
+{
+    public static string Path { get; set; } = string.Empty;
+
+    string IProjectMetadata.ProjectPath => Path;
+
+    LaunchSettings? IProjectMetadata.LaunchSettings => null;
+
+    bool IProjectMetadata.SuppressBuild => true;
+}

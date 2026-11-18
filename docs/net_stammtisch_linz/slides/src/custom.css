@@ -74,3 +74,5 @@
 .reveal .deck-refs a { color: var(--r-link-color); }
 .reveal .deck-refs div + div { margin-top: 0.2em; }
 .reveal img.diagram { display: block; margin: 0 auto; max-height: 470px; width: auto; max-width: 100%; }
+/* A small mascot in the bottom right corner of a slide; fixed inside the scaled slide area, above the slide number. */
+.reveal img.pengu { position: fixed; right: 30px; bottom: 62px; width: 140px; height: auto; max-height: none; margin: 0; }

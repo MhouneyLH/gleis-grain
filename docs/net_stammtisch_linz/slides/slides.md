@@ -256,6 +256,8 @@ Note:
 
 <p class="small">One request at a time per grain: no locks, no data races inside a grain</p>
 
+<img class="pengu" src="/images/sad_pengu.gif" alt="Sad penguin waiting in the queue">
+
 Note:
 - Speaker: Lucas | Raffi
 

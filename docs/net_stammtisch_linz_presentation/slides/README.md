@@ -13,6 +13,10 @@ npm run preview  # serve dist/
 
 Keys: arrows to move, `S` opens the speaker view with notes and timer, `F` fullscreen, `O` overview, `?` help.
 
+## Demo
+
+What to click and say for which demo: [demo-runbook.md](../demo-runbook.md).
+
 ## Edit
 
 - All slides are in `slides.md`. `---` starts a new slide, `--` starts a vertical (sub) slide, `Note:` starts the speaker notes.

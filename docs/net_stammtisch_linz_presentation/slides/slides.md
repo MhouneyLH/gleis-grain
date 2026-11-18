@@ -104,13 +104,13 @@ Raise your hands if you stood in front of such a station display in Linz.
 
 ---
 
-## What are actors? ... and why??? I
+## What are actors?
 
 ![Actor Communication](/images/actors.png)
 
 ---
 
-## What are actors? ... and why??? II
+## What are Grains?
 
 ![Actors in Orleans](/images/grains.png)
 

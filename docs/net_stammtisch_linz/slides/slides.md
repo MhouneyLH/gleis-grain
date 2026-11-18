@@ -66,14 +66,76 @@ Timings in minutes (start-end of the talk):
 
 ---
 
-## Project Intro
-- domain, what is stop, where data from
-- diagram
-- what is tech stack
-- showing frontend example
+## Project Intro: the domain
+
+- Linz AG tram network, everybody knows a stop
+- **Stop**, **trip**, **notice**, **audience** are actors
+- Live departures from the Linz AG EFA server (XML)
+
+<div class="placeholder">photo of a Linz tram at Hauptbahnhof (or a stop display)</div>
+<!-- TODO IMAGE: photo of a Linz tram at Hauptbahnhof (or a stop display), name: tram_hbf.jpg -->
 
 Note:
 - Speaker: Lucas
+
+Everybody has waited at a stop in Linz. Data comes from the Linz AG EFA server as XML (live, or recorded responses replayed with `Ingestion:Mode`). Linz AG terms of use and rate limits are not checked yet, keep polling polite.
+
+---
+
+## Project Intro: the map
+
+- Stops are dots on a map
+- Dot size: how many people watch the stop
+- Shape and colour: which silo and which version runs the grain
+
+<div class="placeholder">screenshot: projector page, map with stops as dots (silo shapes, size by watchers)</div>
+<!-- TODO IMAGE: screenshot of the projector page `/projector`, map with stops as dots, name: map_projector.png. Map tiles are from OpenStreetMap: keep the attribution "© OpenStreetMap contributors" visible. -->
+
+<p class="small">Map data © OpenStreetMap contributors</p>
+
+Note:
+- Speaker: Lucas
+
+Shape = silo is the design for the demo, colour = grain version belongs to the versioning demo (PLANNED, not built yet, see versioning). Public OpenStreetMap tiles are fine for a demo, the attribution has to stay visible.
+
+---
+
+## Project Intro: what you will see
+
+- The map on the projector
+- Your phone picks a stop
+- We break the cluster
+- A rolling version update
+
+<div class="placeholder">screenshot: Aspire dashboard with 3 gleis-grain replicas</div>
+<!-- TODO IMAGE: screenshot of the Aspire dashboard with 3 gleis-grain replicas, name: aspire_replicas.png -->
+
+Note:
+- Speaker: Lucas | Raffi
+
+---
+
+## Demo 1: live map
+
+- Scan the QR code, type a nickname
+- Tap a stop
+- Watch the dot light up
+
+<div class="placeholder">QR CODE + URL of the audience page (/), same as the Free play slide</div>
+<!-- TODO IMAGE: QR code for the audience page, name: qr.svg (also used on the Free play slide) -->
+
+Note:
+- Speaker: Lucas | Raffi
+
+About 2 min. What to do (steps marked PLAN depend on the frontend being finished):
+1. Before the talk: `dotnet run --project src/AppHost`. If the Wi-Fi is bad: `dotnet run --project src/AppHost --launch-profile replay` (recorded departures, no Linz AG calls).
+2. Open the Aspire dashboard http://localhost:15000 and the frontend link from there. Say: "Three replicas, one Orleans silo each, one cluster."
+3. Open the projector page `/projector` and make it full screen on the beamer. Say: "Every dot is a stop, every stop is a grain."
+4. Show the QR code or URL for the audience page `/`. Say: "Scan, pick a nickname, tap a stop."
+5. Audience types a nickname and taps a stop. Dots light up and shrink or grow with the number of watchers. Say: "Nobody created these actors, the first call activated them."
+6. Point at the silo shapes. Say: "The shape tells you which silo hosts the grain." (PLAN: shape = silo is not built yet, confirm.)
+
+If it fails: restart with `--launch-profile replay`; if the app itself is down, play the pre-recorded video (TODO: record it, keep it local on the laptop) and keep talking.
 
 ---
 
@@ -205,12 +267,63 @@ This is in the repo on state, snapshots, ids and grain interfaces. Snippet short
 - Compatibility strategy and version selector
 - v1 and v2 silos coexist during a rolling update
 
-<!-- TODO IMAGE: timeline of a rolling update with v1 and v2 silos -->
+<div class="placeholder">timeline of a rolling update with v1 and v2 silos</div>
+<!-- TODO IMAGE: timeline of a rolling update with v1 and v2 silos, name: rolling_update.svg -->
 
 Note:
 - Speaker: Lucas
 
-PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no rolling update demo (optional demo step 6, extra field such as platform on `StopGrain`). Present as a talk topic or show a pre-recorded run. Discussion question: how do you roll out a breaking state change safely?
+PLANNED, NOT BUILT: no `[Version]` attribute in the repo, no migration code, no rolling update demo (optional demo step 6, extra field such as platform on `StopGrain`). Discussion question: how do you roll out a breaking state change safely?
+
+---
+
+## Versioning: how to read the map
+
+- Colour = grain version: **red** v1, **blue** v2
+- Shape = silo: square, circle, triangle
+- Size = watchers
+
+<div class="placeholder">screenshot: map legend, red and blue dots in square, circle and triangle shapes</div>
+<!-- TODO IMAGE: screenshot of the map legend (red v1, blue v2; square, circle, triangle = silo), name: map_legend.png -->
+
+Note:
+- Speaker: Lucas
+
+PLANNED, NOT BUILT: this encoding is the design for the versioning demo, another agent is building it. Confirm colours and shapes against the real frontend before the talk [CONFIRM].
+
+---
+
+## Demo: rolling update
+
+- Red dots: everything runs v1
+- Start v2 next to v1
+- Stop v1 one by one
+- Dots turn blue, the app keeps answering
+
+<div class="placeholder">screenshot: Aspire dashboard with gleis-grain-v1 and gleis-grain-v2 side by side</div>
+<!-- TODO IMAGE: screenshot of the Aspire dashboard with gleis-grain-v1 and gleis-grain-v2 resources, name: aspire_v1_v2.png [CONFIRM resource names] -->
+
+Note:
+- Speaker: Lucas | Raffi
+
+PLANNED, NOT BUILT: the whole demo below is a plan, nothing of it exists in the repo yet. Resource names, buttons and colours are marked [CONFIRM] until the other agent has finished. Slot: 5 min.
+
+Before the talk (not on stage):
+- AppHost runs 3 v1 replicas, resource `gleis-grain-v1` [CONFIRM], and a v2 resource `gleis-grain-v2` [CONFIRM] with 3 replicas that is NOT started.
+- Ask the audience to keep several stops open, so many grains are active (otherwise nothing to see).
+
+On stage:
+1. (0:30) Projector page: all dots red, three shapes. Say: "Everything runs version 1, three silos."
+2. (0:30) Aspire dashboard http://localhost:15000: click start on `gleis-grain-v2` [CONFIRM]. Say: "Now the new version comes up next to the old one, nobody is switched off."
+3. (0:45) Show the silo list: 6 silos, v1 and v2 side by side (Orleans Dashboard or the map legend [CONFIRM where]). Say: "One cluster, two versions."
+4. (1:15) Explain Orleans interface versioning: `[Version(2)]` on the interface, BackwardCompatible strategy, LatestVersion selector. Say: "New activations go to v2, v1 callers still work, the cluster does not care."
+5. (1:30) Click stop on the v1 replicas one by one [CONFIRM: stop button per replica]. Watch grains move to other silos and dots turn blue, while the app keeps answering (tap a stop on the phone to prove it). Say: "A rolling update without a maintenance window."
+6. (0:30) Take-away: "Interface versions plus a compatible state format make deployments boring. Think about it before the first deployment." Back to Take this home.
+
+If it fails:
+- Play the pre-recorded video (TODO: record it, label it as recorded).
+- If the dots stay red because nobody watches: open some stops yourself on the phone or laptop. Only grains that are activated move, idle ones are activated on v2 when called next.
+- If v2 does not start: skip steps 2 to 3, explain step 4 with the slide and stop at "what would happen".
 
 ---
 

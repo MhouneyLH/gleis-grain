@@ -20,6 +20,7 @@ builder.AddGleisGrainObservability(
     ClusterModule.MeterName);
 builder.AddGleisGrainHttp();
 builder.AddGleisGrainOrleans(
+    StopsModule.GrainVersion,
     StopsModule.StorageName,
     TripsModule.StorageName,
     AlertsModule.StorageName,

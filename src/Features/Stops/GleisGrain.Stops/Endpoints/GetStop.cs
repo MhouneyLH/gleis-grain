@@ -37,6 +37,9 @@ internal sealed record GetStopResponse
     [Description("When the board was last refreshed, null when it never was.")]
     public required DateTimeOffset? RefreshedAt { get; init; }
 
+    [Description("Grain interface version (1 or 2) of the build that serves the stop grain. Changes when the grain moves to a silo of the other version.")]
+    public required int GrainVersion { get; init; }
+
     [Description("The next departures, earliest first.")]
     public required IReadOnlyList<GetStopDeparture> Departures { get; init; }
 }
@@ -100,6 +103,7 @@ internal sealed class GetStop
             Longitude = board.Longitude,
             Watchers = board.Watchers,
             RefreshedAt = board.RefreshedAt,
+            GrainVersion = board.GrainVersion,
             Departures =
             [
                 .. board.Departures.Select(d => new GetStopDeparture

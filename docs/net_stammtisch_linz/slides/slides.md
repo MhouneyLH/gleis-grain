@@ -877,7 +877,7 @@ Placement demo with `[PreferLocalPlacement]` and others was not built, talking p
 |---|---|---|
 | Ingestion | Game | Cluster |
 
-<!-- TODO IMAGE: docs/architecture.md diagram exported as SVG (Excalidraw: Insert > Mermaid to Excalidraw) -->
+<!-- TODO IMAGE: ARCHITECTURE.md diagram exported as SVG (Excalidraw: Insert > Mermaid to Excalidraw) -->
 
 Note:
 - Speaker: Lucas | Raffi

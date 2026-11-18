@@ -52,7 +52,7 @@ src/
   Frontend/           Vue 3 + Vite app (Leaflet map, phone and projector views)
 db/                   SQL: the Orleans schema scripts and init.sh that loads them
 test/                 mirrors src, plus test/Modules (module boundaries) and test/Infrastructure (Postgres)
-docs/                 requirements, API, architecture diagram and talk notes
+docs/                 requirements, API and talk notes (the architecture diagram is ARCHITECTURE.md in the root)
 ```
 
 The domain class (for example `Stop`) is plain C# and knows nothing about Orleans. The grain is a thin wrapper that loads the state, calls the domain class and writes the state back. API and silo run in the same process, so endpoints call `IGrainFactory` directly. Modules talk to each other through grain calls on their Contracts interfaces. Cluster membership and reminders live in the shared `orleans` database, grain state in each module's own database.
@@ -61,7 +61,8 @@ The domain class (for example `Stop`) is plain C# and knows nothing about Orlean
 
 - [CONTRIBUTING.md](CONTRIBUTING.md): build and test commands, workflow, commit messages, the rules that keep the modules apart, releases.
 - [docs/api.md](docs/api.md): the HTTP endpoints and live events.
-- [docs/architecture.md](docs/architecture.md): the architecture diagram.
+- [ARCHITECTURE.md](ARCHITECTURE.md): the architecture diagram and how the parts fit.
+- [AGENTS.md](AGENTS.md): the important rules and pitfalls for AI coding agents.
 - [docs/requirements.md](docs/requirements.md): features, demo script and open questions.
 - Run all tests with `dotnet test --solution gleis-grain.slnx`. The Postgres test needs Docker and skips without it.
 

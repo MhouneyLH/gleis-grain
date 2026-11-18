@@ -80,7 +80,7 @@ Everybody has waited at a stop in Linz. Data comes from the Linz AG EFA server a
 
 ## What you will see
 
-- The map on the projector
+- The Overview page on the projector
 - 80 simulated people pick stops
 - We break the cluster
 - A rolling version update
@@ -105,7 +105,7 @@ Note:
 About 2 min. We only use localhost, so the audience cannot join from their phones. An audience simulator (resource `simulator` in the Aspire dashboard, not started automatically) acts like about 80 people through the public API. Be honest: say they are simulated people. What to do (steps marked PLAN depend on the frontend being finished):
 1. Before the talk: `dotnet run --project src/AppHost`. If the Wi-Fi is bad: `dotnet run --project src/AppHost --launch-profile replay` (recorded departures, no Linz AG calls).
 2. Open the Aspire dashboard http://localhost:15000. Say: "Three replicas, one Orleans silo each, one cluster."
-3. Open the projector page `/projector` and make it full screen on the beamer. Say: "Every dot is a stop, every stop is a grain."
+3. Open the Overview page `/overview` and make it full screen on the beamer. Say: "Every dot is a stop, every stop is a grain."
 4. In the Aspire dashboard click start on `simulator`. Say: "Now 80 people join, simulated ones, they come in over about 40 seconds."
 5. Dots light up and grow with the number of watchers. About 40 percent watch Hauptbahnhof, the rest spread over the 25 stops, and they move around and read boards. Say: "Nobody created these actors, the first call activated them."
 6. Point at Hauptbahnhof. Say: "One stop gets hot, we come back to this."
@@ -718,11 +718,11 @@ Before the talk (not on stage):
 - Click start on `simulator` beforehand, so many stop grains are active (otherwise nothing to see).
 
 On stage:
-1. (0:30) Projector page: all dots red, three shapes. Say: "Everything runs version 1, three silos."
+1. (0:30) Overview page: all dots red, three shapes. Say: "Everything runs version 1, three silos."
 2. (0:30) Aspire dashboard http://localhost:15000: click start on each of the three `gleis-grain-v2-*` rows (one click per replica, so it comes up gradually). Say: "Now the new version comes up next to the old one, nobody is switched off."
-3. (0:45) Show the silo list: 6 active silos, v1 and v2 side by side (silo panel on the projector page, or `/api/cluster/silos`, or the Orleans Dashboard at /dashboard). Most grains already turn blue as soon as v2 callers arrive. Say: "One cluster, two versions."
+3. (0:45) Show the silo list: 6 active silos, v1 and v2 side by side (silo panel on the Overview page, or `/api/cluster/silos`, or the Orleans Dashboard at /dashboard). Most grains already turn blue as soon as v2 callers arrive. Say: "One cluster, two versions."
 4. (1:15) Explain Orleans interface versioning: `[Version(2)]` on the interface, BackwardCompatible strategy, LatestVersion selector. Say: "New activations go to v2, v1 callers still work, the cluster does not care."
-5. (1:30) Click stop on the three `gleis-grain-v1-*` rows one by one. The v1 silos go Dead (an abrupt kill, not a graceful shutdown, so one or two requests may hang for a moment). Watch grains move to other silos and dots turn blue, while the app keeps answering (open a stop on the projector page or laptop to prove it, the simulator keeps going). Say: "A rolling update without a maintenance window."
+5. (1:30) Click stop on the three `gleis-grain-v1-*` rows one by one. The v1 silos go Dead (an abrupt kill, not a graceful shutdown, so one or two requests may hang for a moment). Watch grains move to other silos and dots turn blue, while the app keeps answering (open a stop on the Map page `/` or the Overview page to prove it, the simulator keeps going). Say: "A rolling update without a maintenance window."
 6. (0:30) Take-away: "Interface versions plus a compatible state format make deployments boring. Think about it before the first deployment." Back to Take this home.
 
 If it fails:
@@ -739,14 +739,14 @@ If it fails:
 - Persist: what must survive a crash
 - Let go: what the next refresh rebuilds anyway
 - Losing 10 seconds of departures is fine
-- Bets must survive, so they are persisted
+- The player's chosen stop must survive, so it is persisted
 
 <!-- TODO IMAGE: two columns "persist" vs "let go" with examples -->
 
 Note:
 - Speaker: Lucas | Raffi
 
-Lessons learned from daily work. In the repo the stop board is refreshed from Linz AG, the player bets are state. Write-behind is a talking point, not built (planned).
+Lessons learned from daily work. In the repo the stop board is refreshed from Linz AG, the player's nickname and chosen stop are state. Write-behind is a talking point, not built (planned).
 
 ---
 
@@ -757,14 +757,14 @@ Lessons learned from daily work. In the repo the stop board is refreshed from Li
 | Lives | In memory | Durable (Postgres) |
 | Survives silo crash | No | Yes |
 | Use for | Frequent, fine to lose | Must happen anyway |
-| In gleis-grain | Faster refresh while watched | Refresh every minute, resolve bets |
+| In gleis-grain | Faster refresh while watched | Refresh every minute (stop refresh reminder) |
 
 <div class="refs"><sup class="ref">1</sup> <a href="https://dotnet.github.io/orleans/docs/grains/timers-and-reminders/">https://dotnet.github.io/orleans/docs/grains/timers-and-reminders/</a></div>
 
 Note:
 - Speaker: Lucas | Raffi
 
-Rule of thumb: if it must happen even after a crash, use a reminder. Real code: `RegisterGrainTimer` and `RegisterOrUpdateReminder` in `StopGrain`, reminders in `PlayerGrain` (bet resolution) and `AlertBoardGrain`. Reminder period is an option per context. Exact timer period: check the options before quoting a number.
+Rule of thumb: if it must happen even after a crash, use a reminder. Real code: `RegisterGrainTimer` and `RegisterOrUpdateReminder` and the refresh reminder in `StopGrain`, reminders in `AlertBoardGrain`. Reminder period is an option per context. Exact timer period: check the options before quoting a number.
 
 ---
 

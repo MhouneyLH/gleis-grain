@@ -22,7 +22,7 @@ body:
       label: Steps to reproduce
       placeholder: |
         1. Start the AppHost
-        2. Open the projector page
+        2. Open the Overview page
         3. ...
     validations:
       required: true

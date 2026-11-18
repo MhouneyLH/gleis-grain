@@ -1,7 +1,7 @@
 # Architecture
 
 Mermaid source. In Excalidraw use "Insert > Mermaid to Excalidraw" and paste the diagram block.
-Everything in the diagram is built. For how to work on the code see [CONTRIBUTING.md](CONTRIBUTING.md), for the HTTP contract [docs/api.md](docs/api.md), for agents [AGENTS.md](AGENTS.md).
+Everything in the diagram is built. For how to work on the code see [CONTRIBUTING.md](CONTRIBUTING.md), for the HTTP API Scalar on the running host (http://localhost:5080/scalar) and the `.http` files in `src/Host/http`, for agents [AGENTS.md](AGENTS.md).
 
 ```mermaid
 flowchart LR

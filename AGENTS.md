@@ -12,8 +12,8 @@ Where to look:
 |---|---|
 | How the parts fit (diagram) | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Rules, workflow, commit style, tests | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| HTTP endpoints, live events, silo naming, simulator control API | [docs/api.md](docs/api.md) |
-| Features and demo script | [docs/requirements.md](docs/requirements.md) |
+| HTTP API | Scalar on the running host (http://localhost:5080/scalar, OpenAPI at `/openapi/v1.json`) |
+| Live event payloads | `src/Features/Cluster/GleisGrain.Cluster.Contracts/LivePayloads.cs` |
 | Try the API | `src/Host/http/*.http`, `src/Simulator/http/*.http` |
 | The talk (slides, diagram sources, notes) | `docs/net_stammtisch_linz_presentation/` |
 
@@ -40,7 +40,7 @@ cd docs/net_stammtisch_linz_presentation/slides && npm install && npm run build
 - Strongly typed ids (`StopId`, `TripId`, `Nickname`...) in the owning module's Contracts. Expected failures are `DomainError` records thrown as `DomainException` in endpoint handlers; never throw them across a grain call.
 - Logging with `[LoggerMessage]` and named placeholders (EventId ranges: Stops 1000, Trips 2000, Alerts 3000, Ingestion 4000, Game 5000, Cluster 6000). Metrics through `IMeterFactory`; a module's meter name must be registered in `src/Host/Program.cs`. No personal data in logs. Players are nicknames only.
 - Packages are pinned centrally in `Directory.Packages.props`; run `dotnet restore` and commit the `packages.lock.json` files after a package change (CI restores in locked mode).
-- Tests: xunit.v3, name `Method_Condition_Result`, no real time (`FakeTimeProvider`), **Linz AG is never called from a test or CI**, use the recorded replay data. If an endpoint or live event changes, update `docs/api.md`, the matching `.http` file and the frontend in the same change.
+- Tests: xunit.v3, name `Method_Condition_Result`, no real time (`FakeTimeProvider`), **Linz AG is never called from a test or CI**, use the recorded replay data. If an endpoint or live event changes, update the matching `.http` file and the frontend (`src/Frontend/src/api`) in the same change.
 
 ## Pitfalls we hit (read before debugging)
 

@@ -34,7 +34,7 @@ Details and troubleshooting: [CONTRIBUTING.md](CONTRIBUTING.md#running-the-demo)
 | Game      | Player    | Nicknames, the chosen stop, delay bets and the leaderboard (bets are hidden in the frontend) |
 | Cluster   | Hub       | Silo overview, stats, the chaos button, the live event stream (SSE)        |
 
-They call each other only through their Contracts projects. Live updates reach the browser through server-sent events on `GET /api/cluster/events`; see [docs/api.md](docs/api.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
+They call each other only through their Contracts projects. Live updates reach the browser through server-sent events on `GET /api/cluster/events`; the payloads are in `LivePayloads.cs` (Cluster Contracts). The HTTP API is documented by Scalar on the running host (http://localhost:5080/scalar) and by the `.http` files in `src/Host/http`. See also [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Layout
 
@@ -49,7 +49,7 @@ src/Simulator/       plays the audience through the HTTP API
 src/Frontend/        Vue 3 + Vite app (Leaflet map)
 db/                  Orleans SQL schema
 test/                mirrors src
-docs/                API, requirements and the talk (slides, diagrams)
+docs/                the talk (slides, diagrams)
 ```
 
 ## The talk
@@ -64,7 +64,8 @@ The slides (reveal.js, speaker notes, diagram sources) are in [docs/net_stammtis
 
 - [CONTRIBUTING.md](CONTRIBUTING.md): setup, workflow, commit messages, adding a module.
 - [AGENTS.md](AGENTS.md): the rules and pitfalls for AI coding agents (and a good checklist for humans).
-- [ARCHITECTURE.md](ARCHITECTURE.md): the architecture diagram. [docs/api.md](docs/api.md): endpoints and events. [docs/requirements.md](docs/requirements.md): features and demo script.
+- [ARCHITECTURE.md](ARCHITECTURE.md): the architecture diagram and how the parts fit.
+- HTTP API: Scalar at http://localhost:5080/scalar on the running host, the `.http` files in `src/Host/http` and `src/Simulator/http`.
 
 ## License
 

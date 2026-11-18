@@ -23,7 +23,7 @@ Only `test/Infrastructure/GleisGrain.Postgres.Tests` needs Docker; it skips itse
 
 - **postgres, pgadmin:** one database per module plus `orleans`, schema from `db/` (loaded only on an empty volume). Login errors or a changed schema: stop the AppHost and `docker volume rm gleis-grain-postgres`.
 - **gleis-grain:** the gateway on http://localhost:5080 in front of **gleis-grain-v1** (three replicas, started) and **gleis-grain-v2** (three replicas, start them by hand). `/dashboard` is the Orleans Dashboard, `/scalar` the API docs.
-- **simulator:** virtual audience, start it in the dashboard. Options `Simulator:People`, `RampUpSeconds`, `HotStopShare`, `Seed`; control API on :5090 ([docs/api.md](docs/api.md#simulator-control-api)).
+- **simulator:** virtual audience, start it in the dashboard. Options `Simulator:People`, `RampUpSeconds`, `HotStopShare`, `Seed`; control API on :5090 (`src/Simulator/http/simulator.http`).
 - **frontend:** the Vite dev server (it proxies `/api` and `/sim`).
 
 Rollout demo: start the three `gleis-grain-v2-...` replicas, wait until `/api/cluster/silos` lists six Active silos, then stop the three `gleis-grain-v1-...` replicas. By hand, v2 is built with `dotnet build src/Host -p:GrainVersion=2 --artifacts-path artifacts/v2`; the AppHost does that after each build. To look at the cluster run `SELECT * FROM orleansmembershiptable;` in pgAdmin (filter on the newest `deploymentid`). Details and pitfalls (shared folder, passwords, no builds at start): [AGENTS.md](AGENTS.md).
@@ -63,7 +63,7 @@ The build is strict (warnings are errors) and the module boundaries are enforced
 
 ## Tests
 
-Domain unit tests need no silo (most tests); grain tests use an in-process `TestCluster` with in-memory storage and `FakeTimeProvider`; one Testcontainers test checks the real Orleans schema; the frontend uses Vitest. Name tests `Method_Condition_Result`. Linz AG is never called from a test, use the recorded replay data. If an endpoint or live event changes, update [docs/api.md](docs/api.md), the matching `.http` file and the frontend in the same pull request.
+Domain unit tests need no silo (most tests); grain tests use an in-process `TestCluster` with in-memory storage and `FakeTimeProvider`; one Testcontainers test checks the real Orleans schema; the frontend uses Vitest. Name tests `Method_Condition_Result`. Linz AG is never called from a test, use the recorded replay data. If an endpoint or live event changes, update the matching `.http` file (`src/Host/http`) and the frontend in the same pull request.
 
 ## Releases
 

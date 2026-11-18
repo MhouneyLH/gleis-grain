@@ -1,4 +1,4 @@
-// The contract with the host, see docs/api.md. All types and calls live here.
+// The contract with the host (Scalar on the running host: /scalar, live events: LivePayloads.cs). All types and calls live here.
 import { request } from './http'
 
 export { ApiError } from './http'
@@ -73,7 +73,7 @@ export interface Silo {
 export interface Activation {
   stopId: string
   silo: string
-  /** Not in docs/api.md yet; used when the host sends it. */
+  /** Optional; used when the host sends it. */
   watchers?: number
 }
 

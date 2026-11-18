@@ -60,3 +60,6 @@ nunit-*.xml
 node_modules/
 *.tsbuildinfo
 src/Host/wwwroot/
+
+# Vite dependency cache
+.vite/

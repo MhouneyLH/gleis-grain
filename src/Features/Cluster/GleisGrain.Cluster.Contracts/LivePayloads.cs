@@ -1,6 +1,6 @@
 namespace GleisGrain.Cluster.Contracts;
 
-// The payloads of every live event. The JSON uses camelCase property names. docs/api.md lists them for the frontend.
+// The payloads of every live event. The JSON uses camelCase property names. The frontend mirrors them in src/Frontend/src/api.
 
 /// <summary>A stop grain woke up on a silo.</summary>
 public sealed record StopActivated(string StopId, string Silo) : ILivePayload

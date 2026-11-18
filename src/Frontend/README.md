@@ -2,7 +2,7 @@
 
 Vue 3 + TypeScript + Vite + vue-router + Leaflet. No UI framework, no chart library, no CDN: everything is bundled. The only external request is the OpenStreetMap tile layer; when tiles do not load, the stops are still drawn on a plain background.
 
-The contract with the host is [docs/api.md](../../docs/api.md). All calls and types are in `src/api`.
+The contract with the host is the API shown by Scalar on the running host (http://localhost:5080/scalar) plus the live events in `LivePayloads.cs`. All calls and types are in `src/api`.
 
 ## Run it
 
@@ -47,7 +47,7 @@ The projector shows the audience address as big text. Behind a laptop `localhost
 
 ```
 src/
-  api/          typed docs/api.md and the one fetch wrapper (problem details become ApiError)
+  api/          typed API contract and the one fetch wrapper (problem details become ApiError)
   live/         pure state logic (grain view, ticker, leaderboard, silo slots, formatting), unit tested
   composables/  EventSource wrapper, polling, player, stops, toasts
   map/          Leaflet base map (tiles, resize, labels)

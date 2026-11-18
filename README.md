@@ -1,5 +1,7 @@
 # gleis-grain
 
+[![Orleans](docs/orleans-badge.svg)](https://dotnet.github.io/orleans/)
+
 Showcase for Microsoft Orleans built on public transport data from Linz AG. Stops, trips and service notices are virtual actors, kept up to date with reminders and timers. It is the demo for [a talk about the actor paradigm at the .NET Stammtisch Linz](https://www.meetup.com/net-stammtisch-linz/events/317130107/).
 
 ## Data source

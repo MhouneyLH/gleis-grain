@@ -20,6 +20,7 @@ jobs:
       common: ${{ steps.filter.outputs.shared }}
       apphost: ${{ steps.filter.outputs.apphost }}
       modules: ${{ steps.filter.outputs.modules }}
+      simulator: ${{ steps.filter.outputs.simulator }}
       postgres: ${{ steps.filter.outputs.postgres }}
       frontend: ${{ steps.filter.outputs.frontend }}
     steps:
@@ -63,6 +64,9 @@ jobs:
             Cluster:
               - 'src/Features/Cluster/**'
               - 'test/Features/Cluster/**'
+            simulator:
+              - 'src/Simulator/**'
+              - 'test/Simulator/**'
             postgres:
               - 'db/**'
               - 'src/Host/**'
@@ -120,6 +124,18 @@ jobs:
           global-json-file: global.json
       - run: dotnet test --project test/Modules/GleisGrain.Modules.Tests/GleisGrain.Modules.Tests.csproj --configuration Release
 
+  # The audience simulator talks to the public API only, so it has no module dependency.
+  simulator:
+    needs: changes
+    if: needs.changes.outputs.simulator == 'true' || needs.changes.outputs.common == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - run: dotnet test --project test/Simulator/GleisGrain.Simulator.Tests/GleisGrain.Simulator.Tests.csproj --configuration Release
+
   # Orleans against a real Postgres (Testcontainers): the SQL scripts in db/, clustering, grain storage, reminders.
   # The runners have Docker. Without Docker the tests would skip, so a green run here means they really ran.
   postgres:
@@ -156,7 +172,7 @@ jobs:
   # Single required check for branch protection; skipped jobs count as success.
   ci-ok:
     if: always()
-    needs: [changes, feature, apphost, modules, postgres, frontend]
+    needs: [changes, feature, apphost, modules, simulator, postgres, frontend]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any job failed or was cancelled
